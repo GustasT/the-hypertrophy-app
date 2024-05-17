@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { navbarLinks } from "./navbarData";
+import { navbarLinks } from "../../../config/navbarConfig";
 
 type Props = {};
 
