@@ -1,12 +1,12 @@
 import React, { ReactNode } from "react";
-import Navbar from "../components/common/Navbar";
+import Navbar from "../components/common/navbar/Navbar";
 
 type Props = { children: ReactNode };
 
 const MainLayout: React.FC<Props> = ({ children }) => {
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <div className="flex-grow overflow-auto">{children}</div>
+    <div className="flex flex-col h-dvh overflow-hidden ">
+      <div className="flex-grow overflow-auto p-4 pb-16">{children}</div>
       <Navbar />
     </div>
   );

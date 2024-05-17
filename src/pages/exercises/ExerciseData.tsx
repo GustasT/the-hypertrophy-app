@@ -17,11 +17,11 @@ export const ExerciseData = [
   {
     group: "Quads",
     title: "High bar squat",
-    type: "/barbell",
+    type: "barbell",
   },
   {
     group: "Glutes",
     title: "Split squat",
-    type: "/dumbells",
+    type: "dumbells",
   },
 ];

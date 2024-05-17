@@ -6,6 +6,7 @@ import Mesocycles from "../pages/mesocycles/Mesocycles";
 import NewMesocycle from "../pages/new_mesocycle/NewMesocycle";
 import MainLayout from "../layouts/MainLayout";
 import NotFoundPage from "../pages/not_found_page/NotFoundPage";
+import Exercises from "../pages/exercises/Exercises";
 
 type Props = {};
 
@@ -19,6 +20,7 @@ const AppRoutes = (props: Props) => {
           <Route path="/templates" element={<Templates />} />
           <Route path="/mesocycles" element={<Mesocycles />} />
           <Route path="/newMesocycle" element={<NewMesocycle />} />
+          <Route path="exercises" element={<Exercises />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </MainLayout>
