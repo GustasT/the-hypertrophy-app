@@ -7,7 +7,7 @@ import {
 import { PiNotebookFill } from "react-icons/pi";
 
 export const navbarLinks = [
-  { to: "/workout", label: "Workout", icon: <GiWeightLiftingUp /> },
+  { to: "/exercises", label: "Exercises", icon: <PiNotebookFill /> },
   { to: "/templates", label: "Templates", icon: <MdDashboardCustomize /> },
   {
     to: "/mesocycles",
@@ -19,5 +19,5 @@ export const navbarLinks = [
     label: "New Mesocycle",
     icon: <MdOutlineRestartAlt />,
   },
-  { to: "/exercises", label: "Exercises", icon: <PiNotebookFill /> },
+  { to: "/workout", label: "Workout", icon: <GiWeightLiftingUp /> },
 ];

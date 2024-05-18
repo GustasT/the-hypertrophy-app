@@ -5,21 +5,26 @@ import { muscleGroups, exerciseTypes } from "../../config/exerciseOptions";
 interface NewExerciseFormProps {
   onSave: (exercise: Exercise) => void;
   onClose: () => void;
+  initialData?: Exercise; // Optional prop for initial data
 }
 
 const NewExerciseForm: React.FC<NewExerciseFormProps> = ({
   onSave,
   onClose,
+  initialData,
 }) => {
-  const [exerciseName, setExerciseName] = useState("");
-  const [muscleGroup, setMuscleGroup] = useState("");
-  const [exerciseType, setExerciseType] = useState("");
-  const [youtubeLink, setYoutubeLink] = useState("");
+  const [exerciseName, setExerciseName] = useState(initialData?.name || "");
+  const [muscleGroup, setMuscleGroup] = useState(initialData?.group || "");
+  const [exerciseType, setExerciseType] = useState(initialData?.type || "");
+  const [youtubeLink, setYoutubeLink] = useState(
+    initialData?.youtubeLink || ""
+  );
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const newExercise: Exercise = {
+      id: initialData?.id as number, // Cast to number
       name: exerciseName,
       group: muscleGroup,
       type: exerciseType,
@@ -27,12 +32,19 @@ const NewExerciseForm: React.FC<NewExerciseFormProps> = ({
     };
 
     try {
-      const id = await db.table("exercises").add(newExercise);
-      console.log("Exercise added with id:", id);
-      onSave({ ...newExercise, id: id as number });
+      if (initialData) {
+        // Update existing exercise
+        await db.table("exercises").put(newExercise);
+      } else {
+        // Add new exercise
+        const id = await db.table("exercises").add(newExercise);
+        newExercise.id = id as number; // Cast to number
+      }
+
+      onSave(newExercise);
       onClose();
     } catch (error) {
-      console.error("Failed to add exercise:", error);
+      console.error("Failed to save exercise:", error);
     }
   };
 
