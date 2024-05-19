@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -7,5 +8,19 @@ export default defineConfig({
     host: true,
     port: 5173,
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      manifest: {
+        icons: [
+          {
+            src: "/testSVG.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable",
+          },
+        ],
+      },
+    }),
+  ],
 });

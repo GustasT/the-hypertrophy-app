@@ -1,6 +1,4 @@
-type Props = {};
-
-const NewMesocycle = (props: Props) => {
+const NewMesocycle = () => {
   return <div>NewMesocycle</div>;
 };
 

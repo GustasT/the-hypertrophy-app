@@ -1,6 +1,4 @@
-type Props = {};
-
-const Mesocycles = (props: Props) => {
+const Mesocycles = () => {
   return <div>Mesocycles</div>;
 };
 

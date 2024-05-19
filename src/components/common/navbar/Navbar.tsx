@@ -1,9 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { navbarLinks } from "../../../config/navbarConfig";
 
-type Props = {};
-
-const Navbar = (props: Props) => {
+const Navbar = () => {
   return (
     <nav className="fixed bottom-0 w-full h-16 bg-white border-t border-gray-200">
       <div className="flex justify-around p-4">
@@ -12,7 +10,7 @@ const Navbar = (props: Props) => {
             key={link.to}
             to={link.to}
             end={link.to === "/workout"} // Only use "end" for the "/workout" link
-            className={({ isActive }) => (isActive ? "text-blue-500" : "")}
+            className={({ isActive }) => (isActive ? "text-blue-600" : "")}
           >
             <div className="flex flex-col items-center">
               {link.icon}

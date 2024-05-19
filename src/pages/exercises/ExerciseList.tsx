@@ -46,7 +46,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
                 Edit
               </button>
               <button
-                className="bg-black text-white px-2 py-1 rounded hover:bg-gray-600"
+                className="bg-gray-500 text-white px-2 py-1 rounded  hover:bg-gray-600"
                 onClick={() => onDelete(exercise.id as number)}
               >
                 Delete

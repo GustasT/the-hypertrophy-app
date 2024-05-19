@@ -6,9 +6,7 @@ import ExerciseList from "./ExerciseList";
 import Message from "../../components/Message";
 import Dialog from "../../components/Dialog";
 
-type Props = {};
-
-const Exercises = (props: Props) => {
+const Exercises = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
@@ -77,7 +75,7 @@ const Exercises = (props: Props) => {
         <h1 className="text-2xl font-bold">Exercise List</h1>
         <button
           type="button"
-          className="bg-blue-500 text-white pl-4 pr-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-600 text-white pl-4 pr-4 py-2 rounded hover:bg-blue-700"
           onClick={openAddDialog}
         >
           + New

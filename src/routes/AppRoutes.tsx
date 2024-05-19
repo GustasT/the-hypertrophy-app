@@ -8,9 +8,7 @@ import MainLayout from "../layouts/MainLayout";
 import NotFoundPage from "../pages/not_found_page/NotFoundPage";
 import Exercises from "../pages/exercises/Exercises";
 
-type Props = {};
-
-const AppRoutes = (props: Props) => {
+const AppRoutes = () => {
   return (
     <Router>
       <MainLayout>
