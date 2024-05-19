@@ -1,5 +1,76 @@
+import { useState, useEffect } from "react";
+import db, { Template } from "../../database/db";
+import Dialog from "../../components/Dialog";
+import NewMesocycleForm from "./NewMesocycleForm";
+
 const NewMesocycle = () => {
-  return <div>NewMesocycle</div>;
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
+    null
+  );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const allTemplates = await db.table("templates").toArray();
+        setTemplates(allTemplates);
+      } catch (error) {
+        console.error("Failed to fetch templates:", error);
+      }
+    };
+
+    fetchTemplates();
+  }, []);
+
+  const openDialog = (template: Template) => {
+    setSelectedTemplate(template);
+    setIsDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedTemplate(null);
+  };
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-6">
+        Select Template for New Mesocycle
+      </h1>
+      <ul className="space-y-4">
+        {templates.map((template) => (
+          <li
+            key={template.id}
+            className="p-4 border rounded flex justify-between items-center"
+          >
+            <div>
+              <h2 className="text-xl font-semibold">{template.name}</h2>
+              <p>
+                <strong>Times per week:</strong> {template.timesPerWeek}
+              </p>
+            </div>
+            <button
+              type="button"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              onClick={() => openDialog(template)}
+            >
+              +
+            </button>
+          </li>
+        ))}
+      </ul>
+      <Dialog
+        isOpen={isDialogOpen}
+        onClose={closeDialog}
+        title="Select Exercises"
+      >
+        {selectedTemplate && (
+          <NewMesocycleForm template={selectedTemplate} onClose={closeDialog} />
+        )}
+      </Dialog>
+    </div>
+  );
 };
 
 export default NewMesocycle;

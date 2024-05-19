@@ -36,15 +36,10 @@ const Dialog: React.FC<DialogProps> = ({
           onClick={onClose}
         >
           <div
-            className={`bg-white p-6 rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform ${
+            className={`bg-white p-6 rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform mb-16 max-h-[70vh] overflow-y-auto ${
               visible ? "translate-y-0" : "translate-y-full"
             }`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the dialog
-            style={{
-              marginBottom: "4rem",
-              maxHeight: "80vh",
-              overflowY: "auto",
-            }} // Add margin-bottom, max-height, and overflow-y
           >
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">{title}</h2>
