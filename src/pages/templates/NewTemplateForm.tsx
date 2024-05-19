@@ -1,12 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import db, { Template } from "../../database/db";
 import DayForm from "./DayForm";
 import TabNavigation from "../../components/TabNavigation";
-
-interface Day {
-  name: string;
-  muscleGroups: string[];
-}
+import ErrorList from "../../components/ErrorList";
+import useTemplateForm from "../../components/hooks/useTemplateForm";
 
 interface NewTemplateFormProps {
   onSave: (template: Template) => void;
@@ -17,45 +14,18 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
   onSave,
   onClose,
 }) => {
-  const [templateName, setTemplateName] = useState("");
-  const [timesPerWeek, setTimesPerWeek] = useState<number | null>(null);
-  const [days, setDays] = useState<Day[]>([{ name: "", muscleGroups: [] }]);
-  const [activeTab, setActiveTab] = useState(0);
-  const [errors, setErrors] = useState<string[]>([]);
-
-  const handleTimesPerWeekChange = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const value = parseInt(e.target.value, 10);
-    setTimesPerWeek(value);
-    setDays(new Array(value).fill({ name: "", muscleGroups: [] }));
-    setActiveTab(0); // Reset active tab
-  };
-
-  const handleDayChange = (index: number, day: Day) => {
-    const newDays = [...days];
-    newDays[index] = day;
-    setDays(newDays);
-  };
-
-  const validateForm = () => {
-    const newErrors: string[] = [];
-    if (!templateName) {
-      newErrors.push("Template name is required.");
-    }
-    days.forEach((day, index) => {
-      if (!day.name) {
-        newErrors.push(`Day ${index + 1} name is required.`);
-      }
-      if (day.muscleGroups.length === 0) {
-        newErrors.push(
-          `At least one muscle group is required for Day ${index + 1}.`
-        );
-      }
-    });
-    setErrors(newErrors);
-    return newErrors.length === 0;
-  };
+  const {
+    templateName,
+    timesPerWeek,
+    days,
+    activeTab,
+    errors,
+    setTemplateName,
+    setActiveTab,
+    handleTimesPerWeekChange,
+    handleDayChange,
+    validateForm,
+  } = useTemplateForm([{ name: "", muscleGroups: [] }]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -95,7 +65,9 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
         <select
           className="w-full mt-2 p-2 border rounded"
           value={timesPerWeek || ""}
-          onChange={handleTimesPerWeekChange}
+          onChange={(e) =>
+            handleTimesPerWeekChange(parseInt(e.target.value, 10))
+          }
           required
         >
           <option value="" disabled>
@@ -121,15 +93,7 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
           />
         </>
       )}
-      {errors.length > 0 && (
-        <div className="mb-4 text-red-500">
-          <ul>
-            {errors.map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <ErrorList errors={errors} />
       <div className="flex justify-end">
         <button
           type="button"
