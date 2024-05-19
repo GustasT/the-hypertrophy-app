@@ -5,12 +5,6 @@ interface Day {
   muscleGroups: string[];
 }
 
-interface Template {
-  name: string;
-  timesPerWeek: number;
-  days: Day[];
-}
-
 const useTemplateForm = (initialDays: Day[]) => {
   const [templateName, setTemplateName] = useState("");
   const [timesPerWeek, setTimesPerWeek] = useState<number | null>(null);
@@ -56,6 +50,8 @@ const useTemplateForm = (initialDays: Day[]) => {
     activeTab,
     errors,
     setTemplateName,
+    setTimesPerWeek,
+    setDays,
     setActiveTab,
     handleTimesPerWeekChange,
     handleDayChange,

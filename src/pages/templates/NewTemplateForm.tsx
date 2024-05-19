@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import db, { Template } from "../../database/db";
 import DayForm from "./DayForm";
 import TabNavigation from "../../components/TabNavigation";
-import ErrorList from "../../components/ErrorList";
 import useTemplateForm from "../../components/hooks/useTemplateForm";
+import ErrorList from "../../components/ErrorList";
 
 interface NewTemplateFormProps {
   onSave: (template: Template) => void;
   onClose: () => void;
+  initialData?: Template | null;
 }
 
 const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
   onSave,
   onClose,
+  initialData,
 }) => {
   const {
     templateName,
@@ -21,11 +23,23 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     activeTab,
     errors,
     setTemplateName,
+    setTimesPerWeek,
+    setDays,
     setActiveTab,
     handleTimesPerWeekChange,
     handleDayChange,
     validateForm,
-  } = useTemplateForm([{ name: "", muscleGroups: [] }]);
+  } = useTemplateForm(
+    initialData ? initialData.days : [{ name: "", muscleGroups: [] }]
+  );
+
+  useEffect(() => {
+    if (initialData) {
+      setTemplateName(initialData.name);
+      setTimesPerWeek(initialData.timesPerWeek);
+      setDays(initialData.days);
+    }
+  }, [initialData, setTemplateName, setTimesPerWeek, setDays]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -39,8 +53,15 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     };
 
     try {
-      const id = await db.table("templates").add(newTemplate);
-      newTemplate.id = id as number;
+      if (initialData) {
+        await db
+          .table("templates")
+          .update(initialData.id as number, newTemplate);
+        newTemplate.id = initialData.id;
+      } else {
+        const id = await db.table("templates").add(newTemplate);
+        newTemplate.id = id as number;
+      }
       onSave(newTemplate);
       onClose();
     } catch (error) {

@@ -1,21 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NewTemplateForm from "./NewTemplateForm";
 import Dialog from "../../components/Dialog";
+import db, { Template } from "../../database/db";
+import TemplateList from "./TemplateList";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
+    null
+  );
+  const [templates, setTemplates] = useState<Template[]>([]);
 
-  const handleOpenDialog = () => {
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      try {
+        const allTemplates = await db.table("templates").toArray();
+        setTemplates(allTemplates);
+      } catch (error) {
+        console.error("Failed to fetch templates:", error);
+      }
+    };
+
+    fetchTemplates();
+  }, []);
+
+  const handleSave = (template: Template) => {
+    if (isEditMode && selectedTemplate) {
+      setTemplates((prevTemplates) =>
+        prevTemplates.map((t) => (t.id === template.id ? template : t))
+      );
+    } else {
+      setTemplates((prevTemplates) => [...prevTemplates, template]);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await db.table("templates").delete(id);
+      setTemplates((prevTemplates) => prevTemplates.filter((t) => t.id !== id));
+    } catch (error) {
+      console.error("Failed to delete template:", error);
+    }
+  };
+
+  const openEditDialog = (template: Template) => {
+    setSelectedTemplate(template);
+    setIsEditMode(true);
     setIsDialogOpen(true);
   };
 
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
+  const openAddDialog = () => {
+    setSelectedTemplate(null);
+    setIsEditMode(false);
+    setIsDialogOpen(true);
   };
 
-  const handleSaveTemplate = (template: any) => {
-    console.log("Template saved:", template);
-    // Add logic to save the template to IndexedDB here
+  const closeDialog = () => {
+    setIsDialogOpen(false);
+    setSelectedTemplate(null);
   };
 
   return (
@@ -25,19 +68,25 @@ const Templates = () => {
         <button
           type="button"
           className="bg-blue-600 text-white pl-4 pr-4 py-2 rounded hover:bg-blue-700"
-          onClick={handleOpenDialog}
+          onClick={openAddDialog}
         >
           + New
         </button>
       </div>
+      <TemplateList
+        templates={templates}
+        onEdit={openEditDialog}
+        onDelete={handleDelete}
+      />
       <Dialog
         isOpen={isDialogOpen}
-        onClose={handleCloseDialog}
-        title="New Template"
+        onClose={closeDialog}
+        title={isEditMode ? "Edit Template" : "Add New Template"}
       >
         <NewTemplateForm
-          onSave={handleSaveTemplate}
-          onClose={handleCloseDialog}
+          onSave={handleSave}
+          onClose={closeDialog}
+          initialData={selectedTemplate || undefined}
         />
       </Dialog>
     </div>
