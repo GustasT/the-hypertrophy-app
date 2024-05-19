@@ -12,10 +12,20 @@ const TemplateList: React.FC<TemplateListProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const [expandedTemplate, setExpandedTemplate] = useState<number | null>(null);
+  const [expandedTemplates, setExpandedTemplates] = useState<Set<number>>(
+    new Set()
+  );
 
   const toggleTemplate = (id: number) => {
-    setExpandedTemplate(expandedTemplate === id ? null : id);
+    setExpandedTemplates((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
   };
 
   return (
@@ -32,9 +42,11 @@ const TemplateList: React.FC<TemplateListProps> = ({
                 <strong>Times per week:</strong> {template.timesPerWeek}
               </p>
             </div>
-            <div>{expandedTemplate === template.id ? "-" : "+"}</div>
+            <div>
+              {expandedTemplates.has(template.id as number) ? "-" : "+"}
+            </div>
           </div>
-          {expandedTemplate === template.id && (
+          {expandedTemplates.has(template.id as number) && (
             <div className="mt-4">
               <ul className="list-disc ml-5">
                 {template.days.map((day, index) => (
