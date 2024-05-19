@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import db, { Template, Exercise } from "../../database/db";
+import TabNavigation from "../../components/TabNavigation";
 
 interface NewMesocycleFormProps {
   template: Template;
@@ -14,6 +15,14 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
   const [selectedExercises, setSelectedExercises] = useState<{
     [key: string]: Exercise | null;
   }>({});
+  const [activeTab, setActiveTab] = useState(0);
+  const [isExerciseSelectionComplete, setIsExerciseSelectionComplete] =
+    useState(false);
+  const [isFormComplete, setIsFormComplete] = useState(false);
+
+  const [mesocycleName, setMesocycleName] = useState("");
+  const [weeks, setWeeks] = useState(4);
+  const [weightUnit, setWeightUnit] = useState("KG");
 
   useEffect(() => {
     const fetchExercises = async () => {
@@ -31,51 +40,121 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
     fetchExercises();
   }, [template]);
 
+  useEffect(() => {
+    const isExerciseComplete = template.days.every((day, dayIndex) =>
+      day.muscleGroups.every((muscleGroup, mgIndex) => {
+        const key = `${dayIndex}-${mgIndex}-${muscleGroup}`;
+        return (
+          selectedExercises[key] !== undefined &&
+          selectedExercises[key] !== null
+        );
+      })
+    );
+    setIsExerciseSelectionComplete(isExerciseComplete);
+
+    const isAdditionalFormComplete = mesocycleName !== "" && weightUnit !== "";
+    setIsFormComplete(isExerciseComplete && isAdditionalFormComplete);
+  }, [selectedExercises, template, mesocycleName, weightUnit]);
+
   const handleExerciseSelect = (key: string, exercise: Exercise) => {
     setSelectedExercises((prev) => ({ ...prev, [key]: exercise }));
   };
 
   return (
     <div>
-      {template.days.map((day, dayIndex) => (
-        <div key={dayIndex} className="mb-4">
-          <h3 className="text-lg font-semibold">{day.name}</h3>
-          {day.muscleGroups.map((muscleGroup, mgIndex) => {
-            const key = `${dayIndex}-${mgIndex}-${muscleGroup}`;
-            return (
-              <div key={key} className="mb-2">
-                <label className="block text-gray-700 mb-1">
-                  {muscleGroup}
-                </label>
-                <select
-                  className="w-full p-2 border rounded"
-                  value={selectedExercises[key]?.id || ""}
-                  onChange={(e) =>
-                    handleExerciseSelect(
-                      key,
-                      exercises.find(
-                        (ex) => ex.id === Number(e.target.value)
-                      ) as Exercise
-                    )
-                  }
-                >
-                  <option value="" disabled>
-                    Select exercise
-                  </option>
-                  {exercises
-                    .filter((exercise) => exercise.group === muscleGroup)
-                    .map((exercise) => (
-                      <option key={exercise.id} value={exercise.id}>
-                        {exercise.name}
-                      </option>
-                    ))}
-                </select>
-              </div>
-            );
-          })}
+      <TabNavigation
+        timesPerWeek={template.timesPerWeek}
+        activeTab={activeTab}
+        onTabClick={setActiveTab}
+      />
+      {template.days.map((day, dayIndex) => {
+        if (dayIndex !== activeTab) return null;
+        return (
+          <div key={dayIndex} className="mb-4">
+            <h3 className="text-lg font-semibold">{day.name}</h3>
+            {day.muscleGroups.map((muscleGroup, mgIndex) => {
+              const key = `${dayIndex}-${mgIndex}-${muscleGroup}`;
+              return (
+                <div key={key} className="mb-2">
+                  <label className="block text-gray-700 mb-1">
+                    {muscleGroup}
+                  </label>
+                  <select
+                    className="w-full p-2 border rounded"
+                    value={selectedExercises[key]?.id || ""}
+                    onChange={(e) =>
+                      handleExerciseSelect(
+                        key,
+                        exercises.find(
+                          (ex) => ex.id === Number(e.target.value)
+                        ) as Exercise
+                      )
+                    }
+                  >
+                    <option value="" disabled>
+                      Select exercise
+                    </option>
+                    {exercises
+                      .filter((exercise) => exercise.group === muscleGroup)
+                      .map((exercise) => (
+                        <option key={exercise.id} value={exercise.id}>
+                          {exercise.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
+      {isExerciseSelectionComplete && (
+        <div className="mt-4">
+          <div className="mb-4">
+            <label className="block text-gray-700">Mesocycle Name</label>
+            <input
+              type="text"
+              className="w-full mt-2 p-2 border rounded"
+              value={mesocycleName}
+              onChange={(e) => setMesocycleName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">
+              How many weeks will you train (including deload)
+            </label>
+            <select
+              className="w-full mt-2 p-2 border rounded"
+              value={weeks}
+              onChange={(e) => setWeeks(Number(e.target.value))}
+              required
+            >
+              {[4, 5, 6].map((week) => (
+                <option key={week} value={week}>
+                  {week}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Weight Units</label>
+            <select
+              className="w-full mt-2 p-2 border rounded"
+              value={weightUnit}
+              onChange={(e) => setWeightUnit(e.target.value)}
+              required
+            >
+              {["KG", "LB"].map((unit) => (
+                <option key={unit} value={unit}>
+                  {unit}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      ))}
-      <div className="flex justify-end">
+      )}
+      <div className="flex justify-end mt-4">
         <button
           type="button"
           className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600"
@@ -85,10 +164,20 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
         </button>
         <button
           type="button"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          onClick={() => console.log("Selected exercises:", selectedExercises)}
+          className={`bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ${
+            !isFormComplete && "opacity-50 cursor-not-allowed"
+          }`}
+          onClick={() =>
+            console.log("Starting new mesocycle with:", {
+              selectedExercises,
+              mesocycleName,
+              weeks,
+              weightUnit,
+            })
+          }
+          disabled={!isFormComplete}
         >
-          Save
+          Start New Mesocycle
         </button>
       </div>
     </div>

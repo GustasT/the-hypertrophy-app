@@ -3,6 +3,7 @@ import NewTemplateForm from "./NewTemplateForm";
 import Dialog from "../../components/Dialog";
 import db, { Template } from "../../database/db";
 import TemplateList from "./TemplateList";
+import DeleteDatabaseButton from "../../utils/DeleteDatabaseButton";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -72,6 +73,7 @@ const Templates = () => {
         >
           + New
         </button>
+        {/* <DeleteDatabaseButton /> */}
       </div>
       <TemplateList
         templates={templates}

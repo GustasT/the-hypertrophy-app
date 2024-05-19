@@ -28,3 +28,8 @@ export interface Template {
 }
 
 export default db;
+
+export const deleteDatabase = async () => {
+  await db.delete();
+  console.log("Database deleted successfully");
+};
