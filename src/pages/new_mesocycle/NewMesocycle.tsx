@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import db, { Template } from "../../database/db";
+import db, { Template, Mesocycle } from "../../database/db";
 import Dialog from "../../components/Dialog";
 import NewMesocycleForm from "./NewMesocycleForm";
 
@@ -9,6 +9,7 @@ const NewMesocycle = () => {
     null
   );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -31,6 +32,10 @@ const NewMesocycle = () => {
   const closeDialog = () => {
     setIsDialogOpen(false);
     setSelectedTemplate(null);
+  };
+
+  const handleSave = (newMesocycle: Mesocycle) => {
+    setMesocycles((prev) => [...prev, newMesocycle]);
   };
 
   return (
@@ -66,7 +71,11 @@ const NewMesocycle = () => {
         title="Select Exercises"
       >
         {selectedTemplate && (
-          <NewMesocycleForm template={selectedTemplate} onClose={closeDialog} />
+          <NewMesocycleForm
+            template={selectedTemplate}
+            onClose={closeDialog}
+            onSave={handleSave}
+          />
         )}
       </Dialog>
     </div>
