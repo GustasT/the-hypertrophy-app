@@ -15,14 +15,14 @@ db.version(2).stores({
 db.version(3).stores({
   exercises: "++id,name,group,type,youtubeLink",
   templates: "++id,name,timesPerWeek,days",
-  mesocycles: "++id,name,templateId,weeks,completed",
+  mesocycles: "++id,name,templateId,weeks,completed,isActive",
   workouts: "++id,mesocycleId,week,day,completed",
   logs: "++id,workoutId,exerciseId,sets,weight,reps,workload,pump,soreness",
 });
 
 // Define the TypeScript interface for an exercise
 export interface Exercise {
-  id: number; // Ensure id is a number
+  id?: number; // Ensure id is a number
   name: string;
   group: string;
   type: string;
@@ -31,24 +31,25 @@ export interface Exercise {
 
 // Define the TypeScript interface for a template
 export interface Template {
-  id: number;
+  id?: number;
   name: string;
-  timesPerWeek: 1 | 2 | 3 | 4 | 5 | 6;
+  timesPerWeek: number;
   days: { name: string; muscleGroups: string[] }[];
 }
 
 // Define the TypeScript interface for a mesocycle
 export interface Mesocycle {
-  id: number;
+  id?: number;
   name: string;
-  templateId: number; // Reference to the template
-  weeks: 4 | 5 | 6;
+  templateId: number;
+  weeks: number;
   completed: boolean;
+  isActive: boolean;
 }
 
 // Define the TypeScript interface for a workout
 export interface Workout {
-  id: number;
+  id?: number;
   mesocycleId: number; // Reference to the mesocycle
   week: number; // Week number within the mesocycle
   day: number; // Day number within the week
@@ -57,15 +58,15 @@ export interface Workout {
 
 // Define the TypeScript interface for a log entry
 export interface Log {
-  id: number;
+  id?: number;
   workoutId: number; // Reference to the workout
   exerciseId: number; // Reference to the exercise
   sets: number;
   weight: number;
   reps: number;
-  workload: "low" | "good" | "high" | "too much"; // Workload rating
-  pump: "low" | "good" | "high"; // Pump rating
-  soreness: "never" | "healedAwhileAgo" | "healedOnTime" | "sore"; // Soreness rating
+  workload: string; // Workload rating
+  pump: string; // Pump rating
+  soreness: string; // Soreness rating
 }
 
 export default db;

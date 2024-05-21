@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import db, { Template, Exercise, Mesocycle } from "../../database/db";
 import TabNavigation from "../../components/TabNavigation";
+import Button from "../../components/common/Button";
 
 interface NewMesocycleFormProps {
   template: Template;
@@ -25,7 +26,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
   const [isFormComplete, setIsFormComplete] = useState(false);
 
   const [mesocycleName, setMesocycleName] = useState(initialData?.name || "");
-  const [weeks, setWeeks] = useState<4 | 5 | 6>(initialData?.weeks || 4);
+  const [weeks, setWeeks] = useState<number>(initialData?.weeks || 4);
   const [weightUnit, setWeightUnit] = useState("KG");
 
   useEffect(() => {
@@ -70,6 +71,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
       templateId: template.id!,
       weeks,
       completed: false,
+      isActive: false,
     };
     const mesocycleId = await saveMesocycle(newMesocycle);
     onSave({ id: mesocycleId, ...newMesocycle });
@@ -201,8 +203,8 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
           </div>
         </div>
       )}
-      <div className="flex justify-end mt-4">
-        <button
+      <div className="flex justify-end gap-x-2 mt-4">
+        {/* <button
           type="button"
           className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600"
           onClick={onClose}
@@ -218,7 +220,17 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
           disabled={!isFormComplete}
         >
           Start New Mesocycle
-        </button>
+        </button> */}
+        <Button variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          variant="primary"
+          onClick={handleSave}
+          disabled={!isFormComplete}
+        >
+          Start New Meso
+        </Button>
       </div>
     </div>
   );

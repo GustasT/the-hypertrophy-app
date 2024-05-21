@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Template } from "../../database/db";
+import Button from "../../components/common/Button";
 
 interface TemplateListProps {
   templates: Template[];
@@ -59,18 +60,15 @@ const TemplateList: React.FC<TemplateListProps> = ({
                 ))}
               </ul>
               <div className="flex space-x-2 mt-4">
-                <button
-                  className="text-black px-2 py-1 border rounded hover:bg-gray-200"
-                  onClick={() => onEdit(template)}
-                >
+                <Button variant="outline" onClick={() => onEdit(template)}>
                   Edit
-                </button>
-                <button
-                  className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600"
+                </Button>
+                <Button
+                  variant="secondary"
                   onClick={() => onDelete(template.id as number)}
                 >
                   Delete
-                </button>
+                </Button>
               </div>
             </div>
           )}

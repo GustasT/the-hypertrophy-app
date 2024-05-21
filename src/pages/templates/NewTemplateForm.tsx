@@ -4,6 +4,8 @@ import DayForm from "./DayForm";
 import TabNavigation from "../../components/TabNavigation";
 import useTemplateForm from "../../components/hooks/useTemplateForm";
 import ErrorList from "../../components/ErrorList";
+import Button from "../../components/common/Button";
+import { PrimaryButton } from "../../components/common/ButtonComponents";
 
 interface NewTemplateFormProps {
   onSave: (template: Template) => void;
@@ -46,6 +48,7 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     if (!validateForm()) {
       return;
     }
+
     const newTemplate: Template = {
       name: templateName,
       timesPerWeek: timesPerWeek as number,
@@ -116,19 +119,12 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
       )}
       <ErrorList errors={errors} />
       <div className="flex justify-end">
-        <button
-          type="button"
-          className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600"
-          onClick={onClose}
-        >
+        <Button variant="outline" className="mr-2" onClick={onClose}>
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
+        </Button>
+        <Button variant="primary" type="submit">
           Save
-        </button>
+        </Button>
       </div>
     </form>
   );

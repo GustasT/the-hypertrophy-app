@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import db, { Exercise } from "../../database/db";
 import { muscleGroups, exerciseTypes } from "../../config/exerciseOptions";
+import Button from "../../components/common/Button";
 
 interface NewExerciseFormProps {
   onSave: (exercise: Exercise) => void;
@@ -19,6 +20,14 @@ const NewExerciseForm: React.FC<NewExerciseFormProps> = ({
   const [youtubeLink, setYoutubeLink] = useState(
     initialData?.youtubeLink || ""
   );
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  useEffect(() => {
+    // Check if all required fields are filled
+    setIsFormValid(
+      exerciseName !== "" && muscleGroup !== "" && exerciseType !== ""
+    );
+  }, [exerciseName, muscleGroup, exerciseType]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -105,20 +114,13 @@ const NewExerciseForm: React.FC<NewExerciseFormProps> = ({
           onChange={(e) => setYoutubeLink(e.target.value)}
         />
       </div>
-      <div className="flex justify-end">
-        <button
-          type="button"
-          className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600"
-          onClick={onClose}
-        >
+      <div className="flex justify-end space-x-2">
+        <Button variant="outline" onClick={onClose}>
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
+        </Button>
+        <Button variant="primary" disabled={!isFormValid} type="submit">
           Save
-        </button>
+        </Button>
       </div>
     </form>
   );

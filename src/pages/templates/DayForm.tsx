@@ -66,7 +66,7 @@ const DayForm: React.FC<DayFormProps> = ({ day, onChange }) => {
                 </span>
                 <button
                   type="button"
-                  className="ml-2 text-red-500 hover:text-red-700"
+                  className="ml-2 text-gray-600 hover:text-gray-700"
                   onClick={() => handleRemoveMuscleGroup(idx)}
                 >
                   &times;

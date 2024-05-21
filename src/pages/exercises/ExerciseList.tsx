@@ -1,5 +1,6 @@
 import React from "react";
 import { Exercise } from "../../database/db";
+import Button from "../../components/common/Button";
 
 interface ExerciseListProps {
   exercises: Exercise[];
@@ -39,18 +40,15 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
               )}
             </div>
             <div className="flex space-x-2">
-              <button
-                className=" text-black px-2 py-1 border rounded hover:bg-gray-200"
-                onClick={() => onEdit(exercise)}
-              >
+              <Button variant="outline" onClick={() => onEdit(exercise)}>
                 Edit
-              </button>
-              <button
-                className="bg-gray-500 text-white px-2 py-1 rounded  hover:bg-gray-600"
+              </Button>
+              <Button
+                variant="secondary"
                 onClick={() => onDelete(exercise.id as number)}
               >
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
         </li>

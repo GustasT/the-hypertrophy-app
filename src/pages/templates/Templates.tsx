@@ -3,6 +3,7 @@ import NewTemplateForm from "./NewTemplateForm";
 import Dialog from "../../components/Dialog";
 import db, { Template } from "../../database/db";
 import TemplateList from "./TemplateList";
+import Button from "../../components/common/Button";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -65,13 +66,9 @@ const Templates = () => {
     <div>
       <div className="flex justify-between mb-6">
         <h1 className="text-2xl font-bold">Template List</h1>
-        <button
-          type="button"
-          className="bg-blue-600 text-white pl-4 pr-4 py-2 rounded hover:bg-blue-700"
-          onClick={openAddDialog}
-        >
-          + New
-        </button>
+        <Button onClick={openAddDialog} variant="primary">
+          New Template
+        </Button>
       </div>
       <TemplateList
         templates={templates}

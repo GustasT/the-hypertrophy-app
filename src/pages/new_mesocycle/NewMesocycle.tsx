@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import db, { Template, Mesocycle } from "../../database/db";
 import Dialog from "../../components/Dialog";
 import NewMesocycleForm from "./NewMesocycleForm";
+import Button from "../../components/common/Button";
 
 const NewMesocycle = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -55,13 +56,16 @@ const NewMesocycle = () => {
                 <strong>Times per week:</strong> {template.timesPerWeek}
               </p>
             </div>
-            <button
+            {/* <button
               type="button"
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               onClick={() => openDialog(template)}
             >
               +
-            </button>
+            </button> */}
+            <Button variant="primary" onClick={() => openDialog(template)}>
+              +
+            </Button>
           </li>
         ))}
       </ul>

@@ -1,5 +1,6 @@
 import React from "react";
 import { Mesocycle } from "../../database/db";
+import Button from "../../components/common/Button";
 
 interface MesocyclesListProps {
   mesocycles: Mesocycle[];
@@ -25,20 +26,34 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
               </p>
             </div>
             <div className="flex space-x-2">
-              <button
+              <Button
+                variant="outline"
+                onClick={() =>
+                  alert("View functionality is not implemented yet.")
+                }
+              >
+                View
+              </Button>
+              {/* <button
                 className="text-black px-2 py-1 border rounded hover:bg-gray-200"
                 onClick={() =>
                   alert("View functionality is not implemented yet.")
                 }
               >
                 View
-              </button>
-              <button
+              </button> */}
+              {/* <button
                 className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600"
                 onClick={() => onDelete(mesocycle.id as number)}
               >
                 Delete
-              </button>
+              </button> */}
+              <Button
+                variant="secondary"
+                onClick={() => onDelete(mesocycle.id as number)}
+              >
+                Delete
+              </Button>
             </div>
           </div>
         </li>
