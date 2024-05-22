@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Template, Exercise, Mesocycle } from "../../database/db";
-import { fetchAllExercises, createMesocycle } from "../../services/dbService";
+import { fetchAllExercises, createMesocycle } from "../../services/";
 import TabNavigation from "../../components/TabNavigation";
 import Button from "../../components/common/Button";
 

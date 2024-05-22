@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchAllTemplates } from "../../services/dbService";
+import { fetchAllTemplates } from "../../services";
 import { Template, Mesocycle } from "../../database/db";
 import Dialog from "../../components/Dialog";
 import NewMesocycleForm from "./NewMesocycleForm";

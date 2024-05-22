@@ -1,7 +1,7 @@
 import React from "react";
 import { Mesocycle } from "../../database/db";
 import Button from "../../components/common/Button";
-import { deleteMesocycle } from "../../services/dbService";
+import { deleteMesocycle } from "../../services/";
 
 interface MesocyclesListProps {
   mesocycles: Mesocycle[];
