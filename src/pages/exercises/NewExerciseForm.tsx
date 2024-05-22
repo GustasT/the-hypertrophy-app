@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Exercise } from "../../database/db";
-import { addExercise, updateExercise } from "../../services/dbService";
+import { addExercise, updateExercise } from "../../services";
 import { muscleGroups, exerciseTypes } from "../../config/exerciseOptions";
 import Button from "../../components/common/Button";
 

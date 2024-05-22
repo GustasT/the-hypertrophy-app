@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchAllExercises, deleteExercise } from "../../services/dbService";
+import { fetchAllExercises, deleteExercise } from "../../services";
 import { Exercise } from "../../database/db";
 import NewExerciseForm from "./NewExerciseForm";
 import ExerciseList from "./ExerciseList";

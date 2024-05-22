@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchAllMesocycles, deleteMesocycle } from "../../services/dbService";
+import { fetchAllMesocycles, deleteMesocycle } from "../../services";
 import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
 import PageHeader from "../../components/common/PageHeader";
