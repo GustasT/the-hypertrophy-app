@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import db, { Mesocycle } from "../../database/db";
+import { fetchAllMesocycles, deleteMesocycle } from "../../services/dbService";
+import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
-import Button from "../../components/common/Button";
-import { Link } from "react-router-dom";
+import PageHeader from "../../components/common/PageHeader";
 
 const Mesocycles = () => {
   const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
@@ -11,7 +11,7 @@ const Mesocycles = () => {
   useEffect(() => {
     const fetchMesocycles = async () => {
       try {
-        const allMesocycles = await db.table("mesocycles").toArray();
+        const allMesocycles = await fetchAllMesocycles();
         setMesocycles(allMesocycles);
       } catch (error) {
         console.error("Failed to fetch mesocycles:", error);
@@ -23,22 +23,24 @@ const Mesocycles = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await db.table("mesocycles").delete(id);
+      await deleteMesocycle(id);
       setMesocycles(mesocycles.filter((mc) => mc.id !== id));
     } catch (error) {
       console.error("Failed to delete mesocycle:", error);
     }
   };
+
   return (
-    <div>
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">Mesocycles</h1>
-        <Link to="/newMesocycle">
-          <Button variant="primary">New Meso</Button>
-        </Link>
+    <>
+      <PageHeader
+        title="Mesocycles"
+        buttonText="New Meso"
+        buttonLink="/newMesocycle"
+      />
+      <div className="p-4">
+        <MesocyclesList mesocycles={mesocycles} onDelete={handleDelete} />
       </div>
-      <MesocyclesList mesocycles={mesocycles} onDelete={handleDelete} />
-    </div>
+    </>
   );
 };
 

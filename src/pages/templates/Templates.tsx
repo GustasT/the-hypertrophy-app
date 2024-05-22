@@ -63,30 +63,32 @@ const Templates = () => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between mb-6">
+    <>
+      <div className="flex justify-between top-0 bg-white sticky p-4 border-b">
         <h1 className="text-2xl font-bold">Template List</h1>
         <Button onClick={openAddDialog} variant="primary">
           New Template
         </Button>
       </div>
-      <TemplateList
-        templates={templates}
-        onEdit={openEditDialog}
-        onDelete={handleDelete}
-      />
-      <Dialog
-        isOpen={isDialogOpen}
-        onClose={closeDialog}
-        title={isEditMode ? "Edit Template" : "Add New Template"}
-      >
-        <NewTemplateForm
-          onSave={handleSave}
-          onClose={closeDialog}
-          initialData={selectedTemplate || undefined}
+      <div className="p-4">
+        <TemplateList
+          templates={templates}
+          onEdit={openEditDialog}
+          onDelete={handleDelete}
         />
-      </Dialog>
-    </div>
+        <Dialog
+          isOpen={isDialogOpen}
+          onClose={closeDialog}
+          title={isEditMode ? "Edit Template" : "Add New Template"}
+        >
+          <NewTemplateForm
+            onSave={handleSave}
+            onClose={closeDialog}
+            initialData={selectedTemplate || undefined}
+          />
+        </Dialog>
+      </div>
+    </>
   );
 };
 

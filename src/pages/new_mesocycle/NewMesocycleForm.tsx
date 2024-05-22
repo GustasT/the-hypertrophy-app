@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import db, { Template, Exercise, Mesocycle } from "../../database/db";
+import { Template, Exercise, Mesocycle } from "../../database/db";
+import { fetchAllExercises, createMesocycle } from "../../services/dbService";
 import TabNavigation from "../../components/TabNavigation";
 import Button from "../../components/common/Button";
 
@@ -30,9 +31,9 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
   const [weightUnit, setWeightUnit] = useState("KG");
 
   useEffect(() => {
-    const fetchExercises = async () => {
+    const fetchExercisesData = async () => {
       try {
-        const allExercises = await db.table("exercises").toArray();
+        const allExercises = await fetchAllExercises();
         const filteredExercises = allExercises.filter((exercise) =>
           template.days.some((day) => day.muscleGroups.includes(exercise.group))
         );
@@ -42,7 +43,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
       }
     };
 
-    fetchExercises();
+    fetchExercisesData();
   }, [template]);
 
   useEffect(() => {
@@ -71,42 +72,12 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
       templateId: template.id!,
       weeks,
       completed: false,
-      isActive: false,
+      isActive: true, // Set the new mesocycle as active
+      workouts: [],
     };
-    const mesocycleId = await saveMesocycle(newMesocycle);
+    const mesocycleId = await createMesocycle(newMesocycle, selectedExercises);
     onSave({ id: mesocycleId, ...newMesocycle });
-  };
-
-  const saveMesocycle = async (
-    mesocycle: Omit<Mesocycle, "id">
-  ): Promise<number> => {
-    try {
-      // Create the mesocycle
-      const mesocycleId = (await db
-        .table("mesocycles")
-        .add(mesocycle)) as number;
-
-      // Create the workouts
-      for (let week = 1; week <= mesocycle.weeks; week++) {
-        for (let day = 1; day <= template.timesPerWeek; day++) {
-          await db.table("workouts").add({
-            mesocycleId,
-            week,
-            day,
-            completed: false,
-          });
-        }
-      }
-
-      console.log("Mesocycle and workouts saved successfully!");
-
-      // Close the form
-      onClose();
-      return mesocycleId;
-    } catch (error) {
-      console.error("Failed to save mesocycle:", error);
-      throw error; // Re-throw the error to indicate failure
-    }
+    onClose(); // Close the dialog after saving
   };
 
   return (
@@ -204,23 +175,6 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
         </div>
       )}
       <div className="flex justify-end gap-x-2 mt-4">
-        {/* <button
-          type="button"
-          className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-600"
-          onClick={onClose}
-        >
-          Cancel
-        </button>
-        <button
-          type="button"
-          className={`bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ${
-            !isFormComplete && "opacity-50 cursor-not-allowed"
-          }`}
-          onClick={handleSave}
-          disabled={!isFormComplete}
-        >
-          Start New Mesocycle
-        </button> */}
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>

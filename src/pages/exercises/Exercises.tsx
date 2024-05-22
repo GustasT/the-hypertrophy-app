@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import db, { Exercise } from "../../database/db";
+import { fetchAllExercises, deleteExercise } from "../../services/dbService";
+import { Exercise } from "../../database/db";
 import NewExerciseForm from "./NewExerciseForm";
 import ExerciseList from "./ExerciseList";
 import Dialog from "../../components/Dialog";
-import Button from "../../components/common/Button";
+import PageHeader from "../../components/common/PageHeader";
 
 const Exercises = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -15,16 +16,16 @@ const Exercises = () => {
 
   // Fetch exercises from IndexedDB when the component mounts
   useEffect(() => {
-    const fetchExercises = async () => {
+    const fetchExercisesData = async () => {
       try {
-        const allExercises = await db.table("exercises").toArray();
+        const allExercises = await fetchAllExercises();
         setExercises(allExercises);
       } catch (error) {
         console.error("Failed to fetch exercises:", error);
       }
     };
 
-    fetchExercises();
+    fetchExercisesData();
   }, []);
 
   const handleSave = (exercise: Exercise) => {
@@ -39,7 +40,7 @@ const Exercises = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await db.table("exercises").delete(id);
+      await deleteExercise(id);
       setExercises(exercises.filter((ex) => ex.id !== id));
     } catch (error) {
       console.error("Failed to delete exercise:", error);
@@ -64,30 +65,31 @@ const Exercises = () => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">Exercise List</h1>
-        <Button variant="primary" onClick={openAddDialog}>
-          New Exercise
-        </Button>
-      </div>
-      <ExerciseList
-        exercises={exercises}
-        onEdit={openEditDialog}
-        onDelete={handleDelete}
+    <>
+      <PageHeader
+        title="Exercise List"
+        buttonText="New Exercise"
+        buttonAction={openAddDialog}
       />
-      <Dialog
-        isOpen={isDialogOpen}
-        onClose={closeDialog}
-        title={isEditMode ? "Edit Exercise" : "Add New Exercise"}
-      >
-        <NewExerciseForm
-          onSave={handleSave}
-          onClose={closeDialog}
-          initialData={selectedExercise || undefined}
+      <div className="p-4">
+        <ExerciseList
+          exercises={exercises}
+          onEdit={openEditDialog}
+          onDelete={handleDelete}
         />
-      </Dialog>
-    </div>
+        <Dialog
+          isOpen={isDialogOpen}
+          onClose={closeDialog}
+          title={isEditMode ? "Edit Exercise" : "Add New Exercise"}
+        >
+          <NewExerciseForm
+            onSave={handleSave}
+            onClose={closeDialog}
+            initialData={selectedExercise || undefined}
+          />
+        </Dialog>
+      </div>
+    </>
   );
 };
 

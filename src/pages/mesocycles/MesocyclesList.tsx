@@ -1,6 +1,7 @@
 import React from "react";
 import { Mesocycle } from "../../database/db";
 import Button from "../../components/common/Button";
+import { deleteMesocycle } from "../../services/dbService";
 
 interface MesocyclesListProps {
   mesocycles: Mesocycle[];
@@ -11,6 +12,11 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
   mesocycles,
   onDelete,
 }) => {
+  const handleDelete = async (id: number) => {
+    await deleteMesocycle(id);
+    onDelete(id);
+  };
+
   return (
     <ul className="space-y-4">
       {mesocycles.map((mesocycle) => (
@@ -34,23 +40,9 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
               >
                 View
               </Button>
-              {/* <button
-                className="text-black px-2 py-1 border rounded hover:bg-gray-200"
-                onClick={() =>
-                  alert("View functionality is not implemented yet.")
-                }
-              >
-                View
-              </button> */}
-              {/* <button
-                className="bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600"
-                onClick={() => onDelete(mesocycle.id as number)}
-              >
-                Delete
-              </button> */}
               <Button
                 variant="secondary"
-                onClick={() => onDelete(mesocycle.id as number)}
+                onClick={() => handleDelete(mesocycle.id as number)}
               >
                 Delete
               </Button>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import db, { Exercise } from "../../database/db";
+import { Exercise } from "../../database/db";
+import { addExercise, updateExercise } from "../../services/dbService";
 import { muscleGroups, exerciseTypes } from "../../config/exerciseOptions";
 import Button from "../../components/common/Button";
 
@@ -43,10 +44,10 @@ const NewExerciseForm: React.FC<NewExerciseFormProps> = ({
     try {
       if (initialData) {
         // Update existing exercise
-        await db.table("exercises").put(newExercise);
+        await updateExercise(newExercise);
       } else {
         // Add new exercise
-        const id = await db.table("exercises").add(newExercise);
+        const id = await addExercise(newExercise);
         newExercise.id = id as number; // Cast to number
       }
 

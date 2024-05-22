@@ -1,6 +1,6 @@
 const Home = () => {
   return (
-    <div>
+    <div className="p-4">
       <h1 className="text-2xl font-bold">Home Page</h1>
       <p>
         This is a sample text to test the scrolling behavior in the main content

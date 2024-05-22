@@ -43,9 +43,9 @@ const TemplateList: React.FC<TemplateListProps> = ({
                 <strong>Times per week:</strong> {template.timesPerWeek}
               </p>
             </div>
-            <div>
+            <Button variant="outline">
               {expandedTemplates.has(template.id as number) ? "-" : "+"}
-            </div>
+            </Button>
           </div>
           {expandedTemplates.has(template.id as number) && (
             <div className="mt-4">

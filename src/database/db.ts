@@ -16,13 +16,12 @@ db.version(3).stores({
   exercises: "++id,name,group,type,youtubeLink",
   templates: "++id,name,timesPerWeek,days",
   mesocycles: "++id,name,templateId,weeks,completed,isActive",
-  workouts: "++id,mesocycleId,week,day,completed",
-  logs: "++id,workoutId,exerciseId,sets,weight,reps,workload,pump,soreness",
+  workouts: "++id,mesocycleId,week,day,completed,isActive",
 });
 
 // Define the TypeScript interface for an exercise
 export interface Exercise {
-  id?: number; // Ensure id is a number
+  id?: number;
   name: string;
   group: string;
   type: string;
@@ -43,6 +42,7 @@ export interface Mesocycle {
   name: string;
   templateId: number;
   weeks: number;
+  workouts: number[]; // Array of Workout IDs
   completed: boolean;
   isActive: boolean;
 }
@@ -50,23 +50,25 @@ export interface Mesocycle {
 // Define the TypeScript interface for a workout
 export interface Workout {
   id?: number;
-  mesocycleId: number; // Reference to the mesocycle
-  week: number; // Week number within the mesocycle
-  day: number; // Day number within the week
-  completed: boolean; // Status of the workout
+  mesocycleId: number;
+  week: number;
+  day: number;
+  exercises: ExerciseWithDetails[];
+  completed: boolean;
+  isActive: boolean;
 }
 
-// Define the TypeScript interface for a log entry
-export interface Log {
-  id?: number;
-  workoutId: number; // Reference to the workout
-  exerciseId: number; // Reference to the exercise
-  sets: number;
-  weight: number;
-  reps: number;
-  workload: string; // Workload rating
-  pump: string; // Pump rating
-  soreness: string; // Soreness rating
+// Define the TypeScript interface for an exercise with details
+export interface ExerciseWithDetails extends Exercise {
+  weightRecommended: number;
+  weightCompleted?: number;
+  repsRecommended: number;
+  repsCompleted?: number;
+  setsRecommended: number;
+  setsCompleted?: number;
+  sorenessRating?: number;
+  pumpRating?: number;
+  workloadRating?: number;
 }
 
 export default db;
