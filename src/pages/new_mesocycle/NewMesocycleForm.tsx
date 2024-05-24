@@ -68,17 +68,32 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
   };
 
   const handleSave = async () => {
-    const newMesocycle: Omit<Mesocycle, "id"> = {
-      name: mesocycleName,
-      templateId: template.id!,
-      weeks,
-      completed: false,
-      isActive: true, // Set the new mesocycle as active
-      workouts: [],
-    };
-    const mesocycleId = await createMesocycle(newMesocycle, selectedExercises);
-    onSave({ id: mesocycleId, ...newMesocycle });
-    onClose(); // Close the dialog after saving
+    try {
+      // Create the mesocycle
+      const newMesocycle: Omit<Mesocycle, "id" | "workouts"> = {
+        name: mesocycleName,
+        templateId: template.id!,
+        weeks,
+        timesPerWeek: template.timesPerWeek, // Add this line
+        completed: false,
+        isActive: 1,
+      };
+      const mesocycleId = await createMesocycle(
+        newMesocycle,
+        selectedExercises
+      );
+
+      const updatedMesocycle: Mesocycle = {
+        id: mesocycleId,
+        ...newMesocycle,
+        workouts: [], // Workouts will be added by the service
+      };
+
+      onSave(updatedMesocycle);
+      onClose();
+    } catch (error) {
+      console.error("Failed to save mesocycle and workouts:", error);
+    }
   };
 
   const getAvailableExercises = (dayIndex: number, muscleGroup: string) => {
@@ -149,6 +164,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                       )
                     }
                     isClearable={false}
+                    isSearchable={false}
                   />
                 </div>
               );
@@ -177,6 +193,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
               value={weekOptions.find((option) => option.value === weeks)}
               onChange={(option) => setWeeks((option as any).value)}
               isClearable={false}
+              isSearchable={false}
             />
           </div>
           <div className="mb-4">
@@ -188,6 +205,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
               )}
               onChange={(option) => setWeightUnit((option as any).value)}
               isClearable={false}
+              isSearchable={false}
             />
           </div>
         </div>

@@ -7,6 +7,11 @@ import useTemplateForm from "../../components/hooks/useTemplateForm";
 import ErrorList from "../../components/ErrorList";
 import Button from "../../components/common/Button";
 
+interface Day {
+  name: string;
+  muscleGroups: string[];
+}
+
 interface NewTemplateFormProps {
   onSave: (template: Template) => void;
   onClose: () => void;
@@ -32,14 +37,24 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     handleDayChange,
     validateForm,
   } = useTemplateForm(
-    initialData ? initialData.days : [{ name: "", muscleGroups: [] }]
+    initialData
+      ? initialData.days.map((day, index) => ({
+          ...day,
+          name: `Day ${index + 1}`,
+        }))
+      : [{ name: "Day 1", muscleGroups: [] }] // Initialize with name property
   );
 
   useEffect(() => {
     if (initialData) {
       setTemplateName(initialData.name);
       setTimesPerWeek(initialData.timesPerWeek);
-      setDays(initialData.days);
+      setDays(
+        initialData.days.map((day, index) => ({
+          ...day,
+          name: `Day ${index + 1}`,
+        }))
+      );
     }
   }, [initialData, setTemplateName, setTimesPerWeek, setDays]);
 
@@ -111,6 +126,7 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
           <DayForm
             day={days[activeTab]}
             onChange={(day) => handleDayChange(activeTab, day)}
+            dayNumber={activeTab + 1} // Pass the day number
           />
         </>
       )}
