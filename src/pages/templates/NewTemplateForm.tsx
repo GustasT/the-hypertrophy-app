@@ -5,7 +5,6 @@ import TabNavigation from "../../components/TabNavigation";
 import useTemplateForm from "../../components/hooks/useTemplateForm";
 import ErrorList from "../../components/ErrorList";
 import Button from "../../components/common/Button";
-import { PrimaryButton } from "../../components/common/ButtonComponents";
 
 interface NewTemplateFormProps {
   onSave: (template: Template) => void;

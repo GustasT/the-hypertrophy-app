@@ -1,4 +1,4 @@
-import db, { Exercise } from "../database/db";
+import db, { Exercise, ExerciseWithDetails } from "../database/db";
 
 // Function to add a new exercise
 export const addExercise = async (exercise: Exercise) => {
@@ -27,6 +27,23 @@ export const fetchAllExercises = async () => {
   } catch (error) {
     console.error("Failed to fetch exercises:", error);
     return [];
+  }
+};
+
+// Function to fetch exercises by workout ID
+export const fetchExercisesByWorkoutId = async (
+  workoutId: number
+): Promise<ExerciseWithDetails[]> => {
+  try {
+    const workout = await db.table("workouts").get(workoutId);
+    if (!workout) {
+      throw new Error("Workout not found");
+    }
+
+    return workout.exercises;
+  } catch (error) {
+    console.error("Failed to fetch exercises by workout:", error);
+    throw error;
   }
 };
 

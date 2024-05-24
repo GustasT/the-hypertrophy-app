@@ -1,13 +1,22 @@
 import db, { Workout, ExerciseWithDetails } from "../database/db";
 
 // Function to fetch the active workout
-export const fetchActiveWorkout = async () => {
+export const fetchActiveWorkout = async (): Promise<Workout | null> => {
   try {
     const activeWorkout = await db
       .table("workouts")
-      .where({ isActive: true })
+      .where("isActive")
+      .equals(1)
       .first();
-    return activeWorkout;
+
+    if (!activeWorkout) {
+      console.warn("No active workout found.");
+      return null;
+    }
+    return {
+      ...activeWorkout,
+      isActive: activeWorkout.isActive === 1, // Convert back to boolean
+    };
   } catch (error) {
     console.error("Failed to fetch active workout:", error);
     return null;
@@ -17,10 +26,14 @@ export const fetchActiveWorkout = async () => {
 // Function to update a workout
 export const updateWorkout = async (workout: Workout) => {
   try {
-    await db.table("workouts").update(workout.id!, workout);
+    await db.table("workouts").put({
+      ...workout,
+      isActive: workout.isActive ? 1 : 0, // Convert to number before saving
+    });
     console.log("Workout updated successfully!");
   } catch (error) {
     console.error("Failed to update workout:", error);
+    throw error;
   }
 };
 

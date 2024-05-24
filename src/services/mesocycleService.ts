@@ -5,25 +5,50 @@ import db, {
   Workout,
 } from "../database/db";
 
+// Function to fetch the active mesocycle
+export const fetchActiveMesocycle = async (): Promise<Mesocycle | null> => {
+  try {
+    const activeMesocycle = await db
+      .table("mesocycles")
+      .where("isActive")
+      .equals(1)
+      .first();
+
+    if (!activeMesocycle) {
+      console.warn("No active mesocycle found.");
+      return null;
+    }
+    return {
+      ...activeMesocycle,
+      isActive: activeMesocycle.isActive === 1, // Convert back to boolean
+    };
+  } catch (error) {
+    console.error("Failed to fetch active mesocycle:", error);
+    return null;
+  }
+};
+
 // Function to create a new mesocycle
 export const createMesocycle = async (
   mesocycle: Omit<Mesocycle, "id">,
   selectedExercises: { [key: string]: Exercise | null }
 ) => {
   try {
-    const mesocycleId = (await db.table("mesocycles").add(mesocycle)) as number;
+    const mesocycleId = (await db.table("mesocycles").add({
+      ...mesocycle,
+      isActive: mesocycle.isActive ? 1 : 0,
+    })) as number;
 
-    // Create and save workouts, then associate them with the mesocycle
     for (let week = 1; week <= mesocycle.weeks; week++) {
       for (let day = 1; day <= mesocycle.weeks; day++) {
-        const isActive = week === 1 && day === 1; // Set the first workout as active
+        const isActive = week === 1 && day === 1 ? 1 : 0;
         const workout: Omit<Workout, "id"> = {
           mesocycleId,
           week,
           day,
           exercises: Object.values(selectedExercises).map((exercise) => ({
             ...exercise,
-            weightRecommended: 0, // Set the recommended values as needed
+            weightRecommended: 0,
             repsRecommended: 0,
             setsRecommended: 0,
           })) as ExerciseWithDetails[],
@@ -31,45 +56,18 @@ export const createMesocycle = async (
           isActive,
         };
 
-        // Save the workout and get the generated ID
         const workoutId = (await db.table("workouts").add(workout)) as number;
         mesocycle.workouts.push(workoutId);
       }
     }
 
-    // Update the mesocycle with the list of workout IDs
     await db
       .table("mesocycles")
       .update(mesocycleId, { workouts: mesocycle.workouts });
     return mesocycleId;
   } catch (error) {
     console.error("Failed to create mesocycle:", error);
-    throw error; // Re-throw the error to indicate failure
-  }
-};
-
-// Function to fetch all mesocycles
-export const fetchAllMesocycles = async () => {
-  try {
-    const allMesocycles = await db.table("mesocycles").toArray();
-    return allMesocycles;
-  } catch (error) {
-    console.error("Failed to fetch mesocycles:", error);
-    return [];
-  }
-};
-
-// Function to fetch the active mesocycle
-export const fetchActiveMesocycle = async () => {
-  try {
-    const activeMesocycle = await db
-      .table("mesocycles")
-      .where({ isActive: true })
-      .first();
-    return activeMesocycle;
-  } catch (error) {
-    console.error("Failed to fetch active mesocycle:", error);
-    return null;
+    throw error;
   }
 };
 
@@ -87,5 +85,15 @@ export const deleteMesocycle = async (mesocycleId: number) => {
     );
   } catch (error) {
     console.error("Failed to delete mesocycle and its workouts:", error);
+  }
+};
+// Function to fetch all mesocycles
+export const fetchAllMesocycles = async () => {
+  try {
+    const allMesocycles = await db.table("mesocycles").toArray();
+    return allMesocycles;
+  } catch (error) {
+    console.error("Failed to fetch mesocycles:", error);
+    return [];
   }
 };
