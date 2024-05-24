@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import { Exercise } from "../../database/db";
 import { addExercise, updateExercise } from "../../services";
 import { muscleGroups, exerciseTypes } from "../../config/exerciseOptions";
@@ -58,6 +59,16 @@ const NewExerciseForm: React.FC<NewExerciseFormProps> = ({
     }
   };
 
+  const muscleGroupOptions = muscleGroups.map((group) => ({
+    value: group,
+    label: group,
+  }));
+
+  const exerciseTypeOptions = exerciseTypes.map((type) => ({
+    value: type,
+    label: type,
+  }));
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4">
@@ -72,39 +83,27 @@ const NewExerciseForm: React.FC<NewExerciseFormProps> = ({
       </div>
       <div className="mb-4">
         <label className="block text-gray-700">Muscle Group</label>
-        <select
-          className="w-full mt-2 p-2 border rounded"
-          value={muscleGroup}
-          onChange={(e) => setMuscleGroup(e.target.value)}
-          required
-        >
-          <option value="" disabled>
-            Select muscle group
-          </option>
-          {muscleGroups.map((group) => (
-            <option key={group} value={group}>
-              {group}
-            </option>
-          ))}
-        </select>
+        <Select
+          options={muscleGroupOptions}
+          value={muscleGroupOptions.find(
+            (option) => option.value === muscleGroup
+          )}
+          onChange={(option) => setMuscleGroup((option as any).value)}
+          isClearable={false}
+          isSearchable={false}
+        />
       </div>
       <div className="mb-4">
         <label className="block text-gray-700">Exercise Type</label>
-        <select
-          className="w-full mt-2 p-2 border rounded"
-          value={exerciseType}
-          onChange={(e) => setExerciseType(e.target.value)}
-          required
-        >
-          <option value="" disabled>
-            Select exercise type
-          </option>
-          {exerciseTypes.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </select>
+        <Select
+          options={exerciseTypeOptions}
+          value={exerciseTypeOptions.find(
+            (option) => option.value === exerciseType
+          )}
+          onChange={(option) => setExerciseType((option as any).value)}
+          isClearable={false}
+          isSearchable={false}
+        />
       </div>
       <div className="mb-4">
         <label className="block text-gray-700">YouTube Link (optional)</label>

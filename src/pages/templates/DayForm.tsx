@@ -1,4 +1,5 @@
 import React from "react";
+import Select from "react-select";
 import { muscleGroups } from "../../config/exerciseOptions";
 
 interface Day {
@@ -16,15 +17,22 @@ const DayForm: React.FC<DayFormProps> = ({ day, onChange }) => {
     onChange({ ...day, name: e.target.value });
   };
 
-  const handleMuscleGroupChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newMuscleGroups = [...day.muscleGroups, e.target.value];
-    onChange({ ...day, muscleGroups: newMuscleGroups });
+  const handleMuscleGroupChange = (selectedOption: any) => {
+    if (selectedOption) {
+      const newMuscleGroups = [...day.muscleGroups, selectedOption.value];
+      onChange({ ...day, muscleGroups: newMuscleGroups });
+    }
   };
 
   const handleRemoveMuscleGroup = (index: number) => {
     const newMuscleGroups = day.muscleGroups.filter((_, i) => i !== index);
     onChange({ ...day, muscleGroups: newMuscleGroups });
   };
+
+  const muscleGroupOptions = muscleGroups.map((group) => ({
+    value: group,
+    label: group,
+  }));
 
   return (
     <div className="day-form">
@@ -40,20 +48,14 @@ const DayForm: React.FC<DayFormProps> = ({ day, onChange }) => {
       </div>
       <div className="mb-4">
         <label className="block text-gray-700">Muscle Groups</label>
-        <select
-          className="w-full mt-2 p-2 border rounded"
+        <Select
+          options={muscleGroupOptions}
           onChange={handleMuscleGroupChange}
-          value=""
-        >
-          <option value="" disabled>
-            Add muscle group
-          </option>
-          {muscleGroups.map((group) => (
-            <option key={group} value={group}>
-              {group}
-            </option>
-          ))}
-        </select>
+          value={null}
+          placeholder="Add muscle group"
+          isClearable={false}
+          isSearchable={false}
+        />
         <div className="mt-2">
           <ol className="list-decimal ml-5">
             {day.muscleGroups.map((group, idx) => (

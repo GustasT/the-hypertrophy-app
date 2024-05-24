@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import Select from "react-select";
 import db, { Template } from "../../database/db";
 import DayForm from "./DayForm";
 import TabNavigation from "../../components/TabNavigation";
@@ -71,6 +72,11 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     }
   };
 
+  const timesPerWeekOptions = [...Array(6)].map((_, i) => ({
+    value: i + 1,
+    label: `${i + 1}`,
+  }));
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4">
@@ -85,23 +91,15 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
       </div>
       <div className="mb-4">
         <label className="block text-gray-700">Times Per Week</label>
-        <select
-          className="w-full mt-2 p-2 border rounded"
-          value={timesPerWeek || ""}
-          onChange={(e) =>
-            handleTimesPerWeekChange(parseInt(e.target.value, 10))
-          }
-          required
-        >
-          <option value="" disabled>
-            Select times per week
-          </option>
-          {[...Array(6)].map((_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {i + 1}
-            </option>
-          ))}
-        </select>
+        <Select
+          options={timesPerWeekOptions}
+          value={timesPerWeekOptions.find(
+            (option) => option.value === timesPerWeek
+          )}
+          onChange={(option) => handleTimesPerWeekChange((option as any).value)}
+          isClearable={false}
+          isSearchable={false}
+        />
       </div>
       {timesPerWeek && (
         <>

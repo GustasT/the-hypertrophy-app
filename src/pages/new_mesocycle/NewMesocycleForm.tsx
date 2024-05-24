@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Select from "react-select";
 import { Template, Exercise, Mesocycle } from "../../database/db";
 import { fetchAllExercises, createMesocycle } from "../../services/";
 import TabNavigation from "../../components/TabNavigation";
@@ -62,7 +63,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
     setIsFormComplete(isExerciseComplete && isAdditionalFormComplete);
   }, [selectedExercises, template, mesocycleName, weightUnit]);
 
-  const handleExerciseSelect = (key: string, exercise: Exercise) => {
+  const handleExerciseSelect = (key: string, exercise: Exercise | null) => {
     setSelectedExercises((prev) => ({ ...prev, [key]: exercise }));
   };
 
@@ -80,6 +81,30 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
     onClose(); // Close the dialog after saving
   };
 
+  const getAvailableExercises = (dayIndex: number, muscleGroup: string) => {
+    const selectedExerciseIds = Object.keys(selectedExercises)
+      .filter((key) => key.startsWith(`${dayIndex}-`))
+      .map((key) => selectedExercises[key]?.id)
+      .filter((id) => id !== undefined);
+
+    return exercises.filter(
+      (exercise) =>
+        exercise.group === muscleGroup &&
+        !selectedExerciseIds.includes(exercise.id)
+    );
+  };
+
+  const weekOptions = [
+    { value: 4, label: "4" },
+    { value: 5, label: "5" },
+    { value: 6, label: "6" },
+  ];
+
+  const weightUnitOptions = [
+    { value: "KG", label: "KG" },
+    { value: "LB", label: "LB" },
+  ];
+
   return (
     <div>
       <TabNavigation
@@ -94,34 +119,37 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
             <h3 className="text-lg font-semibold">{day.name}</h3>
             {day.muscleGroups.map((muscleGroup, mgIndex) => {
               const key = `${dayIndex}-${mgIndex}-${muscleGroup}`;
+              const options = getAvailableExercises(dayIndex, muscleGroup).map(
+                (exercise) => ({
+                  value: exercise.id,
+                  label: exercise.name,
+                })
+              );
               return (
                 <div key={key} className="mb-2">
                   <label className="block text-gray-700 mb-1">
                     {muscleGroup}
                   </label>
-                  <select
-                    className="w-full p-2 border rounded"
-                    value={selectedExercises[key]?.id || ""}
-                    onChange={(e) =>
+                  <Select
+                    options={options}
+                    value={
+                      selectedExercises[key]
+                        ? {
+                            value: selectedExercises[key]!.id,
+                            label: selectedExercises[key]!.name,
+                          }
+                        : null
+                    }
+                    onChange={(option) =>
                       handleExerciseSelect(
                         key,
                         exercises.find(
-                          (ex) => ex.id === Number(e.target.value)
-                        ) as Exercise
+                          (ex) => ex.id === (option as any).value
+                        ) || null
                       )
                     }
-                  >
-                    <option value="" disabled>
-                      Select exercise
-                    </option>
-                    {exercises
-                      .filter((exercise) => exercise.group === muscleGroup)
-                      .map((exercise) => (
-                        <option key={exercise.id} value={exercise.id}>
-                          {exercise.name}
-                        </option>
-                      ))}
-                  </select>
+                    isClearable={false}
+                  />
                 </div>
               );
             })}
@@ -144,33 +172,23 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
             <label className="block text-gray-700">
               How many weeks will you train (including deload)
             </label>
-            <select
-              className="w-full mt-2 p-2 border rounded"
-              value={weeks}
-              onChange={(e) => setWeeks(Number(e.target.value) as 4 | 5 | 6)}
-              required
-            >
-              {[4, 5, 6].map((week) => (
-                <option key={week} value={week}>
-                  {week}
-                </option>
-              ))}
-            </select>
+            <Select
+              options={weekOptions}
+              value={weekOptions.find((option) => option.value === weeks)}
+              onChange={(option) => setWeeks((option as any).value)}
+              isClearable={false}
+            />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Weight Units</label>
-            <select
-              className="w-full mt-2 p-2 border rounded"
-              value={weightUnit}
-              onChange={(e) => setWeightUnit(e.target.value)}
-              required
-            >
-              {["KG", "LB"].map((unit) => (
-                <option key={unit} value={unit}>
-                  {unit}
-                </option>
-              ))}
-            </select>
+            <Select
+              options={weightUnitOptions}
+              value={weightUnitOptions.find(
+                (option) => option.value === weightUnit
+              )}
+              onChange={(option) => setWeightUnit((option as any).value)}
+              isClearable={false}
+            />
           </div>
         </div>
       )}
