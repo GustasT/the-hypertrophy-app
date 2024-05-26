@@ -19,12 +19,29 @@ db.version(3).stores({
   workouts: "++id,mesocycleId,week,day,completed,isActive",
 });
 
-db.version(4).stores({
-  exercises: "++id,name,group,type,youtubeLink",
-  templates: "++id,name,timesPerWeek,days",
-  mesocycles: "++id,name,templateId,weeks,completed,isActive",
-  workouts: "++id,mesocycleId,week,day,completed,isActive",
-});
+db.version(4)
+  .stores({
+    exercises: "++id,name,group,type,youtubeLink",
+    templates: "++id,name,timesPerWeek,days",
+    mesocycles: "++id,name,templateId,weeks,completed,isActive",
+    workouts: "++id,mesocycleId,week,day,completed,isActive",
+  })
+  .upgrade((tx) => {
+    return Promise.all([
+      tx
+        .table("mesocycles")
+        .toCollection()
+        .modify((mesocycle) => {
+          mesocycle.isActive = mesocycle.isActive ? 1 : 0;
+        }),
+      tx
+        .table("workouts")
+        .toCollection()
+        .modify((workout) => {
+          workout.isActive = workout.isActive ? 1 : 0;
+        }),
+    ]);
+  });
 
 // Define the TypeScript interface for an exercise
 export interface Exercise {
@@ -49,10 +66,9 @@ export interface Mesocycle {
   name: string;
   templateId: number;
   weeks: number;
-  timesPerWeek: number; // Add this line
   workouts: number[]; // Array of Workout IDs
   completed: boolean;
-  isActive: number;
+  isActive: boolean | number; // Accept both boolean and number
 }
 
 // Define the TypeScript interface for a workout
@@ -63,7 +79,7 @@ export interface Workout {
   day: number;
   exercises: ExerciseWithDetails[];
   completed: boolean;
-  isActive: number;
+  isActive: boolean | number; // Accept both boolean and number
 }
 
 // Define the TypeScript interface for an exercise with details

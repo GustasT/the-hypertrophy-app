@@ -14,11 +14,7 @@ const useTemplateForm = (initialDays: Day[]) => {
 
   const handleTimesPerWeekChange = (value: number) => {
     setTimesPerWeek(value);
-    const newDays = new Array(value).fill(null).map((_, index) => ({
-      name: `Day ${index + 1}`,
-      muscleGroups: [],
-    }));
-    setDays(newDays);
+    setDays(new Array(value).fill({ name: "", muscleGroups: [] }));
     setActiveTab(0); // Reset active tab
   };
 

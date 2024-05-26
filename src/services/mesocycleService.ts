@@ -30,7 +30,7 @@ export const fetchActiveMesocycle = async (): Promise<Mesocycle | null> => {
 
 // Function to create a new mesocycle
 export const createMesocycle = async (
-  mesocycle: Omit<Mesocycle, "id" | "workouts">,
+  mesocycle: Omit<Mesocycle, "id">,
   selectedExercises: { [key: string]: Exercise | null }
 ) => {
   try {
@@ -39,36 +39,31 @@ export const createMesocycle = async (
       isActive: mesocycle.isActive ? 1 : 0,
     })) as number;
 
-    const workouts: number[] = [];
-
     for (let week = 1; week <= mesocycle.weeks; week++) {
-      for (let dayIndex = 0; dayIndex < mesocycle.timesPerWeek; dayIndex++) {
-        const dayExercises = Object.keys(selectedExercises)
-          .filter((key) => key.startsWith(`${dayIndex}-`))
-          .map((key) => selectedExercises[key])
-          .filter((exercise) => exercise !== null) as ExerciseWithDetails[];
-
-        const isActive = week === 1 && dayIndex === 0 ? 1 : 0;
+      for (let day = 1; day <= mesocycle.weeks; day++) {
+        const isActive = week === 1 && day === 1 ? 1 : 0;
         const workout: Omit<Workout, "id"> = {
           mesocycleId,
           week,
-          day: dayIndex,
-          exercises: dayExercises.map((exercise) => ({
+          day,
+          exercises: Object.values(selectedExercises).map((exercise) => ({
             ...exercise,
             weightRecommended: 0,
             repsRecommended: 0,
             setsRecommended: 0,
-          })),
+          })) as ExerciseWithDetails[],
           completed: false,
           isActive,
         };
 
         const workoutId = (await db.table("workouts").add(workout)) as number;
-        workouts.push(workoutId);
+        mesocycle.workouts.push(workoutId);
       }
     }
 
-    await db.table("mesocycles").update(mesocycleId, { workouts });
+    await db
+      .table("mesocycles")
+      .update(mesocycleId, { workouts: mesocycle.workouts });
     return mesocycleId;
   } catch (error) {
     console.error("Failed to create mesocycle:", error);
@@ -92,7 +87,6 @@ export const deleteMesocycle = async (mesocycleId: number) => {
     console.error("Failed to delete mesocycle and its workouts:", error);
   }
 };
-
 // Function to fetch all mesocycles
 export const fetchAllMesocycles = async () => {
   try {

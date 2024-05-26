@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Select from "react-select";
 import { muscleGroups } from "../../config/exerciseOptions";
 
@@ -9,16 +9,13 @@ interface Day {
 
 interface DayFormProps {
   day: Day;
-  dayNumber: number;
   onChange: (day: Day) => void;
 }
 
-const DayForm: React.FC<DayFormProps> = ({ day, dayNumber, onChange }) => {
-  useEffect(() => {
-    if (day.name !== `Day ${dayNumber}`) {
-      onChange({ ...day, name: `Day ${dayNumber}` });
-    }
-  }, [dayNumber, onChange, day]);
+const DayForm: React.FC<DayFormProps> = ({ day, onChange }) => {
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({ ...day, name: e.target.value });
+  };
 
   const handleMuscleGroupChange = (selectedOption: any) => {
     if (selectedOption) {
@@ -39,6 +36,16 @@ const DayForm: React.FC<DayFormProps> = ({ day, dayNumber, onChange }) => {
 
   return (
     <div className="day-form">
+      <div className="mb-4">
+        <label className="block text-gray-700">Day Name</label>
+        <input
+          type="text"
+          className="w-full mt-2 p-2 border rounded"
+          value={day.name}
+          onChange={handleNameChange}
+          required
+        />
+      </div>
       <div className="mb-4">
         <label className="block text-gray-700">Muscle Groups</label>
         <Select

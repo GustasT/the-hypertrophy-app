@@ -52,7 +52,9 @@ const TemplateList: React.FC<TemplateListProps> = ({
               <ul className="list-disc ml-5">
                 {template.days.map((day, index) => (
                   <li key={index}>
-                    <strong>Day {index + 1} :</strong>{" "}
+                    <strong>
+                      Day {index + 1} ({day.name}):
+                    </strong>{" "}
                     {day.muscleGroups.join(", ")}
                   </li>
                 ))}
