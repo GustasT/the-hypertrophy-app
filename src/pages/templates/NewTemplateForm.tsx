@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
-import Select from "react-select";
+
 import db, { Template } from "../../database/db";
 import DayForm from "./DayForm";
 import TabNavigation from "../../components/TabNavigation";
 import useTemplateForm from "../../components/hooks/useTemplateForm";
 import ErrorList from "../../components/ErrorList";
 import Button from "../../components/common/Button";
+import InputField from "../../components/common/InputField";
+import SelectField from "../../components/common/SelectField";
 
 interface NewTemplateFormProps {
   onSave: (template: Template) => void;
@@ -79,28 +81,23 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mb-4">
-        <label className="block text-gray-700">Template Name</label>
-        <input
-          type="text"
-          className="w-full mt-2 p-2 border rounded"
-          value={templateName}
-          onChange={(e) => setTemplateName(e.target.value)}
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Times Per Week</label>
-        <Select
-          options={timesPerWeekOptions}
-          value={timesPerWeekOptions.find(
-            (option) => option.value === timesPerWeek
-          )}
-          onChange={(option) => handleTimesPerWeekChange((option as any).value)}
-          isClearable={false}
-          isSearchable={false}
-        />
-      </div>
+      <InputField
+        type="text"
+        label="Template Name"
+        value={templateName}
+        onChange={(e) => setTemplateName(e.target.value)}
+      />
+
+      <SelectField
+        options={timesPerWeekOptions}
+        value={
+          timesPerWeekOptions.find((option) => option.value === timesPerWeek) ||
+          null
+        }
+        label="Times Per Week"
+        onChange={(option) => handleTimesPerWeekChange((option as any).value)}
+      />
+
       {timesPerWeek && (
         <>
           <TabNavigation

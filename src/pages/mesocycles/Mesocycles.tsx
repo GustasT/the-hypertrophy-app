@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { fetchAllMesocycles, deleteMesocycle } from "../../services";
+import {
+  fetchAllMesocycles,
+  deleteMesocycle,
+  setActiveMesocycle,
+} from "../../services";
 import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
 import PageHeader from "../../components/common/PageHeader";
@@ -30,6 +34,16 @@ const Mesocycles = () => {
     }
   };
 
+  const handleSetActive = async (id: number) => {
+    try {
+      await setActiveMesocycle(id);
+      const allMesocycles = await fetchAllMesocycles();
+      setMesocycles(allMesocycles);
+    } catch (error) {
+      console.error("Failed to set mesocycle as active:", error);
+    }
+  };
+
   return (
     <>
       <PageHeader
@@ -38,7 +52,11 @@ const Mesocycles = () => {
         buttonLink="/newMesocycle"
       />
       <div className="p-4">
-        <MesocyclesList mesocycles={mesocycles} onDelete={handleDelete} />
+        <MesocyclesList
+          mesocycles={mesocycles}
+          onDelete={handleDelete}
+          onSetActive={handleSetActive}
+        />
       </div>
     </>
   );

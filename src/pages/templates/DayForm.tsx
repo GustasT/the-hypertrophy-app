@@ -1,6 +1,8 @@
 import React from "react";
-import Select from "react-select";
+
 import { muscleGroups } from "../../config/exerciseOptions";
+import InputField from "../../components/common/InputField";
+import SelectField from "../../components/common/SelectField";
 
 interface Day {
   name: string;
@@ -36,48 +38,40 @@ const DayForm: React.FC<DayFormProps> = ({ day, onChange }) => {
 
   return (
     <div className="day-form">
-      <div className="mb-4">
-        <label className="block text-gray-700">Day Name</label>
-        <input
-          type="text"
-          className="w-full mt-2 p-2 border rounded"
-          value={day.name}
-          onChange={handleNameChange}
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Muscle Groups</label>
-        <Select
-          options={muscleGroupOptions}
-          onChange={handleMuscleGroupChange}
-          value={null}
-          placeholder="Add muscle group"
-          isClearable={false}
-          isSearchable={false}
-        />
-        <div className="mt-2">
-          <ol className="list-decimal ml-5">
-            {day.muscleGroups.map((group, idx) => (
-              <li
-                key={idx}
-                className="text-gray-700 flex justify-between items-center"
-              >
-                <span>
-                  {idx + 1}. {group}
-                </span>
-                <button
-                  type="button"
-                  className="ml-2 text-gray-600 hover:text-gray-700"
-                  onClick={() => handleRemoveMuscleGroup(idx)}
-                >
-                  &times;
-                </button>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
+      <InputField
+        type="text"
+        label="Day Name"
+        value={day.name}
+        onChange={handleNameChange}
+      />
+
+      <SelectField
+        label="Muscle Groups"
+        options={muscleGroupOptions}
+        onChange={handleMuscleGroupChange}
+        value={null}
+        placeholder="Add muscle group"
+      />
+
+      <ol className="list-decimal ml-5">
+        {day.muscleGroups.map((group, idx) => (
+          <li
+            key={idx}
+            className="text-gray-700 flex justify-between items-center"
+          >
+            <span>
+              {idx + 1}. {group}
+            </span>
+            <button
+              type="button"
+              className="ml-2 text-gray-600 hover:text-gray-700"
+              onClick={() => handleRemoveMuscleGroup(idx)}
+            >
+              &times;
+            </button>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 };

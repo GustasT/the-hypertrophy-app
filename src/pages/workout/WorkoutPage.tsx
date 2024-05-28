@@ -5,13 +5,10 @@ import {
   fetchExercisesByWorkoutId,
   updateWorkout,
 } from "../../services";
-import { Mesocycle, Workout, ExerciseWithDetails } from "../../database/db";
+import { Workout, ExerciseWithDetails } from "../../database/db";
 import Button from "../../components/common/Button";
 
 const WorkoutPage = () => {
-  const [activeMesocycle, setActiveMesocycle] = useState<Mesocycle | null>(
-    null
-  );
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithDetails[]>([]);
 
@@ -19,7 +16,6 @@ const WorkoutPage = () => {
     const fetchData = async () => {
       try {
         const mesocycle = await fetchActiveMesocycle();
-        setActiveMesocycle(mesocycle);
 
         if (mesocycle) {
           const workout = await fetchActiveWorkout(mesocycle.id!);

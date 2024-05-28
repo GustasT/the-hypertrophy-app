@@ -115,3 +115,21 @@ export const fetchAllMesocycles = async () => {
     return [];
   }
 };
+
+// Function to set a mesocycle as active
+export const setActiveMesocycle = async (id: number) => {
+  try {
+    // Set all mesocycles to inactive
+    await db
+      .table("mesocycles")
+      .toCollection()
+      .modify((mesocycle) => {
+        mesocycle.isActive = 0;
+      });
+
+    // Set the specified mesocycle to active
+    await db.table("mesocycles").update(id, { isActive: 1 });
+  } catch (error) {
+    console.error("Failed to set mesocycle as active:", error);
+  }
+};

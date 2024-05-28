@@ -1,20 +1,24 @@
 import React from "react";
 import { Mesocycle } from "../../database/db";
 import Button from "../../components/common/Button";
-import { deleteMesocycle } from "../../services/";
 
 interface MesocyclesListProps {
   mesocycles: Mesocycle[];
   onDelete: (id: number) => void;
+  onSetActive: (id: number) => void;
 }
 
 const MesocyclesList: React.FC<MesocyclesListProps> = ({
   mesocycles,
   onDelete,
+  onSetActive,
 }) => {
   const handleDelete = async (id: number) => {
-    await deleteMesocycle(id);
     onDelete(id);
+  };
+
+  const handleSetActive = async (id: number) => {
+    onSetActive(id);
   };
 
   return (
@@ -32,14 +36,18 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
               </p>
             </div>
             <div className="flex space-x-2">
-              <Button
-                variant="outline"
-                onClick={() =>
-                  alert("View functionality is not implemented yet.")
-                }
-              >
-                View
-              </Button>
+              {mesocycle.completed ? (
+                <span className="text-gray-500">Completed</span>
+              ) : mesocycle.isActive ? (
+                <span className="text-green-500 font-bold">Active</span>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => handleSetActive(mesocycle.id as number)}
+                >
+                  Make Active
+                </Button>
+              )}
               <Button
                 variant="secondary"
                 onClick={() => handleDelete(mesocycle.id as number)}
