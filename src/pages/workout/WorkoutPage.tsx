@@ -22,7 +22,7 @@ const WorkoutPage = () => {
         setActiveMesocycle(mesocycle);
 
         if (mesocycle) {
-          const workout = await fetchActiveWorkout();
+          const workout = await fetchActiveWorkout(mesocycle.id!);
           setActiveWorkout(workout);
 
           if (workout) {

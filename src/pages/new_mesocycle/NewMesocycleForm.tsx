@@ -72,8 +72,9 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
       name: mesocycleName,
       templateId: template.id!,
       weeks,
-      completed: false,
-      isActive: true, // Set the new mesocycle as active
+      timesPerWeek: template.timesPerWeek,
+      completed: 0,
+      isActive: 1, // Set the new mesocycle as active
       workouts: [],
     };
     const mesocycleId = await createMesocycle(newMesocycle, selectedExercises);

@@ -34,36 +34,54 @@ export const createMesocycle = async (
   selectedExercises: { [key: string]: Exercise | null }
 ) => {
   try {
+    // Set all existing mesocycles to inactive
+    await db
+      .table("mesocycles")
+      .toCollection()
+      .modify((m) => {
+        m.isActive = 0;
+      });
+
+    // Create the new mesocycle
     const mesocycleId = (await db.table("mesocycles").add({
       ...mesocycle,
-      isActive: mesocycle.isActive ? 1 : 0,
+      isActive: 1, // New mesocycle is active
     })) as number;
 
+    const workouts: number[] = [];
+    let isFirstWorkout = true;
+
     for (let week = 1; week <= mesocycle.weeks; week++) {
-      for (let day = 1; day <= mesocycle.weeks; day++) {
-        const isActive = week === 1 && day === 1 ? 1 : 0;
+      for (let dayIndex = 0; dayIndex < mesocycle.timesPerWeek; dayIndex++) {
+        const dayExercises = Object.keys(selectedExercises)
+          .filter((key) => key.startsWith(`${dayIndex}-`))
+          .map((key) => selectedExercises[key])
+          .filter((exercise) => exercise !== null) as ExerciseWithDetails[];
+
         const workout: Omit<Workout, "id"> = {
           mesocycleId,
           week,
-          day,
-          exercises: Object.values(selectedExercises).map((exercise) => ({
+          day: dayIndex + 1, // Increment dayIndex by 1
+          exercises: dayExercises.map((exercise) => ({
             ...exercise,
             weightRecommended: 0,
             repsRecommended: 0,
             setsRecommended: 0,
-          })) as ExerciseWithDetails[],
-          completed: false,
-          isActive,
+          })),
+          completed: 0,
+          isActive: isFirstWorkout ? 1 : 0,
         };
 
         const workoutId = (await db.table("workouts").add(workout)) as number;
-        mesocycle.workouts.push(workoutId);
+        workouts.push(workoutId);
+
+        if (isFirstWorkout) {
+          isFirstWorkout = false;
+        }
       }
     }
 
-    await db
-      .table("mesocycles")
-      .update(mesocycleId, { workouts: mesocycle.workouts });
+    await db.table("mesocycles").update(mesocycleId, { workouts });
     return mesocycleId;
   } catch (error) {
     console.error("Failed to create mesocycle:", error);

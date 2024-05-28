@@ -1,22 +1,20 @@
 import db, { Workout, ExerciseWithDetails } from "../database/db";
 
-// Function to fetch the active workout
-export const fetchActiveWorkout = async (): Promise<Workout | null> => {
+// Function to fetch the active workout for a specific mesocycle
+export const fetchActiveWorkout = async (
+  mesocycleId: number
+): Promise<Workout | null> => {
   try {
     const activeWorkout = await db
       .table("workouts")
-      .where("isActive")
-      .equals(1)
+      .where({ mesocycleId, isActive: 1 })
       .first();
 
     if (!activeWorkout) {
       console.warn("No active workout found.");
       return null;
     }
-    return {
-      ...activeWorkout,
-      isActive: activeWorkout.isActive === 1, // Convert back to boolean
-    };
+    return activeWorkout;
   } catch (error) {
     console.error("Failed to fetch active workout:", error);
     return null;
