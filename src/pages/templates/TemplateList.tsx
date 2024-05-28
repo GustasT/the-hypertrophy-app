@@ -6,12 +6,14 @@ interface TemplateListProps {
   templates: Template[];
   onEdit: (template: Template) => void;
   onDelete: (id: number) => void;
+  onStartMeso: (template: Template) => void; // Add this line
 }
 
 const TemplateList: React.FC<TemplateListProps> = ({
   templates,
   onEdit,
   onDelete,
+  onStartMeso, // Add this line
 }) => {
   const [expandedTemplates, setExpandedTemplates] = useState<Set<number>>(
     new Set()
@@ -68,6 +70,9 @@ const TemplateList: React.FC<TemplateListProps> = ({
                   onClick={() => onDelete(template.id as number)}
                 >
                   Delete
+                </Button>
+                <Button variant="primary" onClick={() => onStartMeso(template)}>
+                  New Meso
                 </Button>
               </div>
             </div>

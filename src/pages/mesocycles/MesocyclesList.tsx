@@ -1,6 +1,7 @@
-import React from "react";
-import { Mesocycle } from "../../database/db";
+import React, { useEffect, useState } from "react";
+import { Mesocycle, Template } from "../../database/db";
 import Button from "../../components/common/Button";
+import db from "../../database/db";
 
 interface MesocyclesListProps {
   mesocycles: Mesocycle[];
@@ -13,6 +14,32 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
   onDelete,
   onSetActive,
 }) => {
+  const [templateNames, setTemplateNames] = useState<{ [key: number]: string }>(
+    {}
+  );
+
+  useEffect(() => {
+    const fetchTemplateNames = async () => {
+      try {
+        const templates = await db.table("templates").toArray();
+        const names = templates.reduce(
+          (acc: { [key: number]: string }, template: Template) => {
+            if (template.id) {
+              acc[template.id] = template.name;
+            }
+            return acc;
+          },
+          {}
+        );
+        setTemplateNames(names);
+      } catch (error) {
+        console.error("Failed to fetch template names:", error);
+      }
+    };
+
+    fetchTemplateNames();
+  }, []);
+
   const handleDelete = async (id: number) => {
     onDelete(id);
   };
@@ -32,7 +59,11 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                 <strong>Weeks:</strong> {mesocycle.weeks}
               </p>
               <p>
-                <strong>Template ID:</strong> {mesocycle.templateId}
+                <strong>Times/week</strong> {mesocycle.timesPerWeek}
+              </p>
+              <p>
+                <strong>Template:</strong>{" "}
+                {templateNames[mesocycle.templateId] || mesocycle.templateId}
               </p>
             </div>
             <div className="flex space-x-2">

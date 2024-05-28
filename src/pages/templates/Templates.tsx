@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import NewTemplateForm from "./NewTemplateForm";
 import Dialog from "../../components/Dialog";
-import db, { Template } from "../../database/db";
+import db, { Template, Mesocycle } from "../../database/db";
 import TemplateList from "./TemplateList";
 import Button from "../../components/common/Button";
+import NewMesocycleForm from "../new_mesocycle/NewMesocycleForm";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -12,6 +13,7 @@ const Templates = () => {
     null
   );
   const [templates, setTemplates] = useState<Template[]>([]);
+  const [isMesoDialogOpen, setIsMesoDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -62,6 +64,21 @@ const Templates = () => {
     setSelectedTemplate(null);
   };
 
+  const openMesoDialog = (template: Template) => {
+    setSelectedTemplate(template);
+    setIsMesoDialogOpen(true);
+  };
+
+  const closeMesoDialog = () => {
+    setIsMesoDialogOpen(false);
+    setSelectedTemplate(null);
+  };
+
+  const handleMesoSave = async (newMesocycle: Mesocycle) => {
+    console.log("New mesocycle saved:", newMesocycle);
+    setIsMesoDialogOpen(false);
+  };
+
   return (
     <>
       <div className="flex justify-between top-0 bg-white sticky p-4 border-b">
@@ -75,6 +92,7 @@ const Templates = () => {
           templates={templates}
           onEdit={openEditDialog}
           onDelete={handleDelete}
+          onStartMeso={openMesoDialog} // Add this line
         />
         <Dialog
           isOpen={isDialogOpen}
@@ -86,6 +104,19 @@ const Templates = () => {
             onClose={closeDialog}
             initialData={selectedTemplate || undefined}
           />
+        </Dialog>
+        <Dialog
+          isOpen={isMesoDialogOpen}
+          onClose={closeMesoDialog}
+          title="Select Exercises"
+        >
+          {selectedTemplate && (
+            <NewMesocycleForm
+              template={selectedTemplate}
+              onClose={closeMesoDialog}
+              onSave={handleMesoSave}
+            />
+          )}
         </Dialog>
       </div>
     </>
