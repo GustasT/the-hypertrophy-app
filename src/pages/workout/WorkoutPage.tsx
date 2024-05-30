@@ -7,6 +7,7 @@ import {
 } from "../../services";
 import { Workout, ExerciseWithDetails } from "../../database/db";
 import Button from "../../components/common/Button";
+import ExerciseItem from "../../components/ExerciseItem";
 
 const WorkoutPage = () => {
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
@@ -23,7 +24,12 @@ const WorkoutPage = () => {
 
           if (workout) {
             const exercises = await fetchExercisesByWorkoutId(workout.id!);
-            setExercises(exercises);
+            // Ensure each exercise has an initialized sets array
+            const exercisesWithSets = exercises.map((exercise) => ({
+              ...exercise,
+              sets: exercise.sets || [],
+            }));
+            setExercises(exercisesWithSets);
           }
         }
       } catch (error) {
@@ -34,10 +40,34 @@ const WorkoutPage = () => {
     fetchData();
   }, []);
 
-  const handleInputChange = (index: number, field: string, value: number) => {
+  const handleInputChange = (
+    exerciseIndex: number,
+    setIndex: number,
+    field: string,
+    value: number
+  ) => {
     const updatedExercises = [...exercises];
-    updatedExercises[index] = { ...updatedExercises[index], [field]: value };
+    const exercise = updatedExercises[exerciseIndex];
+    if (!exercise.sets) {
+      exercise.sets = [];
+    }
+    exercise.sets[setIndex] = { ...exercise.sets[setIndex], [field]: value };
+    updatedExercises[exerciseIndex] = exercise;
     setExercises(updatedExercises);
+  };
+
+  const handleRemoveSet = (exerciseIndex: number) => {
+    const updatedExercises = [...exercises];
+    const exercise = updatedExercises[exerciseIndex];
+    if (exercise.sets && exercise.sets.length > 1) {
+      exercise.sets = exercise.sets.slice(0, -1);
+      setExercises(updatedExercises);
+    }
+  };
+
+  const handleLogSet = (exerciseIndex: number, setIndex: number) => {
+    // Implement the logic for logging the set here
+    console.log(`Logging set ${setIndex} for exercise ${exerciseIndex}`);
   };
 
   const handleSave = async () => {
@@ -61,50 +91,14 @@ const WorkoutPage = () => {
       </div>
       <div className="p-4">
         {exercises.map((exercise, index) => (
-          <div key={exercise.id} className="mb-4">
-            <h2 className="text-lg font-semibold">{exercise.name}</h2>
-            <div className="flex space-x-4">
-              <input
-                type="number"
-                value={exercise.setsRecommended}
-                onChange={(e) =>
-                  handleInputChange(
-                    index,
-                    "setsRecommended",
-                    Number(e.target.value)
-                  )
-                }
-                placeholder="Sets"
-                className="border p-2"
-              />
-              <input
-                type="number"
-                value={exercise.repsRecommended}
-                onChange={(e) =>
-                  handleInputChange(
-                    index,
-                    "repsRecommended",
-                    Number(e.target.value)
-                  )
-                }
-                placeholder="Reps"
-                className="border p-2"
-              />
-              <input
-                type="number"
-                value={exercise.weightRecommended}
-                onChange={(e) =>
-                  handleInputChange(
-                    index,
-                    "weightRecommended",
-                    Number(e.target.value)
-                  )
-                }
-                placeholder="Weight"
-                className="border p-2"
-              />
-            </div>
-          </div>
+          <ExerciseItem
+            key={exercise.id}
+            exercise={exercise}
+            index={index}
+            onInputChange={handleInputChange}
+            onRemoveSet={handleRemoveSet}
+            onLogSet={handleLogSet}
+          />
         ))}
       </div>
     </div>

@@ -85,6 +85,7 @@ export interface ExerciseWithDetails extends Exercise {
   sorenessRating?: number;
   pumpRating?: number;
   workloadRating?: number;
+  sets?: { reps: number; weight: number }[];
 }
 
 export default db;

@@ -30,7 +30,7 @@ const Button: React.FC<ButtonProps> = ({
       break;
     case "secondary":
       baseClassName =
-        "bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600";
+        "bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500";
       break;
     case "outline":
       baseClassName = "text-black px-3 py-1 border rounded hover:bg-gray-200";
