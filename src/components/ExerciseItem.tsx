@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ExerciseWithDetails } from "../database/db";
 import NumericInput from "../components/common/NumericInput";
 import DecimalInput from "../components/common/DecimalInput";
@@ -27,15 +27,22 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
   const [sets, setSets] = useState<{ reps: string; weight: string }[]>([
     { reps: "", weight: "" },
   ]);
+  const [isValid, setIsValid] = useState<boolean[]>([false]);
+
+  useEffect(() => {
+    setIsValid(sets.map((set) => set.reps !== "" && set.weight !== ""));
+  }, [sets]);
 
   const handleAddSet = () => {
     setSets([...sets, { reps: "", weight: "" }]);
+    setIsValid([...isValid, false]);
   };
 
   const handleRemoveLastSet = () => {
     if (sets.length > 1) {
       const updatedSets = sets.slice(0, -1);
       setSets(updatedSets);
+      setIsValid(isValid.slice(0, -1));
       onRemoveSet(index);
     }
   };
@@ -48,6 +55,13 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
     const updatedSets = [...sets];
     updatedSets[setIndex] = { ...updatedSets[setIndex], [field]: value };
     setSets(updatedSets);
+
+    // Validate the input values
+    const reps = field === "reps" ? value : updatedSets[setIndex].reps;
+    const weight = field === "weight" ? value : updatedSets[setIndex].weight;
+    const updatedValidations = [...isValid];
+    updatedValidations[setIndex] = reps !== "" && weight !== "";
+    setIsValid(updatedValidations);
 
     // Convert the input value to a number when calling the parent handler
     const numericValue = Number(value.replace(",", "."));
@@ -86,6 +100,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
             variant="primary"
             onClick={() => onLogSet(index, setIndex)}
             className="col-span-1"
+            disabled={!isValid[setIndex]}
           >
             Log
           </Button>
