@@ -7,6 +7,7 @@ interface NumericInputProps {
   onInputChange: (setIndex: number, field: string, value: string) => void;
   className?: string;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 const NumericInput: React.FC<NumericInputProps> = ({
@@ -16,6 +17,7 @@ const NumericInput: React.FC<NumericInputProps> = ({
   onInputChange,
   className,
   placeholder,
+  disabled,
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const allowedKeys = [
@@ -61,6 +63,7 @@ const NumericInput: React.FC<NumericInputProps> = ({
       onChange={handleChange}
       placeholder={placeholder}
       className={`border p-2 ${className}`}
+      disabled={disabled}
     />
   );
 };

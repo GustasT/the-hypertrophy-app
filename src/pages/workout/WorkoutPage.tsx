@@ -8,6 +8,10 @@ import {
 import { Workout, ExerciseWithDetails } from "../../database/db";
 import Button from "../../components/common/Button";
 import ExerciseItem from "../../components/ExerciseItem";
+import {
+  saveToLocalStorage,
+  getFromLocalStorage,
+} from "../../utils/localStorageUtils";
 
 const WorkoutPage = () => {
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
@@ -37,8 +41,19 @@ const WorkoutPage = () => {
       }
     };
 
-    fetchData();
+    const savedExercises = getFromLocalStorage("exercises");
+    if (savedExercises) {
+      setExercises(savedExercises);
+    } else {
+      fetchData();
+    }
   }, []);
+
+  useEffect(() => {
+    if (exercises.length > 0) {
+      saveToLocalStorage("exercises", exercises);
+    }
+  }, [exercises]);
 
   const handleInputChange = (
     exerciseIndex: number,
