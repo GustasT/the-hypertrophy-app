@@ -28,10 +28,13 @@ const WorkoutPage = () => {
 
           if (workout) {
             const exercises = await fetchExercisesByWorkoutId(workout.id!);
-            // Ensure each exercise has an initialized sets array
+            // Ensure each exercise has at least one initialized set array
             const exercisesWithSets = exercises.map((exercise) => ({
               ...exercise,
-              sets: exercise.sets || [],
+              sets:
+                exercise.sets && exercise.sets.length > 0
+                  ? exercise.sets
+                  : [{ reps: 0, weight: 0 }],
             }));
             setExercises(exercisesWithSets);
           }
@@ -66,6 +69,9 @@ const WorkoutPage = () => {
     if (!exercise.sets) {
       exercise.sets = [];
     }
+    if (!exercise.sets[setIndex]) {
+      exercise.sets[setIndex] = { reps: 0, weight: 0 };
+    }
     exercise.sets[setIndex] = { ...exercise.sets[setIndex], [field]: value };
     updatedExercises[exerciseIndex] = exercise;
     setExercises(updatedExercises);
@@ -78,11 +84,6 @@ const WorkoutPage = () => {
       exercise.sets = exercise.sets.slice(0, -1);
       setExercises(updatedExercises);
     }
-  };
-
-  const handleLogSet = (exerciseIndex: number, setIndex: number) => {
-    // Implement the logic for logging the set here
-    console.log(`Logging set ${setIndex} for exercise ${exerciseIndex}`);
   };
 
   const handleSave = async () => {
@@ -112,7 +113,7 @@ const WorkoutPage = () => {
             index={index}
             onInputChange={handleInputChange}
             onRemoveSet={handleRemoveSet}
-            onLogSet={handleLogSet}
+            workoutId={activeWorkout ? activeWorkout.id! : -1} // Pass workoutId to ExerciseItem
           />
         ))}
       </div>

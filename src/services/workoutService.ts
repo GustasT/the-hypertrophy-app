@@ -42,9 +42,10 @@ export const logExerciseDetails = async (
 ) => {
   try {
     const workout = (await db.table("workouts").get(workoutId)) as Workout;
-    const updatedExercises = workout.exercises.map((exercise) =>
-      exercise.id === exerciseDetails.id ? exerciseDetails : exercise
-    );
+    const updatedExercises =
+      workout.exercises?.map((exercise) =>
+        exercise.id === exerciseDetails.id ? exerciseDetails : exercise
+      ) ?? [];
     await db
       .table("workouts")
       .update(workoutId, { exercises: updatedExercises });
@@ -68,4 +69,21 @@ export const fetchExercisesByWorkout = async (workoutId: number) => {
     console.error("Failed to fetch exercises by workout:", error);
     return [];
   }
+};
+
+export const updateWorkoutSets = async (
+  workoutId: number,
+  exerciseIndex: number,
+  sets: { reps: number; weight: number }[]
+) => {
+  await db.transaction("rw", db.workouts, async () => {
+    const workout = await db.workouts.get(workoutId);
+    if (workout) {
+      const exercises = workout.exercises ?? [];
+      if (exercises[exerciseIndex]) {
+        exercises[exerciseIndex].sets = sets;
+        await db.workouts.update(workoutId, { exercises });
+      }
+    }
+  });
 };

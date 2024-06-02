@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { Template, Exercise, Mesocycle } from "../../database/db";
-import { fetchAllExercises, createMesocycle } from "../../services/";
+import {
+  fetchAllExercises,
+  createMesocycle,
+  clearLocalStorageExercises,
+} from "../../services/";
 import TabNavigation from "../../components/TabNavigation";
 import Button from "../../components/common/Button";
 
@@ -79,6 +83,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
     };
     const mesocycleId = await createMesocycle(newMesocycle, selectedExercises);
     onSave({ id: mesocycleId, ...newMesocycle });
+    clearLocalStorageExercises();
     onClose(); // Close the dialog after saving
   };
 

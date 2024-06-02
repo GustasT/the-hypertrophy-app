@@ -3,6 +3,7 @@ import {
   fetchAllMesocycles,
   deleteMesocycle,
   setActiveMesocycle,
+  clearLocalStorageExercises,
 } from "../../services";
 import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
@@ -27,6 +28,10 @@ const Mesocycles = () => {
 
   const handleDelete = async (id: number) => {
     try {
+      const mesocycleToDelete = mesocycles.find((mc) => mc.id === id);
+      if (mesocycleToDelete?.isActive) {
+        clearLocalStorageExercises();
+      }
       await deleteMesocycle(id);
       setMesocycles(mesocycles.filter((mc) => mc.id !== id));
     } catch (error) {
@@ -36,6 +41,7 @@ const Mesocycles = () => {
 
   const handleSetActive = async (id: number) => {
     try {
+      clearLocalStorageExercises();
       await setActiveMesocycle(id);
       const allMesocycles = await fetchAllMesocycles();
       setMesocycles(allMesocycles);

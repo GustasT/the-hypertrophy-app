@@ -1,40 +1,51 @@
-import Dexie from "dexie";
+import Dexie, { Table } from "dexie";
 
 // Define the database
-const db = new Dexie("ExerciseDB");
+class ExerciseDB extends Dexie {
+  exercises!: Table<Exercise>;
+  templates!: Table<Template>;
+  mesocycles!: Table<Mesocycle>;
+  workouts!: Table<Workout>;
 
-db.version(1).stores({
-  exercises: "++id,name,group,type,youtubeLink",
-});
+  constructor() {
+    super("ExerciseDB");
+    this.version(1).stores({
+      exercises: "++id,name,group,type,youtubeLink",
+    });
 
-db.version(2).stores({
-  exercises: "++id,name,group,type,youtubeLink",
-  templates: "++id,name,timesPerWeek,days",
-});
+    this.version(2).stores({
+      exercises: "++id,name,group,type,youtubeLink",
+      templates: "++id,name,timesPerWeek,days",
+    });
 
-db.version(3).stores({
-  exercises: "++id,name,group,type,youtubeLink",
-  templates: "++id,name,timesPerWeek,days",
-  mesocycles: "++id,name,templateId,weeks,completed,isActive",
-  workouts: "++id,mesocycleId,week,day,completed,isActive",
-});
+    this.version(3).stores({
+      exercises: "++id,name,group,type,youtubeLink",
+      templates: "++id,name,timesPerWeek,days",
+      mesocycles: "++id,name,templateId,weeks,completed,isActive",
+      workouts: "++id,mesocycleId,week,day,completed,isActive",
+    });
 
-db.version(4).stores({
-  exercises: "++id,name,group,type,youtubeLink",
-  templates: "++id,name,timesPerWeek,days",
-  mesocycles: "++id,name,templateId,weeks,completed,isActive",
-  workouts: "++id,mesocycleId,week,day,completed,isActive",
-});
+    this.version(4).stores({
+      exercises: "++id,name,group,type,youtubeLink",
+      templates: "++id,name,timesPerWeek,days",
+      mesocycles: "++id,name,templateId,weeks,completed,isActive",
+      workouts: "++id,mesocycleId,week,day,completed,isActive",
+    });
 
-db.version(5).stores({
-  exercises: "++id,name,group,type,youtubeLink",
-  templates: "++id,name,timesPerWeek,days",
-  mesocycles: "++id,name,templateId,weeks,completed,isActive",
-  workouts:
-    "++id,mesocycleId,week,day,completed,isActive,[mesocycleId+isActive]", // Add compound index
-});
+    this.version(5).stores({
+      exercises: "++id,name,group,type,youtubeLink",
+      templates: "++id,name,timesPerWeek,days",
+      mesocycles: "++id,name,templateId,weeks,completed,isActive",
+      workouts:
+        "++id,mesocycleId,week,day,completed,isActive,[mesocycleId+isActive]", // Add compound index
+    });
+  }
+}
 
-// Define the TypeScript interface for an exercise
+const db = new ExerciseDB();
+
+export default db;
+
 export interface Exercise {
   id?: number;
   name: string;
@@ -43,7 +54,6 @@ export interface Exercise {
   youtubeLink?: string;
 }
 
-// Define the TypeScript interface for a template
 export interface Template {
   id?: number;
   name: string;
@@ -51,30 +61,27 @@ export interface Template {
   days: { name: string; muscleGroups: string[] }[];
 }
 
-// Define the TypeScript interface for a mesocycle
 export interface Mesocycle {
   id?: number;
   name: string;
   templateId: number;
   timesPerWeek: number;
   weeks: number;
-  workouts: number[]; // Array of Workout IDs
-  completed: number; // 1 is true, 0 is false
-  isActive: number; // numbers used because of database limitations
+  workouts: number[];
+  completed: number;
+  isActive: number;
 }
 
-// Define the TypeScript interface for a workout
 export interface Workout {
   id?: number;
   mesocycleId: number;
   week: number;
   day: number;
   exercises: ExerciseWithDetails[];
-  completed: number; // 1 is true, 0 is false
-  isActive: number; // numbers used because of database limitations
+  completed: number;
+  isActive: number;
 }
 
-// Define the TypeScript interface for an exercise with details
 export interface ExerciseWithDetails extends Exercise {
   weightRecommended: number;
   weightCompleted?: number;
@@ -87,5 +94,3 @@ export interface ExerciseWithDetails extends Exercise {
   workloadRating?: number;
   sets?: { reps: number; weight: number }[];
 }
-
-export default db;

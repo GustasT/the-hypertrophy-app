@@ -55,3 +55,11 @@ export const deleteExercise = async (id: number) => {
     console.error("Failed to delete exercise:", error);
   }
 };
+
+export const clearLocalStorageExercises = () => {
+  Object.keys(localStorage).forEach((key) => {
+    if (key.includes("exercise")) {
+      localStorage.removeItem(key);
+    }
+  });
+};
