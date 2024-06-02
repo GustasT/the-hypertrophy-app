@@ -19,7 +19,7 @@ interface ExerciseItemProps {
     value: number
   ) => void;
   onRemoveSet: (exerciseIndex: number) => void;
-  workoutId: number; // Add workoutId to props
+  workoutId: number;
 }
 
 const ExerciseItem: React.FC<ExerciseItemProps> = ({
@@ -27,7 +27,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
   index,
   onInputChange,
   onRemoveSet,
-  workoutId, // Destructure workoutId from props
+  workoutId,
 }) => {
   const initialSets = exercise.sets?.length
     ? exercise.sets.map((set) => ({
@@ -40,11 +40,28 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
   const [sets, setSets] =
     useState<{ reps: string; weight: string; logged: boolean }[]>(initialSets);
   const [isValid, setIsValid] = useState<boolean[]>(
-    sets.map((set) => set.reps !== "" && set.weight !== "")
+    sets.map(
+      (set) =>
+        set.reps !== "" &&
+        set.reps !== "0" &&
+        set.weight !== "" &&
+        set.weight !== "0"
+    )
+  );
+  const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(
+    sets.length === 0 || !sets[sets.length - 1].logged
   );
 
   useEffect(() => {
-    setIsValid(sets.map((set) => set.reps !== "" && set.weight !== ""));
+    setIsValid(
+      sets.map(
+        (set) =>
+          set.reps !== "" &&
+          set.reps !== "0" &&
+          set.weight !== "" &&
+          set.weight !== "0"
+      )
+    );
   }, [sets]);
 
   useEffect(() => {
@@ -57,6 +74,10 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
       }
     }
   }, [exercise.id]);
+
+  useEffect(() => {
+    setIsAddButtonDisabled(sets.length === 0 || !sets[sets.length - 1].logged);
+  }, [sets]);
 
   const handleAddSet = () => {
     const updatedSets = [...sets, { reps: "", weight: "", logged: false }];
@@ -73,7 +94,6 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
       onRemoveSet(index);
       saveToLocalStorage(`exercise-${exercise.id}-sets`, updatedSets);
 
-      // Synchronize with IndexedDB
       await updateWorkoutSets(
         workoutId,
         index,
@@ -94,17 +114,17 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
     updatedSets[setIndex] = { ...updatedSets[setIndex], [field]: value };
     setSets(updatedSets);
 
-    // Validate the input values
     const updatedValidations = [...isValid];
     updatedValidations[setIndex] =
-      updatedSets[setIndex].reps !== "" && updatedSets[setIndex].weight !== "";
+      updatedSets[setIndex].reps !== "" &&
+      updatedSets[setIndex].reps !== "0" &&
+      updatedSets[setIndex].weight !== "" &&
+      updatedSets[setIndex].weight !== "0";
     setIsValid(updatedValidations);
 
-    // Convert the input value to a number when calling the parent handler
     const numericValue = Number(value.replace(",", "."));
     onInputChange(index, setIndex, field, numericValue);
 
-    // Save the updated sets to localStorage
     saveToLocalStorage(`exercise-${exercise.id}-sets`, updatedSets);
   };
 
@@ -118,7 +138,6 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
     setSets(updatedSets);
     saveToLocalStorage(`exercise-${exercise.id}-sets`, updatedSets);
 
-    // Synchronize with IndexedDB if logging the set
     if (!currentSet.logged) {
       await updateWorkoutSets(
         workoutId,
@@ -178,7 +197,11 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
         </div>
       ))}
       <div className="flex space-x-2 mt-2">
-        <Button variant="outline" onClick={handleAddSet}>
+        <Button
+          variant="outline"
+          onClick={handleAddSet}
+          disabled={isAddButtonDisabled}
+        >
           Add
         </Button>
         <Button

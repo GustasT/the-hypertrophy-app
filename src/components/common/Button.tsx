@@ -22,27 +22,33 @@ const Button: React.FC<ButtonProps> = ({
   disabled = false,
 }) => {
   let baseClassName;
+  let disabledClassName;
 
   switch (variant) {
     case "primary":
       baseClassName =
         "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700";
+      disabledClassName =
+        "bg-blue-400 text-white px-4 py-2 rounded cursor-not-allowed";
+      // seperate class for disabled button, because by default its see through and shines throgh the header
       break;
     case "secondary":
       baseClassName =
         "bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500";
+      disabledClassName =
+        "bg-gray-300 text-white px-4 py-2 rounded cursor-not-allowed";
       break;
     case "outline":
       baseClassName = "text-black px-3 py-1 border rounded hover:bg-gray-200";
+      disabledClassName =
+        "text-gray-400 px-3 py-1 border rounded cursor-not-allowed";
       break;
   }
 
   return (
     <button
       onClick={onClick}
-      className={`${baseClassName} ${className} ${
-        disabled ? "opacity-50 cursor-not-allowed" : ""
-      }`}
+      className={`${disabled ? disabledClassName : baseClassName} ${className}`}
       type={type}
       disabled={disabled}
     >

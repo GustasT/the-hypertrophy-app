@@ -16,7 +16,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   buttonLink,
 }) => {
   return (
-    <div className="flex justify-between p-4 top-0 sticky bg-white border-b">
+    <div className="flex justify-between p-4 top-0 sticky bg-white border-b z-10">
       <h1 className="text-2xl font-bold">{title}</h1>
       {buttonLink ? (
         <Link to={buttonLink}>
