@@ -5,7 +5,7 @@ import {
   fetchExercisesByWorkoutId,
   updateWorkout,
 } from "../../services";
-import { Workout, ExerciseWithDetails } from "../../database/db";
+import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
 import Button from "../../components/common/Button";
 import ExerciseItem from "../../components/ExerciseItem";
 import {
@@ -16,19 +16,35 @@ import {
 const WorkoutPage = () => {
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithDetails[]>([]);
+  const [activeMesocycle, setActiveMesocycle] = useState<Mesocycle | null>(
+    null
+  );
+  const [loadingWorkout, setLoadingWorkout] = useState(true);
 
   useEffect(() => {
+    const loadFromLocalStorage = () => {
+      const savedMesocycle = getFromLocalStorage("activeMesocycle");
+      const savedExercises = getFromLocalStorage("exercises");
+      if (savedMesocycle) {
+        setActiveMesocycle(savedMesocycle);
+      }
+      if (savedExercises) {
+        setExercises(savedExercises);
+      }
+    };
+
     const fetchData = async () => {
       try {
         const mesocycle = await fetchActiveMesocycle();
-
         if (mesocycle) {
-          const workout = await fetchActiveWorkout(mesocycle.id!);
-          setActiveWorkout(workout);
+          setActiveMesocycle(mesocycle);
+          saveToLocalStorage("activeMesocycle", mesocycle);
 
+          const workout = await fetchActiveWorkout(mesocycle.id!);
           if (workout) {
+            setActiveWorkout(workout);
+
             const exercises = await fetchExercisesByWorkoutId(workout.id!);
-            // Ensure each exercise has at least one initialized set array
             const exercisesWithSets = exercises.map((exercise) => ({
               ...exercise,
               sets:
@@ -41,15 +57,13 @@ const WorkoutPage = () => {
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
+      } finally {
+        setLoadingWorkout(false);
       }
     };
 
-    const savedExercises = getFromLocalStorage("exercises");
-    if (savedExercises) {
-      setExercises(savedExercises);
-    } else {
-      fetchData();
-    }
+    loadFromLocalStorage();
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -105,6 +119,13 @@ const WorkoutPage = () => {
           Save Workout
         </Button>
       </div>
+      {activeMesocycle && !loadingWorkout ? (
+        <h2 className="text-xl font-semibold p-4">
+          {`${activeMesocycle.name} - Week ${activeWorkout?.week}, Day ${activeWorkout?.day}`}
+        </h2>
+      ) : (
+        <h2 className="text-xl font-semibold p-4">Loading workout info...</h2>
+      )}
       <div className="p-4">
         {exercises.map((exercise, index) => (
           <ExerciseItem
