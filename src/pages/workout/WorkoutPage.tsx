@@ -8,10 +8,7 @@ import {
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
 import Button from "../../components/common/Button";
 import ExerciseItem from "../../components/ExerciseItem";
-import {
-  saveToLocalStorage,
-  getFromLocalStorage,
-} from "../../utils/localStorageUtils";
+import { getFromLocalStorage } from "../../utils/localStorageUtils";
 
 const WorkoutPage = () => {
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
@@ -24,12 +21,19 @@ const WorkoutPage = () => {
   useEffect(() => {
     const loadFromLocalStorage = () => {
       const savedMesocycle = getFromLocalStorage("activeMesocycle");
-      const savedExercises = getFromLocalStorage("exercises");
+      const savedWorkoutSets = getFromLocalStorage(
+        `workout-${activeWorkout?.id}-sets`
+      );
       if (savedMesocycle) {
         setActiveMesocycle(savedMesocycle);
       }
-      if (savedExercises) {
-        setExercises(savedExercises);
+      if (savedWorkoutSets) {
+        setExercises((prevExercises) =>
+          prevExercises.map((exercise) => ({
+            ...exercise,
+            sets: savedWorkoutSets[exercise.id!] || exercise.sets,
+          }))
+        );
       }
     };
 
@@ -38,7 +42,6 @@ const WorkoutPage = () => {
         const mesocycle = await fetchActiveMesocycle();
         if (mesocycle) {
           setActiveMesocycle(mesocycle);
-          saveToLocalStorage("activeMesocycle", mesocycle);
 
           const workout = await fetchActiveWorkout(mesocycle.id!);
           if (workout) {
@@ -65,12 +68,6 @@ const WorkoutPage = () => {
     loadFromLocalStorage();
     fetchData();
   }, []);
-
-  useEffect(() => {
-    if (exercises.length > 0) {
-      saveToLocalStorage("exercises", exercises);
-    }
-  }, [exercises]);
 
   const handleInputChange = (
     exerciseIndex: number,

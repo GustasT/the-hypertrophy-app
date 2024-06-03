@@ -3,16 +3,20 @@ import {
   fetchAllMesocycles,
   deleteMesocycle,
   setActiveMesocycle,
-  clearLocalStorageExercises,
+  fetchActiveWorkout,
+  fetchExercisesByWorkoutId,
 } from "../../services";
 import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
 import PageHeader from "../../components/common/PageHeader";
+import {
+  saveToLocalStorage,
+  removeWorkoutKeysFromLocalStorage,
+} from "../../utils/localStorageUtils";
 
 const Mesocycles = () => {
   const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
 
-  // Fetch mesocycles from IndexedDB when the component mounts
   useEffect(() => {
     const fetchMesocycles = async () => {
       try {
@@ -30,7 +34,7 @@ const Mesocycles = () => {
     try {
       const mesocycleToDelete = mesocycles.find((mc) => mc.id === id);
       if (mesocycleToDelete?.isActive) {
-        clearLocalStorageExercises();
+        removeWorkoutKeysFromLocalStorage();
       }
       await deleteMesocycle(id);
       setMesocycles(mesocycles.filter((mc) => mc.id !== id));
@@ -41,8 +45,25 @@ const Mesocycles = () => {
 
   const handleSetActive = async (id: number) => {
     try {
-      clearLocalStorageExercises();
+      removeWorkoutKeysFromLocalStorage();
       await setActiveMesocycle(id);
+
+      const activeWorkout = await fetchActiveWorkout(id);
+      if (activeWorkout) {
+        saveToLocalStorage("activeMesocycle", { id });
+        const exercises = await fetchExercisesByWorkoutId(activeWorkout.id!);
+        const sets = exercises.reduce((acc, exercise) => {
+          if (exercise.sets) {
+            acc[exercise.id!] = exercise.sets.map((set) => ({
+              ...set,
+              logged: set.reps !== 0 && set.weight !== 0,
+            }));
+          }
+          return acc;
+        }, {} as Record<number, { reps: number; weight: number; logged: boolean }[]>);
+        saveToLocalStorage(`workout-${activeWorkout.id}-sets`, sets);
+      }
+
       const allMesocycles = await fetchAllMesocycles();
       setMesocycles(allMesocycles);
     } catch (error) {

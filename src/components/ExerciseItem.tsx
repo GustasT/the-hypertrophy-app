@@ -65,25 +65,38 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
   }, [sets]);
 
   useEffect(() => {
-    const savedSets = getFromLocalStorage(`exercise-${exercise.id}-sets`);
-    if (savedSets) {
-      setSets(savedSets);
+    const savedWorkoutSets = getFromLocalStorage(`workout-${workoutId}-sets`);
+    if (savedWorkoutSets && savedWorkoutSets[exercise.id!]) {
+      setSets(
+        savedWorkoutSets[exercise.id!].map((set: any) => ({
+          reps: set.reps.toString(),
+          weight: set.weight.toString(),
+          logged: set.logged ?? (set.reps !== 0 && set.weight !== 0),
+        }))
+      );
     } else {
       if (sets.length === 0) {
         setSets([{ reps: "", weight: "", logged: false }]);
       }
     }
-  }, [exercise.id]);
+  }, [exercise.id, workoutId]);
 
   useEffect(() => {
     setIsAddButtonDisabled(sets.length === 0 || !sets[sets.length - 1].logged);
   }, [sets]);
 
+  const saveSetsToLocalStorage = (updatedSets: any) => {
+    const currentWorkoutSets =
+      getFromLocalStorage(`workout-${workoutId}-sets`) || {};
+    currentWorkoutSets[exercise.id!] = updatedSets;
+    saveToLocalStorage(`workout-${workoutId}-sets`, currentWorkoutSets);
+  };
+
   const handleAddSet = () => {
     const updatedSets = [...sets, { reps: "", weight: "", logged: false }];
     setSets(updatedSets);
     setIsValid([...isValid, false]);
-    saveToLocalStorage(`exercise-${exercise.id}-sets`, updatedSets);
+    saveSetsToLocalStorage(updatedSets);
   };
 
   const handleRemoveLastSet = async () => {
@@ -92,7 +105,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
       setSets(updatedSets);
       setIsValid(isValid.slice(0, -1));
       onRemoveSet(index);
-      saveToLocalStorage(`exercise-${exercise.id}-sets`, updatedSets);
+      saveSetsToLocalStorage(updatedSets);
 
       await updateWorkoutSets(
         workoutId,
@@ -125,7 +138,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
     const numericValue = Number(value.replace(",", "."));
     onInputChange(index, setIndex, field, numericValue);
 
-    saveToLocalStorage(`exercise-${exercise.id}-sets`, updatedSets);
+    saveSetsToLocalStorage(updatedSets);
   };
 
   const handleLogSetToggle = async (setIndex: number) => {
@@ -136,7 +149,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
       logged: !currentSet.logged,
     };
     setSets(updatedSets);
-    saveToLocalStorage(`exercise-${exercise.id}-sets`, updatedSets);
+    saveSetsToLocalStorage(updatedSets);
 
     if (!currentSet.logged) {
       await updateWorkoutSets(
