@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Mesocycle, Template } from "../../database/db";
 import Button from "../../components/common/Button";
 import db from "../../database/db";
@@ -67,6 +68,9 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
               </p>
             </div>
             <div className="flex space-x-2">
+              <Link to={`/mesocycles/${mesocycle.id}`}>
+                <Button variant="primary">View</Button>
+              </Link>
               {mesocycle.completed ? (
                 <span className="text-gray-500">Completed</span>
               ) : mesocycle.isActive ? (

@@ -15,7 +15,7 @@ import {
   removeWorkoutKeysFromLocalStorage,
 } from "../../utils/localStorageUtils";
 
-const Mesocycles = () => {
+const MesocyclesPage = () => {
   const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
 
   useEffect(() => {
@@ -104,4 +104,4 @@ const Mesocycles = () => {
   );
 };
 
-export default Mesocycles;
+export default MesocyclesPage;

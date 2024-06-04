@@ -133,3 +133,15 @@ export const setActiveMesocycle = async (id: number) => {
     console.error("Failed to set mesocycle as active:", error);
   }
 };
+
+export const fetchMesocycleById = async (
+  mesocycleId: number
+): Promise<Mesocycle | null> => {
+  try {
+    const mesocycle = await db.table("mesocycles").get(mesocycleId);
+    return mesocycle ?? null;
+  } catch (error) {
+    console.error("Failed to fetch mesocycle by ID:", error);
+    return null;
+  }
+};

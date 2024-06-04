@@ -127,3 +127,30 @@ export const activateNextWorkout = async (
     throw error;
   }
 };
+
+export const fetchWorkoutsByMesocycle = async (
+  mesocycleId: number
+): Promise<Workout[]> => {
+  try {
+    const workouts = await db
+      .table("workouts")
+      .where({ mesocycleId })
+      .toArray();
+    return workouts;
+  } catch (error) {
+    console.error("Failed to fetch workouts by mesocycle ID:", error);
+    return [];
+  }
+};
+
+export const fetchWorkoutById = async (
+  workoutId: number
+): Promise<Workout | null> => {
+  try {
+    const workout = await db.table("workouts").get(workoutId);
+    return workout ?? null;
+  } catch (error) {
+    console.error("Failed to fetch workout by ID:", error);
+    return null;
+  }
+};
