@@ -17,6 +17,30 @@ const WorkoutPage = () => {
     null
   );
   const [loadingWorkout, setLoadingWorkout] = useState(true);
+  const [isSaveWorkoutButtonActive, setIsSaveWorkoutButtonActive] =
+    useState(false);
+
+  const checkUnloggedSets = () => {
+    const savedWorkoutSets = getFromLocalStorage(
+      `workout-${activeWorkout?.id}-sets`
+    );
+    if (savedWorkoutSets) {
+      // Check if any set has logged: false
+      const hasUnloggedSets = Object.values(savedWorkoutSets).some(
+        (value: unknown) => {
+          // Remove the unused 'index' parameter
+          if (Array.isArray(value)) {
+            return value.some(
+              (set: { reps: number; weight: number; logged: boolean }) =>
+                set.logged === false
+            );
+          }
+          return false;
+        }
+      );
+      setIsSaveWorkoutButtonActive(hasUnloggedSets);
+    }
+  };
 
   useEffect(() => {
     const loadFromLocalStorage = () => {
@@ -34,6 +58,7 @@ const WorkoutPage = () => {
             sets: savedWorkoutSets[exercise.id!] || exercise.sets,
           }))
         );
+        checkUnloggedSets(); // Check for unlogged sets
       }
     };
 
@@ -62,12 +87,12 @@ const WorkoutPage = () => {
         console.error("Failed to fetch data:", error);
       } finally {
         setLoadingWorkout(false);
+        loadFromLocalStorage(); // Move this call here to ensure activeWorkout is set before it's used
       }
     };
 
-    loadFromLocalStorage();
     fetchData();
-  }, []);
+  }, [activeWorkout?.id]);
 
   const handleInputChange = (
     exerciseIndex: number,
@@ -112,8 +137,12 @@ const WorkoutPage = () => {
     <div>
       <div className="flex justify-between sticky top-0 bg-white p-4 border-b">
         <h1 className="text-2xl font-bold">Workout</h1>
-        <Button variant="primary" onClick={handleSave}>
-          Save Workout
+        <Button
+          variant="primary"
+          onClick={handleSave}
+          disabled={isSaveWorkoutButtonActive}
+        >
+          Finish Workout
         </Button>
       </div>
       {activeMesocycle && !loadingWorkout ? (
@@ -131,7 +160,8 @@ const WorkoutPage = () => {
             index={index}
             onInputChange={handleInputChange}
             onRemoveSet={handleRemoveSet}
-            workoutId={activeWorkout ? activeWorkout.id! : -1} // Pass workoutId to ExerciseItem
+            workoutId={activeWorkout ? activeWorkout.id! : -1}
+            checkUnloggedSets={checkUnloggedSets} // Pass the function to ExerciseItem
           />
         ))}
       </div>

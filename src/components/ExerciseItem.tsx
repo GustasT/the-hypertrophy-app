@@ -20,6 +20,7 @@ interface ExerciseItemProps {
   ) => void;
   onRemoveSet: (exerciseIndex: number) => void;
   workoutId: number;
+  checkUnloggedSets: () => void; // Add the prop type
 }
 
 const ExerciseItem: React.FC<ExerciseItemProps> = ({
@@ -28,6 +29,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
   onInputChange,
   onRemoveSet,
   workoutId,
+  checkUnloggedSets,
 }) => {
   const initialSets = exercise.sets?.length
     ? exercise.sets.map((set) => ({
@@ -97,6 +99,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
     setSets(updatedSets);
     setIsValid([...isValid, false]);
     saveSetsToLocalStorage(updatedSets);
+    checkUnloggedSets();
   };
 
   const handleRemoveLastSet = async () => {
@@ -106,6 +109,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
       setIsValid(isValid.slice(0, -1));
       onRemoveSet(index);
       saveSetsToLocalStorage(updatedSets);
+      checkUnloggedSets();
 
       await updateWorkoutSets(
         workoutId,
@@ -161,6 +165,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
         }))
       );
     }
+    checkUnloggedSets();
   };
 
   const inputClassNames = (logged: boolean) =>

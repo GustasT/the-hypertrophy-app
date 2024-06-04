@@ -5,6 +5,7 @@ import {
   setActiveMesocycle,
   fetchActiveWorkout,
   fetchExercisesByWorkoutId,
+  fetchActiveMesocycle,
 } from "../../services";
 import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
@@ -50,18 +51,27 @@ const Mesocycles = () => {
 
       const activeWorkout = await fetchActiveWorkout(id);
       if (activeWorkout) {
-        saveToLocalStorage("activeMesocycle", { id });
-        const exercises = await fetchExercisesByWorkoutId(activeWorkout.id!);
-        const sets = exercises.reduce((acc, exercise) => {
-          if (exercise.sets) {
-            acc[exercise.id!] = exercise.sets.map((set) => ({
-              ...set,
-              logged: set.reps !== 0 && set.weight !== 0,
-            }));
-          }
-          return acc;
-        }, {} as Record<number, { reps: number; weight: number; logged: boolean }[]>);
-        saveToLocalStorage(`workout-${activeWorkout.id}-sets`, sets);
+        const activeMesocycle = await fetchActiveMesocycle();
+        if (activeMesocycle) {
+          saveToLocalStorage("activeMesocycle", {
+            id: activeMesocycle.id,
+            name: activeMesocycle.name,
+            weeks: activeMesocycle.weeks,
+            timesPerWeek: activeMesocycle.timesPerWeek,
+          });
+
+          const exercises = await fetchExercisesByWorkoutId(activeWorkout.id!);
+          const sets = exercises.reduce((acc, exercise) => {
+            if (exercise.sets) {
+              acc[exercise.id!] = exercise.sets.map((set) => ({
+                ...set,
+                logged: set.reps !== 0 && set.weight !== 0,
+              }));
+            }
+            return acc;
+          }, {} as Record<number, { reps: number; weight: number; logged: boolean }[]>);
+          saveToLocalStorage(`workout-${activeWorkout.id}-sets`, sets);
+        }
       }
 
       const allMesocycles = await fetchAllMesocycles();
