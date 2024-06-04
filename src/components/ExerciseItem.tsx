@@ -220,14 +220,14 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           onClick={handleAddSet}
           disabled={isAddButtonDisabled}
         >
-          Add
+          +
         </Button>
         <Button
           variant="secondary"
           onClick={handleRemoveLastSet}
           disabled={isRemoveButtonDisabled}
         >
-          Remove
+          -
         </Button>
       </div>
     </div>

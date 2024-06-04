@@ -135,7 +135,7 @@ const WorkoutPage = () => {
 
   return (
     <div>
-      <div className="flex justify-between sticky top-0 bg-white p-4 border-b">
+      <div className="flex justify-between sticky top-0 bg-white p-4 border-b z-10">
         <h1 className="text-2xl font-bold">Workout</h1>
         <Button
           variant="primary"
