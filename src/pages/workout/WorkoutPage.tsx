@@ -4,6 +4,8 @@ import {
   fetchActiveWorkout,
   fetchExercisesByWorkoutId,
   updateWorkout,
+  completeCurrentWorkout, // Import the new functions
+  activateNextWorkout,
 } from "../../services";
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
 import Button from "../../components/common/Button";
@@ -17,18 +19,16 @@ const WorkoutPage = () => {
     null
   );
   const [loadingWorkout, setLoadingWorkout] = useState(true);
-  const [isSaveWorkoutButtonActive, setIsSaveWorkoutButtonActive] =
-    useState(false);
+  const [isFinishWorkoutButtonDisabled, setIsSaveWorkoutButtonActive] =
+    useState(true);
 
   const checkUnloggedSets = () => {
     const savedWorkoutSets = getFromLocalStorage(
       `workout-${activeWorkout?.id}-sets`
     );
     if (savedWorkoutSets) {
-      // Check if any set has logged: false
       const hasUnloggedSets = Object.values(savedWorkoutSets).some(
         (value: unknown) => {
-          // Remove the unused 'index' parameter
           if (Array.isArray(value)) {
             return value.some(
               (set: { reps: number; weight: number; logged: boolean }) =>
@@ -58,7 +58,7 @@ const WorkoutPage = () => {
             sets: savedWorkoutSets[exercise.id!] || exercise.sets,
           }))
         );
-        checkUnloggedSets(); // Check for unlogged sets
+        checkUnloggedSets();
       }
     };
 
@@ -87,7 +87,7 @@ const WorkoutPage = () => {
         console.error("Failed to fetch data:", error);
       } finally {
         setLoadingWorkout(false);
-        loadFromLocalStorage(); // Move this call here to ensure activeWorkout is set before it's used
+        loadFromLocalStorage();
       }
     };
 
@@ -126,6 +126,8 @@ const WorkoutPage = () => {
     if (activeWorkout) {
       try {
         await updateWorkout({ ...activeWorkout, exercises });
+        await completeCurrentWorkout(activeWorkout); // Call the function to complete the current workout
+        await activateNextWorkout(activeWorkout); // Call the function to activate the next workout
         console.log("Workout updated successfully!");
       } catch (error) {
         console.error("Failed to update workout:", error);
@@ -140,7 +142,7 @@ const WorkoutPage = () => {
         <Button
           variant="primary"
           onClick={handleSave}
-          disabled={isSaveWorkoutButtonActive}
+          disabled={isFinishWorkoutButtonDisabled}
         >
           Finish Workout
         </Button>
@@ -161,7 +163,7 @@ const WorkoutPage = () => {
             onInputChange={handleInputChange}
             onRemoveSet={handleRemoveSet}
             workoutId={activeWorkout ? activeWorkout.id! : -1}
-            checkUnloggedSets={checkUnloggedSets} // Pass the function to ExerciseItem
+            checkUnloggedSets={checkUnloggedSets}
           />
         ))}
       </div>

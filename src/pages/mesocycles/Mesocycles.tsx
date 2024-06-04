@@ -62,11 +62,16 @@ const Mesocycles = () => {
 
           const exercises = await fetchExercisesByWorkoutId(activeWorkout.id!);
           const sets = exercises.reduce((acc, exercise) => {
-            if (exercise.sets) {
+            if (exercise.sets && exercise.sets.length > 0) {
               acc[exercise.id!] = exercise.sets.map((set) => ({
                 ...set,
                 logged: set.reps !== 0 && set.weight !== 0,
               }));
+            } else {
+              // If the exercise has no sets, add a new set
+              acc[exercise.id!] = [
+                { reps: "", weight: "", logged: false } as any,
+              ];
             }
             return acc;
           }, {} as Record<number, { reps: number; weight: number; logged: boolean }[]>);

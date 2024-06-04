@@ -87,3 +87,43 @@ export const updateWorkoutSets = async (
     }
   });
 };
+
+// Function to complete the current workout
+export const completeCurrentWorkout = async (
+  currentWorkout: Workout
+): Promise<void> => {
+  try {
+    await db
+      .table("workouts")
+      .update(currentWorkout.id!, { completed: 1, isActive: 0 });
+    console.log("Current workout completed successfully!");
+  } catch (error) {
+    console.error("Failed to complete current workout:", error);
+    throw error;
+  }
+};
+
+// Function to activate the next workout within the same mesocycle
+export const activateNextWorkout = async (
+  currentWorkout: Workout
+): Promise<void> => {
+  try {
+    const nextWorkout = await db
+      .table("workouts")
+      .where({
+        mesocycleId: currentWorkout.mesocycleId,
+        id: currentWorkout.id! + 1,
+      })
+      .first();
+
+    if (nextWorkout) {
+      await db.table("workouts").update(nextWorkout.id!, { isActive: 1 });
+      console.log("Next workout activated successfully!");
+    } else {
+      console.log("No next workout found to activate.");
+    }
+  } catch (error) {
+    console.error("Failed to activate next workout:", error);
+    throw error;
+  }
+};
