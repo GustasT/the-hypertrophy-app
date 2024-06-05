@@ -77,13 +77,14 @@ const MesocycleWorkoutsPage = () => {
                       key={workout.id}
                       to={`${workout.id}`}
                       onClick={() => setViewedWorkoutId(workout.id ?? null)} // Set viewed workout ID
-                      className="w-full"
+                      className="w-full p-0.5"
                     >
                       {({ isActive }) => (
                         <Button
                           variant={isActive ? "primary" : "outline"}
                           className="w-full h-10 text-xs"
                           style={{ padding: "0", margin: "0" }}
+                          disabled={!workout.completed} // Disable if not completed
                         >
                           Day {workout.day}
                         </Button>
