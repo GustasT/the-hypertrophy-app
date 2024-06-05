@@ -1,13 +1,16 @@
+// src/pages/WorkoutDetailsPage.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { fetchWorkoutById } from "../../services";
 import { Workout, ExerciseWithDetails } from "../../database/db";
+import { useCurrentView } from "../../contexts/CurrentViewContext"; // Import the context
 
 const WorkoutDetailsPage = () => {
   const { mesocycleId, workoutId } = useParams<{
     mesocycleId: string;
     workoutId: string;
   }>();
+  const { setViewedWorkoutId } = useCurrentView(); // Use the context
   const [workout, setWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithDetails[]>([]);
   const [loadingWorkout, setLoadingWorkout] = useState(true);
@@ -19,6 +22,7 @@ const WorkoutDetailsPage = () => {
         if (workoutData) {
           setWorkout(workoutData);
           setExercises(workoutData.exercises);
+          setViewedWorkoutId(Number(workoutId)); // Set viewed workout ID
         }
       } catch (error) {
         console.error("Failed to fetch workout:", error);
@@ -30,7 +34,7 @@ const WorkoutDetailsPage = () => {
     if (workoutId) {
       fetchData();
     }
-  }, [workoutId]);
+  }, [workoutId, setViewedWorkoutId]);
 
   return (
     <div>

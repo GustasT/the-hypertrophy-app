@@ -12,6 +12,7 @@ import {
   removeFromLocalStorage,
 } from "../../utils/localStorageUtils";
 import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils"; // Import the utility function
+import CurrentViewDebug from "../../contexts/CurrentViewDebug";
 
 const MesocyclesPage = () => {
   const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
@@ -90,6 +91,7 @@ const MesocyclesPage = () => {
           onSetActive={handleSetActive}
         />
       </div>
+      <CurrentViewDebug />
     </>
   );
 };

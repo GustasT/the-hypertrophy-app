@@ -1,10 +1,13 @@
+// src/pages/MesocycleWorkoutsPage.tsx
 import { useState, useEffect } from "react";
 import { useParams, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { fetchMesocycleById, fetchWorkoutsByMesocycle } from "../../services";
 import { Workout } from "../../database/db";
+import { useCurrentView } from "../../contexts/CurrentViewContext"; // Import the context
 
 const MesocycleWorkoutsPage = () => {
   const { mesocycleId } = useParams<{ mesocycleId: string }>();
+  const { setViewedMesocycleId, setViewedWorkoutId } = useCurrentView(); // Use the context
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [mesocycleExists, setMesocycleExists] = useState(true);
   const navigate = useNavigate();
@@ -12,15 +15,21 @@ const MesocycleWorkoutsPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const mesocycle = await fetchMesocycleById(Number(mesocycleId));
-        if (!mesocycle) {
+        if (mesocycleId) {
+          const mesocycle = await fetchMesocycleById(Number(mesocycleId));
+          if (!mesocycle) {
+            setMesocycleExists(false);
+            return;
+          }
+          const workoutsData = await fetchWorkoutsByMesocycle(
+            Number(mesocycleId)
+          );
+          setWorkouts(workoutsData);
+          setViewedMesocycleId(Number(mesocycleId)); // Set viewed mesocycle ID
+          setViewedWorkoutId(null); // Unset viewed workout ID
+        } else {
           setMesocycleExists(false);
-          return;
         }
-        const workoutsData = await fetchWorkoutsByMesocycle(
-          Number(mesocycleId)
-        );
-        setWorkouts(workoutsData);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         setMesocycleExists(false);
@@ -28,7 +37,7 @@ const MesocycleWorkoutsPage = () => {
     };
 
     fetchData();
-  }, [mesocycleId]);
+  }, [mesocycleId, setViewedMesocycleId, setViewedWorkoutId]);
 
   useEffect(() => {
     if (!mesocycleExists) {
@@ -49,6 +58,7 @@ const MesocycleWorkoutsPage = () => {
                   className={({ isActive }) =>
                     isActive ? "text-blue-500 font-bold" : ""
                   }
+                  onClick={() => setViewedWorkoutId(workout.id ?? null)} // Set viewed workout ID
                 >
                   Workout {workout.id}
                 </NavLink>
