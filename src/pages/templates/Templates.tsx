@@ -5,6 +5,7 @@ import db, { Template, Mesocycle } from "../../database/db";
 import TemplateList from "./TemplateList";
 import Button from "../../components/common/Button";
 import NewMesocycleForm from "../new_mesocycle/NewMesocycleForm";
+import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils"; // Import the utility function
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -76,6 +77,7 @@ const Templates = () => {
 
   const handleMesoSave = async (newMesocycle: Mesocycle) => {
     console.log("New mesocycle saved:", newMesocycle);
+    await setActiveMesocycleAndWorkout(newMesocycle.id!); // Use the utility function
     setIsMesoDialogOpen(false);
   };
 

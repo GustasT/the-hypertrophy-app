@@ -88,17 +88,28 @@ export const updateWorkoutSets = async (
   });
 };
 
-// Function to complete the current workout
+// Function to mark the workout as completed
 export const completeCurrentWorkout = async (
   currentWorkout: Workout
 ): Promise<void> => {
   try {
-    await db
-      .table("workouts")
-      .update(currentWorkout.id!, { completed: 1, isActive: 0 });
+    await db.table("workouts").update(currentWorkout.id!, { completed: 1 });
     console.log("Current workout completed successfully!");
   } catch (error) {
     console.error("Failed to complete current workout:", error);
+    throw error;
+  }
+};
+
+// Function to deactivate the workout
+export const deactivateCurrentWorkout = async (
+  currentWorkout: Workout
+): Promise<void> => {
+  try {
+    await db.table("workouts").update(currentWorkout.id!, { isActive: 0 });
+    console.log("Current workout deactivated successfully!");
+  } catch (error) {
+    console.error("Failed to deactivate current workout:", error);
     throw error;
   }
 };

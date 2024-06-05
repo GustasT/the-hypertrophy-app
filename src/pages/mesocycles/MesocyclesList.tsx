@@ -83,7 +83,7 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                 </Button>
               )}
               <Link to={`/mesocycles/${mesocycle.id}`}>
-                <Button variant="primary">View</Button>
+                <Button variant="outline">View</Button>
               </Link>
 
               <Button

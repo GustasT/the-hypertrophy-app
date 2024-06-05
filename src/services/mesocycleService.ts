@@ -145,3 +145,16 @@ export const fetchMesocycleById = async (
     return null;
   }
 };
+
+// Function to complete the mesocycle
+export const setMesocycleCompleted = async (
+  mesocycleId: number
+): Promise<void> => {
+  try {
+    await db.table("mesocycles").update(mesocycleId, { completed: 1 });
+    console.log(`Mesocycle ${mesocycleId} set as completed`);
+  } catch (error) {
+    console.error("Failed to set mesocycle as completed:", error);
+    throw error;
+  }
+};

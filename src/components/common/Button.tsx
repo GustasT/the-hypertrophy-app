@@ -39,9 +39,9 @@ const Button: React.FC<ButtonProps> = ({
         "bg-gray-300 text-white px-4 py-2 rounded cursor-not-allowed";
       break;
     case "outline":
-      baseClassName = "text-black px-3 py-1 border rounded hover:bg-gray-200";
+      baseClassName = "text-black px-4 py-2 border rounded hover:bg-gray-200";
       disabledClassName =
-        "text-gray-400 px-3 py-1 border rounded cursor-not-allowed";
+        "text-gray-400 px-4 py-2 border rounded cursor-not-allowed";
       break;
   }
 

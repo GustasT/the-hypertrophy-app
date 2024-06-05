@@ -2,19 +2,16 @@ import { useState, useEffect } from "react";
 import {
   fetchAllMesocycles,
   deleteMesocycle,
-  setActiveMesocycle,
-  fetchActiveWorkout,
-  fetchExercisesByWorkoutId,
   fetchActiveMesocycle,
 } from "../../services";
 import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
 import PageHeader from "../../components/common/PageHeader";
 import {
-  saveToLocalStorage,
   removeWorkoutKeysFromLocalStorage,
   removeFromLocalStorage,
 } from "../../utils/localStorageUtils";
+import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils"; // Import the utility function
 
 const MesocyclesPage = () => {
   const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
@@ -64,39 +61,7 @@ const MesocyclesPage = () => {
 
   const handleSetActive = async (id: number) => {
     try {
-      removeWorkoutKeysFromLocalStorage();
-      await setActiveMesocycle(id);
-
-      const activeWorkout = await fetchActiveWorkout(id);
-      if (activeWorkout) {
-        const activeMesocycle = await fetchActiveMesocycle();
-        if (activeMesocycle) {
-          saveToLocalStorage("activeMesocycle", {
-            id: activeMesocycle.id,
-            name: activeMesocycle.name,
-            weeks: activeMesocycle.weeks,
-            timesPerWeek: activeMesocycle.timesPerWeek,
-          });
-
-          const exercises = await fetchExercisesByWorkoutId(activeWorkout.id!);
-          const sets = exercises.reduce((acc, exercise) => {
-            if (exercise.sets && exercise.sets.length > 0) {
-              acc[exercise.id!] = exercise.sets.map((set) => ({
-                ...set,
-                logged: set.reps !== 0 && set.weight !== 0,
-              }));
-            } else {
-              // If the exercise has no sets, add a new set
-              acc[exercise.id!] = [
-                { reps: "", weight: "", logged: false } as any,
-              ];
-            }
-            return acc;
-          }, {} as Record<number, { reps: number; weight: number; logged: boolean }[]>);
-          saveToLocalStorage(`workout-${activeWorkout.id}-sets`, sets);
-        }
-      }
-
+      await setActiveMesocycleAndWorkout(id); // Use the utility function
       const allMesocycles = await fetchAllMesocycles();
       setMesocycles(allMesocycles);
       const activeMeso = await fetchActiveMesocycle();
