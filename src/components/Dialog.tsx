@@ -30,7 +30,7 @@ const Dialog: React.FC<DialogProps> = ({
     <>
       {showDialog && (
         <div
-          className={`fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end transition-opacity duration-300 ${
+          className={`fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end transition-opacity duration-300 z-20 ${
             visible ? "opacity-100" : "opacity-0"
           }`}
           onClick={onClose}

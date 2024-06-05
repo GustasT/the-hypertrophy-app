@@ -154,7 +154,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                         ) || null
                       )
                     }
-                    isClearable={false}
+                    isClearable={true}
                   />
                 </div>
               );

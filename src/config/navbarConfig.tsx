@@ -2,7 +2,7 @@ import { GiWeightLiftingUp } from "react-icons/gi";
 import {
   MdOutlinePlaylistAddCheck,
   MdDashboardCustomize,
-  MdOutlineRestartAlt,
+  // MdOutlineRestartAlt,
 } from "react-icons/md";
 import { PiNotebookFill } from "react-icons/pi";
 
@@ -14,10 +14,10 @@ export const navbarLinks = [
     label: "Mesocycles",
     icon: <MdOutlinePlaylistAddCheck />,
   },
-  {
-    to: "/newMesocycle",
-    label: "New Mesocycle",
-    icon: <MdOutlineRestartAlt />,
-  },
+  // {
+  //   to: "/newMesocycle",
+  //   label: "New Mesocycle",
+  //   icon: <MdOutlineRestartAlt />,
+  // },
   { to: "/workout", label: "Workout", icon: <GiWeightLiftingUp /> },
 ];

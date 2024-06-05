@@ -3,7 +3,7 @@ import { navbarLinks } from "../../config/navbarConfig";
 
 const Navbar = () => {
   return (
-    <nav className="fixed bottom-0 w-full h-16 bg-white border-t border-gray-200">
+    <nav className="fixed bottom-0 w-full h-16 bg-white border-t border-gray-200 z-20">
       <div className="flex justify-around p-4">
         {navbarLinks.map((link) => (
           <NavLink

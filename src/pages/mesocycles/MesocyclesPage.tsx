@@ -13,10 +13,14 @@ import PageHeader from "../../components/common/PageHeader";
 import {
   saveToLocalStorage,
   removeWorkoutKeysFromLocalStorage,
+  removeFromLocalStorage,
 } from "../../utils/localStorageUtils";
 
 const MesocyclesPage = () => {
   const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
+  const [activeMesocycle, setActiveMesocycleState] = useState<Mesocycle | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchMesocycles = async () => {
@@ -28,7 +32,17 @@ const MesocyclesPage = () => {
       }
     };
 
+    const fetchActive = async () => {
+      try {
+        const activeMeso = await fetchActiveMesocycle();
+        setActiveMesocycleState(activeMeso);
+      } catch (error) {
+        console.error("Failed to fetch active mesocycle:", error);
+      }
+    };
+
     fetchMesocycles();
+    fetchActive();
   }, []);
 
   const handleDelete = async (id: number) => {
@@ -38,6 +52,10 @@ const MesocyclesPage = () => {
         removeWorkoutKeysFromLocalStorage();
       }
       await deleteMesocycle(id);
+      if (activeMesocycle?.id === id) {
+        removeFromLocalStorage("activeMesocycle");
+        setActiveMesocycleState(null);
+      }
       setMesocycles(mesocycles.filter((mc) => mc.id !== id));
     } catch (error) {
       console.error("Failed to delete mesocycle:", error);
@@ -81,6 +99,8 @@ const MesocyclesPage = () => {
 
       const allMesocycles = await fetchAllMesocycles();
       setMesocycles(allMesocycles);
+      const activeMeso = await fetchActiveMesocycle();
+      setActiveMesocycleState(activeMeso);
     } catch (error) {
       console.error("Failed to set mesocycle as active:", error);
     }
@@ -91,9 +111,14 @@ const MesocyclesPage = () => {
       <PageHeader
         title="Mesocycles"
         buttonText="New Meso"
-        buttonLink="/newMesocycle"
+        buttonLink="/templates"
       />
       <div className="p-4">
+        {mesocycles.length === 0 ? (
+          <p>Please create a mesocycle</p>
+        ) : !activeMesocycle ? (
+          <p>Please activate a mesocycle</p>
+        ) : null}
         <MesocyclesList
           mesocycles={mesocycles}
           onDelete={handleDelete}

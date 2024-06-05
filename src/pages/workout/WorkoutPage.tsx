@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   fetchActiveMesocycle,
   fetchActiveWorkout,
   fetchExercisesByWorkoutId,
   updateWorkout,
-  completeCurrentWorkout, // Import the new functions
+  completeCurrentWorkout,
   activateNextWorkout,
 } from "../../services";
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
@@ -13,6 +14,7 @@ import ExerciseItem from "../../components/ExerciseItem";
 import { getFromLocalStorage } from "../../utils/localStorageUtils";
 
 const WorkoutPage = () => {
+  const navigate = useNavigate();
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithDetails[]>([]);
   const [activeMesocycle, setActiveMesocycle] = useState<Mesocycle | null>(
@@ -82,9 +84,12 @@ const WorkoutPage = () => {
             }));
             setExercises(exercisesWithSets);
           }
+        } else {
+          navigate("/mesocycles"); // Redirect if no active mesocycle
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
+        navigate("/mesocycles"); // Redirect on error
       } finally {
         setLoadingWorkout(false);
         loadFromLocalStorage();
@@ -92,7 +97,7 @@ const WorkoutPage = () => {
     };
 
     fetchData();
-  }, [activeWorkout?.id]);
+  }, [activeWorkout?.id, navigate]);
 
   const handleInputChange = (
     exerciseIndex: number,
