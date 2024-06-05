@@ -6,12 +6,19 @@ import {
   fetchExercisesByWorkoutId,
   updateWorkout,
   completeCurrentWorkout,
+  deactivateCurrentWorkout,
   activateNextWorkout,
+  setMesocycleCompleted,
 } from "../../services";
+import db from "../../database/db"; // Import the Dexie db instance
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
 import Button from "../../components/common/Button";
 import ExerciseItem from "../../components/ExerciseItem";
-import { getFromLocalStorage } from "../../utils/localStorageUtils";
+import {
+  getFromLocalStorage,
+  removeFromLocalStorage,
+  saveToLocalStorage,
+} from "../../utils/localStorageUtils";
 
 const WorkoutPage = () => {
   const navigate = useNavigate();
@@ -131,10 +138,47 @@ const WorkoutPage = () => {
     if (activeWorkout) {
       try {
         await updateWorkout({ ...activeWorkout, exercises });
-        await completeCurrentWorkout(activeWorkout); // Call the function to complete the current workout
-        await activateNextWorkout(activeWorkout); // Call the function to activate the next workout
-        console.log("Workout updated successfully!");
-        fetchData(); // Fetch the next active workout
+        await completeCurrentWorkout(activeWorkout); // Complete the current workout
+
+        // Find the next workout within the same mesocycle
+        const nextWorkout = await db
+          .table("workouts")
+          .where({
+            mesocycleId: activeWorkout.mesocycleId,
+            id: activeWorkout.id! + 1,
+          })
+          .first();
+
+        if (nextWorkout) {
+          await deactivateCurrentWorkout(activeWorkout); // Deactivate the current workout
+          removeFromLocalStorage(`workout-${activeWorkout.id}-sets`); // Remove the current workout sets from local storage
+
+          const exercises = await fetchExercisesByWorkoutId(nextWorkout.id!);
+          const sets = exercises.reduce((acc, exercise) => {
+            if (exercise.sets && exercise.sets.length > 0) {
+              acc[exercise.id!] = exercise.sets.map((set) => ({
+                ...set,
+                logged: set.reps !== 0 && set.weight !== 0,
+              }));
+            } else {
+              acc[exercise.id!] = [
+                { reps: "", weight: "", logged: false } as any,
+              ];
+            }
+            return acc;
+          }, {} as Record<number, { reps: number; weight: number; logged: boolean }[]>);
+          saveToLocalStorage(`workout-${nextWorkout.id}-sets`, sets); // Save the next workout sets to local storage
+
+          await activateNextWorkout(activeWorkout); // Activate the next workout
+          console.log("Workout updated successfully!");
+          setActiveWorkout(nextWorkout); // Update the state with the next workout
+          setExercises(exercises); // Update the state with the next workout exercises
+        } else {
+          console.log(
+            "No next workout found to activate. Setting mesocycle as completed."
+          );
+          await setMesocycleCompleted(activeWorkout.mesocycleId!); // Complete the mesocycle
+        }
       } catch (error) {
         console.error("Failed to update workout:", error);
       }

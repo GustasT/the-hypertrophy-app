@@ -69,7 +69,7 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
             </div>
             <div className="flex space-x-2">
               {mesocycle.completed ? (
-                <span className="text-gray-500">Completed</span>
+                <span className="text-green-400 px-2 py-2">Completed</span>
               ) : mesocycle.isActive ? (
                 <div className="bg-green-400 text-white px-2 py-2 rounded-full">
                   Active
