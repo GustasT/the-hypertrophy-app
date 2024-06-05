@@ -4,10 +4,12 @@ import { fetchMesocycleById, fetchWorkoutsByMesocycle } from "../../services";
 import { Workout } from "../../database/db";
 import { useCurrentView } from "../../contexts/CurrentViewContext"; // Import the context
 import Button from "../../components/common/Button"; // Import the Button component
+import CurrentViewDebug from "../../contexts/CurrentViewDebug";
 
 const MesocycleWorkoutsPage = () => {
   const { mesocycleId } = useParams<{ mesocycleId: string }>();
-  const { setViewedMesocycleId, setViewedWorkoutId } = useCurrentView(); // Use the context
+  const { setViewedMesocycleId, setViewedWorkoutId, viewedWorkoutId } =
+    useCurrentView(); // Use the context
   const [workoutsByWeek, setWorkoutsByWeek] = useState<{
     [week: number]: Workout[];
   }>({});
@@ -27,7 +29,9 @@ const MesocycleWorkoutsPage = () => {
             Number(mesocycleId)
           );
           setViewedMesocycleId(Number(mesocycleId)); // Set viewed mesocycle ID
-          setViewedWorkoutId(null); // Unset viewed workout ID
+          if (!viewedWorkoutId) {
+            setViewedWorkoutId(null); // Unset viewed workout ID
+          }
 
           // Organize workouts by weeks
           const workoutsByWeek = workoutsData.reduce(
@@ -52,7 +56,7 @@ const MesocycleWorkoutsPage = () => {
     };
 
     fetchData();
-  }, [mesocycleId, setViewedMesocycleId, setViewedWorkoutId]);
+  }, [mesocycleId, setViewedMesocycleId, setViewedWorkoutId, viewedWorkoutId]);
 
   useEffect(() => {
     if (!mesocycleExists) {
@@ -100,6 +104,7 @@ const MesocycleWorkoutsPage = () => {
       ) : (
         <h2 className="text-xl font-semibold p-4">Mesocycle not found.</h2>
       )}
+      <CurrentViewDebug />
     </div>
   );
 };
