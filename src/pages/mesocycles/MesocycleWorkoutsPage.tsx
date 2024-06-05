@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { fetchMesocycleById, fetchWorkoutsByMesocycle } from "../../services";
 import { Workout } from "../../database/db";
 
@@ -44,12 +44,18 @@ const MesocycleWorkoutsPage = () => {
           <ul>
             {workouts.map((workout) => (
               <li key={workout.id}>
-                <Link to={`/mesocycles/${mesocycleId}/${workout.id}`}>
+                <NavLink
+                  to={`${workout.id}`}
+                  className={({ isActive }) =>
+                    isActive ? "text-blue-500 font-bold" : ""
+                  }
+                >
                   Workout {workout.id}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>
+          <Outlet />
         </>
       ) : (
         <h2 className="text-xl font-semibold p-4">Mesocycle not found.</h2>

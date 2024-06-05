@@ -8,7 +8,7 @@ import Exercises from "../pages/exercises/Exercises";
 import WorkoutPage from "../pages/workout/WorkoutPage";
 import MesocyclesPage from "../pages/mesocycles/MesocyclesPage";
 import MesocycleWorkoutsPage from "../pages/mesocycles/MesocycleWorkoutsPage";
-import ReadOnlyWorkoutPage from "../pages/mesocycles/ReadOnlyWorkoutPage";
+import WorkoutDetailsPage from "../pages/mesocycles/WorkoutDetailsPage";
 
 const AppRoutes = () => {
   return (
@@ -26,11 +26,9 @@ const AppRoutes = () => {
           <Route
             path="/mesocycles/:mesocycleId"
             element={<MesocycleWorkoutsPage />}
-          />
-          <Route
-            path="/mesocycles/:mesocycleId/:workoutId"
-            element={<ReadOnlyWorkoutPage />}
-          />
+          >
+            <Route path=":workoutId" element={<WorkoutDetailsPage />} />
+          </Route>
         </Routes>
       </MainLayout>
     </Router>

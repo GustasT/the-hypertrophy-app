@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { fetchWorkoutById } from "../../services";
 import { Workout, ExerciseWithDetails } from "../../database/db";
 
-const ReadOnlyWorkoutPage = () => {
+const WorkoutDetailsPage = () => {
   const { mesocycleId, workoutId } = useParams<{
     mesocycleId: string;
     workoutId: string;
@@ -66,4 +66,4 @@ const ReadOnlyWorkoutPage = () => {
   );
 };
 
-export default ReadOnlyWorkoutPage;
+export default WorkoutDetailsPage;
