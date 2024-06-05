@@ -1,14 +1,16 @@
-// src/pages/MesocycleWorkoutsPage.tsx
 import { useState, useEffect } from "react";
-import { useParams, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useParams, NavLink, useNavigate, Outlet } from "react-router-dom";
 import { fetchMesocycleById, fetchWorkoutsByMesocycle } from "../../services";
 import { Workout } from "../../database/db";
 import { useCurrentView } from "../../contexts/CurrentViewContext"; // Import the context
+import Button from "../../components/common/Button"; // Import the Button component
 
 const MesocycleWorkoutsPage = () => {
   const { mesocycleId } = useParams<{ mesocycleId: string }>();
   const { setViewedMesocycleId, setViewedWorkoutId } = useCurrentView(); // Use the context
-  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [workoutsByWeek, setWorkoutsByWeek] = useState<{
+    [week: number]: Workout[];
+  }>({});
   const [mesocycleExists, setMesocycleExists] = useState(true);
   const navigate = useNavigate();
 
@@ -24,9 +26,22 @@ const MesocycleWorkoutsPage = () => {
           const workoutsData = await fetchWorkoutsByMesocycle(
             Number(mesocycleId)
           );
-          setWorkouts(workoutsData);
           setViewedMesocycleId(Number(mesocycleId)); // Set viewed mesocycle ID
           setViewedWorkoutId(null); // Unset viewed workout ID
+
+          // Organize workouts by weeks
+          const workoutsByWeek = workoutsData.reduce(
+            (acc: { [week: number]: Workout[] }, workout) => {
+              if (!acc[workout.week]) {
+                acc[workout.week] = [];
+              }
+              acc[workout.week].push(workout);
+              return acc;
+            },
+            {}
+          );
+
+          setWorkoutsByWeek(workoutsByWeek);
         } else {
           setMesocycleExists(false);
         }
@@ -46,26 +61,40 @@ const MesocycleWorkoutsPage = () => {
   }, [mesocycleExists, navigate]);
 
   return (
-    <div>
+    <div className="p-4">
       {mesocycleExists ? (
         <>
-          <h1>Workouts for Mesocycle {mesocycleId}</h1>
-          <ul>
-            {workouts.map((workout) => (
-              <li key={workout.id}>
-                <NavLink
-                  to={`${workout.id}`}
-                  className={({ isActive }) =>
-                    isActive ? "text-blue-500 font-bold" : ""
-                  }
-                  onClick={() => setViewedWorkoutId(workout.id ?? null)} // Set viewed workout ID
-                >
-                  Workout {workout.id}
-                </NavLink>
-              </li>
+          <h1 className="text-2xl font-bold mb-4">
+            Workouts for Mesocycle {mesocycleId}
+          </h1>
+          <div className="flex justify-between ">
+            {Object.entries(workoutsByWeek).map(([week, weekWorkouts]) => (
+              <div key={week} className="flex-grow flex-shrink-0 ">
+                <h2 className="font-semibold text-center mb-2 ">Week {week}</h2>
+                <div className="flex flex-col items-center ">
+                  {weekWorkouts.map((workout) => (
+                    <NavLink
+                      key={workout.id}
+                      to={`${workout.id}`}
+                      onClick={() => setViewedWorkoutId(workout.id ?? null)} // Set viewed workout ID
+                      className="w-full"
+                    >
+                      {({ isActive }) => (
+                        <Button
+                          variant={isActive ? "primary" : "outline"}
+                          className="w-full h-10 text-xs"
+                          style={{ padding: "0", margin: "0" }}
+                        >
+                          Day {workout.day}
+                        </Button>
+                      )}
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
             ))}
-          </ul>
-          <Outlet />
+          </div>
+          <Outlet /> {/* This renders the nested WorkoutDetailsPage */}
         </>
       ) : (
         <h2 className="text-xl font-semibold p-4">Mesocycle not found.</h2>

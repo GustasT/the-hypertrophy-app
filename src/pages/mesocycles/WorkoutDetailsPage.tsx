@@ -1,4 +1,3 @@
-// src/pages/WorkoutDetailsPage.tsx
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { fetchWorkoutById } from "../../services";

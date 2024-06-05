@@ -1,5 +1,5 @@
 // Button.tsx
-import React from "react";
+import React, { CSSProperties } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "outline";
 type ButtonType = "button" | "submit" | "reset";
@@ -11,6 +11,7 @@ interface ButtonProps {
   type?: ButtonType;
   className?: string;
   disabled?: boolean;
+  style?: CSSProperties;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -20,6 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   type = "button",
   className = "",
   disabled = false,
+  style = {}, // Add default value for style
 }) => {
   let baseClassName;
   let disabledClassName;
@@ -51,6 +53,7 @@ const Button: React.FC<ButtonProps> = ({
       className={`${disabled ? disabledClassName : baseClassName} ${className}`}
       type={type}
       disabled={disabled}
+      style={style}
     >
       {children}
     </button>
