@@ -69,26 +69,30 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
             </div>
             <div className="flex space-x-2">
               {mesocycle.completed ? (
-                <span className="text-green-400 px-2 py-2">Completed</span>
+                <span className="text-green-400 px-2 py-1">Completed</span>
               ) : mesocycle.isActive ? (
-                <div className="bg-green-400 text-white px-2 py-2 rounded-full">
+                <div className="bg-green-400 text-white px-2 py-1 rounded-full">
                   Active
                 </div>
               ) : (
                 <Button
                   variant="outline"
                   onClick={() => handleSetActive(mesocycle.id as number)}
+                  size="small"
                 >
                   Make Active
                 </Button>
               )}
               <Link to={`/mesocycles/${mesocycle.id}`}>
-                <Button variant="outline">View</Button>
+                <Button variant="outline" size="small">
+                  View
+                </Button>
               </Link>
 
               <Button
                 variant="secondary"
                 onClick={() => handleDelete(mesocycle.id as number)}
+                size="small"
               >
                 Delete
               </Button>

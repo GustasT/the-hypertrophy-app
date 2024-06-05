@@ -13,7 +13,7 @@ import {
 import db from "../../database/db"; // Import the Dexie db instance
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
 
-import ExerciseItem from "../../components/ExerciseItem";
+import ExerciseItem from "./ExerciseItem";
 import {
   getFromLocalStorage,
   removeFromLocalStorage,

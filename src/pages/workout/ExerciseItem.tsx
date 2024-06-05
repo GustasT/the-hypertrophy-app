@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { ExerciseWithDetails } from "../database/db";
-import NumericInput from "../components/common/NumericInput";
-import DecimalInput from "../components/common/DecimalInput";
-import Button from "../components/common/Button";
+import { ExerciseWithDetails } from "../../database/db";
+import NumericInput from "../../components/common/NumericInput";
+import DecimalInput from "../../components/common/DecimalInput";
+import Button from "../../components/common/Button";
 import {
   saveToLocalStorage,
   getFromLocalStorage,
-} from "../utils/localStorageUtils";
-import { updateWorkoutSets } from "../services";
+} from "../../utils/localStorageUtils";
+import { updateWorkoutSets } from "../../services";
 
 interface ExerciseItemProps {
   exercise: ExerciseWithDetails;
@@ -219,6 +219,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           variant="outline"
           onClick={handleAddSet}
           disabled={isAddButtonDisabled}
+          size="small"
         >
           +
         </Button>
@@ -226,6 +227,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           variant="secondary"
           onClick={handleRemoveLastSet}
           disabled={isRemoveButtonDisabled}
+          size="small"
         >
           -
         </Button>
