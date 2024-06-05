@@ -3,9 +3,10 @@ import NewTemplateForm from "./NewTemplateForm";
 import Dialog from "../../components/Dialog";
 import db, { Template, Mesocycle } from "../../database/db";
 import TemplateList from "./TemplateList";
-import Button from "../../components/common/Button";
+
 import NewMesocycleForm from "../new_mesocycle/NewMesocycleForm";
 import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils"; // Import the utility function
+import PageHeader from "../../components/common/PageHeader";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -83,12 +84,11 @@ const Templates = () => {
 
   return (
     <>
-      <div className="flex justify-between top-0 bg-white sticky p-4 border-b">
-        <h1 className="text-2xl font-bold">Template List</h1>
-        <Button onClick={openAddDialog} variant="primary">
-          New Template
-        </Button>
-      </div>
+      <PageHeader
+        title="Template List"
+        buttonText="New Template"
+        buttonAction={openAddDialog}
+      />
       <div className="p-4">
         <TemplateList
           templates={templates}

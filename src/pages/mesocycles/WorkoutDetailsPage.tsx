@@ -36,25 +36,37 @@ const WorkoutDetailsPage = () => {
   }, [workoutId, setViewedWorkoutId]);
 
   return (
-    <div>
+    <div className="p-4">
       {loadingWorkout ? (
-        <h2 className="text-xl font-semibold p-4">Loading workout info...</h2>
+        <div className="flex justify-center items-center h-full">
+          <h2 className="text-xl font-semibold">Loading workout info...</h2>
+        </div>
       ) : (
         workout && (
           <div>
-            <h1>
+            <h1 className="text-3xl font-bold mb-4">
               Mesocycle {mesocycleId} - Workout {workoutId}
             </h1>
-            <h2>{`Week ${workout.week}, Day ${workout.day}`}</h2>
-            <div>
+            <h2 className="text-2xl font-semibold mb-6">
+              {`Week ${workout.week}, Day ${workout.day}`}
+            </h2>
+            <div className="space-y-4">
               {exercises.map((exercise) => (
-                <div key={exercise.id} className="mb-4">
-                  <h3 className="text-lg font-semibold">{exercise.name}</h3>
-                  <div>
+                <div
+                  key={exercise.id}
+                  className="bg-white p-4 rounded-lg shadow-md"
+                >
+                  <h3 className="text-xl font-semibold mb-2">
+                    {exercise.name}
+                  </h3>
+                  <div className="space-y-1">
                     {exercise.sets?.map((set, setIndex) => (
-                      <div key={setIndex} className="mb-2">
+                      <div key={setIndex} className="text-gray-700">
                         <p>
-                          Set {setIndex + 1}: {set.reps} reps at {set.weight} kg
+                          <span className="font-semibold">
+                            Set {setIndex + 1}:
+                          </span>{" "}
+                          {set.reps} reps at {set.weight} kg
                         </p>
                       </div>
                     ))}

@@ -12,13 +12,14 @@ import {
 } from "../../services";
 import db from "../../database/db"; // Import the Dexie db instance
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
-import Button from "../../components/common/Button";
+
 import ExerciseItem from "../../components/ExerciseItem";
 import {
   getFromLocalStorage,
   removeFromLocalStorage,
   saveToLocalStorage,
 } from "../../utils/localStorageUtils";
+import PageHeader from "../../components/common/PageHeader"; // Import the PageHeader component
 
 const WorkoutPage = () => {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ const WorkoutPage = () => {
     null
   );
   const [loadingWorkout, setLoadingWorkout] = useState(true);
-  const [isFinishWorkoutButtonDisabled, setIsSaveWorkoutButtonActive] =
+  const [isFinishWorkoutButtonDisabled, setIsFinishWorkoutButtonDisabled] =
     useState(true);
 
   const checkUnloggedSets = () => {
@@ -47,7 +48,7 @@ const WorkoutPage = () => {
           return false;
         }
       );
-      setIsSaveWorkoutButtonActive(hasUnloggedSets);
+      setIsFinishWorkoutButtonDisabled(hasUnloggedSets);
     }
   };
 
@@ -187,16 +188,12 @@ const WorkoutPage = () => {
 
   return (
     <div>
-      <div className="flex justify-between sticky top-0 bg-white p-4 border-b z-10">
-        <h1 className="text-2xl font-bold">Workout</h1>
-        <Button
-          variant="primary"
-          onClick={handleSave}
-          disabled={isFinishWorkoutButtonDisabled}
-        >
-          Finish Workout
-        </Button>
-      </div>
+      <PageHeader
+        title="Workout"
+        buttonText="Finish Workout"
+        buttonAction={handleSave}
+        buttonDisabled={isFinishWorkoutButtonDisabled} // Pass the disabled state
+      />
       {activeMesocycle && !loadingWorkout ? (
         <h2 className="text-xl font-semibold p-4">
           {`${activeMesocycle.name} - Week ${activeWorkout?.week}, Day ${activeWorkout?.day}`}

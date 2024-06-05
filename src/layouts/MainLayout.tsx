@@ -3,8 +3,8 @@ import Navbar from "../components/common/Navbar";
 
 const MainLayout = () => {
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <div className="flex-grow overflow-auto mb-16">
+    <div className="flex flex-col h-dvh overflow-hidden">
+      <div className="flex-grow overflow-auto mb-16 mt-16 ">
         <Outlet />
       </div>
       <Navbar />
