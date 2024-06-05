@@ -13,24 +13,23 @@ import WorkoutDetailsPage from "../pages/mesocycles/WorkoutDetailsPage";
 const AppRoutes = () => {
   return (
     <Router>
-      <MainLayout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-
-          <Route path="/templates" element={<Templates />} />
-          <Route path="/mesocycles" element={<MesocyclesPage />} />
-          {/* <Route path="/newMesocycle" element={<NewMesocycle />} /> */}
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="templates" element={<Templates />} />
+          <Route path="mesocycles" element={<MesocyclesPage />} />
+          {/* <Route path="newMesocycle" element={<NewMesocycle />} /> */}
           <Route path="exercises" element={<Exercises />} />
+          <Route path="workout" element={<WorkoutPage />} />
           <Route path="*" element={<NotFoundPage />} />
-          <Route path="/workout" element={<WorkoutPage />} />
           <Route
-            path="/mesocycles/:mesocycleId"
+            path="mesocycles/:mesocycleId"
             element={<MesocycleWorkoutsPage />}
           >
             <Route path=":workoutId" element={<WorkoutDetailsPage />} />
           </Route>
-        </Routes>
-      </MainLayout>
+        </Route>
+      </Routes>
     </Router>
   );
 };

@@ -44,7 +44,7 @@ const WorkoutDetailsPage = () => {
             </h1>
             <h2>{`Week ${workout.week}, Day ${workout.day}`}</h2>
             <div>
-              {exercises.map((exercise, index) => (
+              {exercises.map((exercise) => (
                 <div key={exercise.id} className="mb-4">
                   <h3 className="text-lg font-semibold">{exercise.name}</h3>
                   <div>
