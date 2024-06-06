@@ -7,16 +7,13 @@ import {
 import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
 import PageHeader from "../../components/common/PageHeader";
-import {
-  removeWorkoutKeysFromLocalStorage,
-  removeFromLocalStorage,
-} from "../../utils/localStorageUtils";
-import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils"; // Import the utility function
+import { removeWorkoutKeysFromLocalStorage } from "../../utils/localStorageUtils";
+import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils";
 import CurrentViewDebug from "../../contexts/CurrentViewDebug";
 
 const MesocyclesPage = () => {
   const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
-  const [activeMesocycle, setActiveMesocycleState] = useState<Mesocycle | null>(
+  const [activeMesocycle, setActiveMesocycle] = useState<Mesocycle | null>(
     null
   );
 
@@ -33,7 +30,7 @@ const MesocyclesPage = () => {
     const fetchActive = async () => {
       try {
         const activeMeso = await fetchActiveMesocycle();
-        setActiveMesocycleState(activeMeso);
+        setActiveMesocycle(activeMeso);
       } catch (error) {
         console.error("Failed to fetch active mesocycle:", error);
       }
@@ -51,8 +48,7 @@ const MesocyclesPage = () => {
       }
       await deleteMesocycle(id);
       if (activeMesocycle?.id === id) {
-        removeFromLocalStorage("activeMesocycle");
-        setActiveMesocycleState(null);
+        setActiveMesocycle(null);
       }
       setMesocycles(mesocycles.filter((mc) => mc.id !== id));
     } catch (error) {
@@ -62,11 +58,11 @@ const MesocyclesPage = () => {
 
   const handleSetActive = async (id: number) => {
     try {
-      await setActiveMesocycleAndWorkout(id); // Use the utility function
+      await setActiveMesocycleAndWorkout(id);
       const allMesocycles = await fetchAllMesocycles();
       setMesocycles(allMesocycles);
       const activeMeso = await fetchActiveMesocycle();
-      setActiveMesocycleState(activeMeso);
+      setActiveMesocycle(activeMeso);
     } catch (error) {
       console.error("Failed to set mesocycle as active:", error);
     }

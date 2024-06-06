@@ -53,13 +53,9 @@ const WorkoutPage = () => {
   };
 
   const loadFromLocalStorage = () => {
-    const savedMesocycle = getFromLocalStorage("activeMesocycle");
     const savedWorkoutSets = getFromLocalStorage(
       `workout-${activeWorkout?.id}-sets`
     );
-    if (savedMesocycle) {
-      setActiveMesocycle(savedMesocycle);
-    }
     if (savedWorkoutSets) {
       setExercises((prevExercises) =>
         prevExercises.map((exercise) => ({

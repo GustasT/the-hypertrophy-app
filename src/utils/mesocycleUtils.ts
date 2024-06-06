@@ -19,13 +19,6 @@ export const setActiveMesocycleAndWorkout = async (mesocycleId: number) => {
     if (activeWorkout) {
       const activeMesocycle = await db.table("mesocycles").get(mesocycleId);
       if (activeMesocycle) {
-        saveToLocalStorage("activeMesocycle", {
-          id: activeMesocycle.id,
-          name: activeMesocycle.name,
-          weeks: activeMesocycle.weeks,
-          timesPerWeek: activeMesocycle.timesPerWeek,
-        });
-
         const exercises = await fetchExercisesByWorkoutId(activeWorkout.id!);
         const sets = exercises.reduce((acc, exercise) => {
           if (exercise.sets && exercise.sets.length > 0) {
