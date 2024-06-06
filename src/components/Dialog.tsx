@@ -40,7 +40,7 @@ const Dialog: React.FC<DialogProps> = ({
               visible ? "translate-y-0" : "translate-y-full"
             }`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the dialog
-            style={{ maxHeight: "70vh", marginBottom: "4rem" }}
+            style={{ maxHeight: "70dvh", marginBottom: "4rem" }}
           >
             <div className="sticky top-0 bg-white p-6 rounded-t-lg flex justify-between items-center border-b">
               <h2 className="text-xl font-bold">{title}</h2>

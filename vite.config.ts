@@ -12,6 +12,7 @@ export default defineConfig({
     react(),
     VitePWA({
       manifest: {
+        theme_color: "#ffffff",
         icons: [
           {
             src: "/testSVG.png",
