@@ -1,25 +1,35 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   fetchActiveMesocycle,
   fetchActiveWorkout,
   fetchExercisesByWorkoutId,
   updateWorkout,
-  completeCurrentWorkout, // Import the new functions
+  completeCurrentWorkout,
+  deactivateCurrentWorkout,
   activateNextWorkout,
+  setMesocycleCompleted,
 } from "../../services";
+import db from "../../database/db"; // Import the Dexie db instance
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
-import Button from "../../components/common/Button";
-import ExerciseItem from "../../components/ExerciseItem";
-import { getFromLocalStorage } from "../../utils/localStorageUtils";
+
+import ExerciseItem from "./ExerciseItem";
+import {
+  getFromLocalStorage,
+  removeFromLocalStorage,
+  saveToLocalStorage,
+} from "../../utils/localStorageUtils";
+import PageHeader from "../../components/common/PageHeader"; // Import the PageHeader component
 
 const WorkoutPage = () => {
+  const navigate = useNavigate();
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithDetails[]>([]);
   const [activeMesocycle, setActiveMesocycle] = useState<Mesocycle | null>(
     null
   );
   const [loadingWorkout, setLoadingWorkout] = useState(true);
-  const [isFinishWorkoutButtonDisabled, setIsSaveWorkoutButtonActive] =
+  const [isFinishWorkoutButtonDisabled, setIsFinishWorkoutButtonDisabled] =
     useState(true);
 
   const checkUnloggedSets = () => {
@@ -38,61 +48,60 @@ const WorkoutPage = () => {
           return false;
         }
       );
-      setIsSaveWorkoutButtonActive(hasUnloggedSets);
+      setIsFinishWorkoutButtonDisabled(hasUnloggedSets);
+    }
+  };
+
+  const loadFromLocalStorage = () => {
+    const savedWorkoutSets = getFromLocalStorage(
+      `workout-${activeWorkout?.id}-sets`
+    );
+    if (savedWorkoutSets) {
+      setExercises((prevExercises) =>
+        prevExercises.map((exercise) => ({
+          ...exercise,
+          sets: savedWorkoutSets[exercise.id!] || exercise.sets,
+        }))
+      );
+      checkUnloggedSets();
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const mesocycle = await fetchActiveMesocycle();
+      if (mesocycle) {
+        setActiveMesocycle(mesocycle);
+
+        const workout = await fetchActiveWorkout(mesocycle.id!);
+        if (workout) {
+          setActiveWorkout(workout);
+
+          const exercises = await fetchExercisesByWorkoutId(workout.id!);
+          const exercisesWithSets = exercises.map((exercise) => ({
+            ...exercise,
+            sets:
+              exercise.sets && exercise.sets.length > 0
+                ? exercise.sets
+                : [{ reps: 0, weight: 0 }],
+          }));
+          setExercises(exercisesWithSets);
+        }
+      } else {
+        navigate("/mesocycles"); // Redirect if no active mesocycle
+      }
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+      navigate("/mesocycles"); // Redirect on error
+    } finally {
+      setLoadingWorkout(false);
+      loadFromLocalStorage();
     }
   };
 
   useEffect(() => {
-    const loadFromLocalStorage = () => {
-      const savedMesocycle = getFromLocalStorage("activeMesocycle");
-      const savedWorkoutSets = getFromLocalStorage(
-        `workout-${activeWorkout?.id}-sets`
-      );
-      if (savedMesocycle) {
-        setActiveMesocycle(savedMesocycle);
-      }
-      if (savedWorkoutSets) {
-        setExercises((prevExercises) =>
-          prevExercises.map((exercise) => ({
-            ...exercise,
-            sets: savedWorkoutSets[exercise.id!] || exercise.sets,
-          }))
-        );
-        checkUnloggedSets();
-      }
-    };
-
-    const fetchData = async () => {
-      try {
-        const mesocycle = await fetchActiveMesocycle();
-        if (mesocycle) {
-          setActiveMesocycle(mesocycle);
-
-          const workout = await fetchActiveWorkout(mesocycle.id!);
-          if (workout) {
-            setActiveWorkout(workout);
-
-            const exercises = await fetchExercisesByWorkoutId(workout.id!);
-            const exercisesWithSets = exercises.map((exercise) => ({
-              ...exercise,
-              sets:
-                exercise.sets && exercise.sets.length > 0
-                  ? exercise.sets
-                  : [{ reps: 0, weight: 0 }],
-            }));
-            setExercises(exercisesWithSets);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      } finally {
-        setLoadingWorkout(false);
-        loadFromLocalStorage();
-      }
-    };
-
     fetchData();
-  }, [activeWorkout?.id]);
+  }, [activeWorkout?.id, navigate]);
 
   const handleInputChange = (
     exerciseIndex: number,
@@ -126,9 +135,47 @@ const WorkoutPage = () => {
     if (activeWorkout) {
       try {
         await updateWorkout({ ...activeWorkout, exercises });
-        await completeCurrentWorkout(activeWorkout); // Call the function to complete the current workout
-        await activateNextWorkout(activeWorkout); // Call the function to activate the next workout
-        console.log("Workout updated successfully!");
+        await completeCurrentWorkout(activeWorkout); // Complete the current workout
+
+        // Find the next workout within the same mesocycle
+        const nextWorkout = await db
+          .table("workouts")
+          .where({
+            mesocycleId: activeWorkout.mesocycleId,
+            id: activeWorkout.id! + 1,
+          })
+          .first();
+
+        if (nextWorkout) {
+          await deactivateCurrentWorkout(activeWorkout); // Deactivate the current workout
+          removeFromLocalStorage(`workout-${activeWorkout.id}-sets`); // Remove the current workout sets from local storage
+
+          const exercises = await fetchExercisesByWorkoutId(nextWorkout.id!);
+          const sets = exercises.reduce((acc, exercise) => {
+            if (exercise.sets && exercise.sets.length > 0) {
+              acc[exercise.id!] = exercise.sets.map((set) => ({
+                ...set,
+                logged: set.reps !== 0 && set.weight !== 0,
+              }));
+            } else {
+              acc[exercise.id!] = [
+                { reps: "", weight: "", logged: false } as any,
+              ];
+            }
+            return acc;
+          }, {} as Record<number, { reps: number; weight: number; logged: boolean }[]>);
+          saveToLocalStorage(`workout-${nextWorkout.id}-sets`, sets); // Save the next workout sets to local storage
+
+          await activateNextWorkout(activeWorkout); // Activate the next workout
+          console.log("Workout updated successfully!");
+          setActiveWorkout(nextWorkout); // Update the state with the next workout
+          setExercises(exercises); // Update the state with the next workout exercises
+        } else {
+          console.log(
+            "No next workout found to activate. Setting mesocycle as completed."
+          );
+          await setMesocycleCompleted(activeWorkout.mesocycleId!); // Complete the mesocycle
+        }
       } catch (error) {
         console.error("Failed to update workout:", error);
       }
@@ -137,16 +184,12 @@ const WorkoutPage = () => {
 
   return (
     <div>
-      <div className="flex justify-between sticky top-0 bg-white p-4 border-b z-10">
-        <h1 className="text-2xl font-bold">Workout</h1>
-        <Button
-          variant="primary"
-          onClick={handleSave}
-          disabled={isFinishWorkoutButtonDisabled}
-        >
-          Finish Workout
-        </Button>
-      </div>
+      <PageHeader
+        title="Workout"
+        buttonText="Finish Workout"
+        buttonAction={handleSave}
+        buttonDisabled={isFinishWorkoutButtonDisabled} // Pass the disabled state
+      />
       {activeMesocycle && !loadingWorkout ? (
         <h2 className="text-xl font-semibold p-4">
           {`${activeMesocycle.name} - Week ${activeWorkout?.week}, Day ${activeWorkout?.day}`}

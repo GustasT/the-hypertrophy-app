@@ -88,17 +88,28 @@ export const updateWorkoutSets = async (
   });
 };
 
-// Function to complete the current workout
+// Function to mark the workout as completed
 export const completeCurrentWorkout = async (
   currentWorkout: Workout
 ): Promise<void> => {
   try {
-    await db
-      .table("workouts")
-      .update(currentWorkout.id!, { completed: 1, isActive: 0 });
+    await db.table("workouts").update(currentWorkout.id!, { completed: 1 });
     console.log("Current workout completed successfully!");
   } catch (error) {
     console.error("Failed to complete current workout:", error);
+    throw error;
+  }
+};
+
+// Function to deactivate the workout
+export const deactivateCurrentWorkout = async (
+  currentWorkout: Workout
+): Promise<void> => {
+  try {
+    await db.table("workouts").update(currentWorkout.id!, { isActive: 0 });
+    console.log("Current workout deactivated successfully!");
+  } catch (error) {
+    console.error("Failed to deactivate current workout:", error);
     throw error;
   }
 };
@@ -125,5 +136,32 @@ export const activateNextWorkout = async (
   } catch (error) {
     console.error("Failed to activate next workout:", error);
     throw error;
+  }
+};
+
+export const fetchWorkoutsByMesocycle = async (
+  mesocycleId: number
+): Promise<Workout[]> => {
+  try {
+    const workouts = await db
+      .table("workouts")
+      .where({ mesocycleId })
+      .toArray();
+    return workouts;
+  } catch (error) {
+    console.error("Failed to fetch workouts by mesocycle ID:", error);
+    return [];
+  }
+};
+
+export const fetchWorkoutById = async (
+  workoutId: number
+): Promise<Workout | null> => {
+  try {
+    const workout = await db.table("workouts").get(workoutId);
+    return workout ?? null;
+  } catch (error) {
+    console.error("Failed to fetch workout by ID:", error);
+    return null;
   }
 };

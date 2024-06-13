@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Mesocycle, Template } from "../../database/db";
 import Button from "../../components/common/Button";
 import db from "../../database/db";
@@ -68,20 +69,30 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
             </div>
             <div className="flex space-x-2">
               {mesocycle.completed ? (
-                <span className="text-gray-500">Completed</span>
+                <span className="text-green-400 px-2 py-1">Completed</span>
               ) : mesocycle.isActive ? (
-                <span className="text-green-500 font-bold">Active</span>
+                <div className="bg-green-400 text-white px-2 py-1 rounded-full">
+                  Active
+                </div>
               ) : (
                 <Button
                   variant="outline"
                   onClick={() => handleSetActive(mesocycle.id as number)}
+                  size="small"
                 >
                   Make Active
                 </Button>
               )}
+              <Link to={`/mesocycles/${mesocycle.id}`}>
+                <Button variant="outline" size="small">
+                  View
+                </Button>
+              </Link>
+
               <Button
                 variant="secondary"
                 onClick={() => handleDelete(mesocycle.id as number)}
+                size="small"
               >
                 Delete
               </Button>

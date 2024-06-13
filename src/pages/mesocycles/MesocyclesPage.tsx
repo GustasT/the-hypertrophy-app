@@ -2,21 +2,20 @@ import { useState, useEffect } from "react";
 import {
   fetchAllMesocycles,
   deleteMesocycle,
-  setActiveMesocycle,
-  fetchActiveWorkout,
-  fetchExercisesByWorkoutId,
   fetchActiveMesocycle,
 } from "../../services";
 import { Mesocycle } from "../../database/db";
 import MesocyclesList from "./MesocyclesList";
 import PageHeader from "../../components/common/PageHeader";
-import {
-  saveToLocalStorage,
-  removeWorkoutKeysFromLocalStorage,
-} from "../../utils/localStorageUtils";
+import { removeWorkoutKeysFromLocalStorage } from "../../utils/localStorageUtils";
+import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils";
+import CurrentViewDebug from "../../contexts/CurrentViewDebug";
 
-const Mesocycles = () => {
+const MesocyclesPage = () => {
   const [mesocycles, setMesocycles] = useState<Mesocycle[]>([]);
+  const [activeMesocycle, setActiveMesocycle] = useState<Mesocycle | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchMesocycles = async () => {
@@ -28,7 +27,17 @@ const Mesocycles = () => {
       }
     };
 
+    const fetchActive = async () => {
+      try {
+        const activeMeso = await fetchActiveMesocycle();
+        setActiveMesocycle(activeMeso);
+      } catch (error) {
+        console.error("Failed to fetch active mesocycle:", error);
+      }
+    };
+
     fetchMesocycles();
+    fetchActive();
   }, []);
 
   const handleDelete = async (id: number) => {
@@ -38,6 +47,9 @@ const Mesocycles = () => {
         removeWorkoutKeysFromLocalStorage();
       }
       await deleteMesocycle(id);
+      if (activeMesocycle?.id === id) {
+        setActiveMesocycle(null);
+      }
       setMesocycles(mesocycles.filter((mc) => mc.id !== id));
     } catch (error) {
       console.error("Failed to delete mesocycle:", error);
@@ -46,41 +58,11 @@ const Mesocycles = () => {
 
   const handleSetActive = async (id: number) => {
     try {
-      removeWorkoutKeysFromLocalStorage();
-      await setActiveMesocycle(id);
-
-      const activeWorkout = await fetchActiveWorkout(id);
-      if (activeWorkout) {
-        const activeMesocycle = await fetchActiveMesocycle();
-        if (activeMesocycle) {
-          saveToLocalStorage("activeMesocycle", {
-            id: activeMesocycle.id,
-            name: activeMesocycle.name,
-            weeks: activeMesocycle.weeks,
-            timesPerWeek: activeMesocycle.timesPerWeek,
-          });
-
-          const exercises = await fetchExercisesByWorkoutId(activeWorkout.id!);
-          const sets = exercises.reduce((acc, exercise) => {
-            if (exercise.sets && exercise.sets.length > 0) {
-              acc[exercise.id!] = exercise.sets.map((set) => ({
-                ...set,
-                logged: set.reps !== 0 && set.weight !== 0,
-              }));
-            } else {
-              // If the exercise has no sets, add a new set
-              acc[exercise.id!] = [
-                { reps: "", weight: "", logged: false } as any,
-              ];
-            }
-            return acc;
-          }, {} as Record<number, { reps: number; weight: number; logged: boolean }[]>);
-          saveToLocalStorage(`workout-${activeWorkout.id}-sets`, sets);
-        }
-      }
-
+      await setActiveMesocycleAndWorkout(id);
       const allMesocycles = await fetchAllMesocycles();
       setMesocycles(allMesocycles);
+      const activeMeso = await fetchActiveMesocycle();
+      setActiveMesocycle(activeMeso);
     } catch (error) {
       console.error("Failed to set mesocycle as active:", error);
     }
@@ -91,17 +73,23 @@ const Mesocycles = () => {
       <PageHeader
         title="Mesocycles"
         buttonText="New Meso"
-        buttonLink="/newMesocycle"
+        buttonLink="/templates"
       />
       <div className="p-4">
+        {mesocycles.length === 0 ? (
+          <p>Please create a mesocycle</p>
+        ) : !activeMesocycle ? (
+          <p>Please activate a mesocycle</p>
+        ) : null}
         <MesocyclesList
           mesocycles={mesocycles}
           onDelete={handleDelete}
           onSetActive={handleSetActive}
         />
       </div>
+      <CurrentViewDebug />
     </>
   );
 };
 
-export default Mesocycles;
+export default MesocyclesPage;
