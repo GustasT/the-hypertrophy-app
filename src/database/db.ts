@@ -1,4 +1,5 @@
 import Dexie, { Table } from "dexie";
+import { defaultExercises } from "./defaultExercises"; // Import default exercises
 
 // Define the database
 class ExerciseDB extends Dexie {
@@ -48,6 +49,19 @@ class ExerciseDB extends Dexie {
       workouts:
         "++id,mesocycleId,week,day,completed,isActive,[mesocycleId+isActive],[mesocycleId+id]", // Add compound index
     });
+
+    this.on("populate", async () => {
+      await this.populateDefaultExercises();
+    });
+  }
+
+  async populateDefaultExercises() {
+    for (const exercise of defaultExercises) {
+      const existingExercise = await this.exercises.get(exercise.id);
+      if (!existingExercise) {
+        await this.exercises.add(exercise);
+      }
+    }
   }
 }
 
@@ -61,6 +75,7 @@ export interface Exercise {
   group: string;
   type: string;
   youtubeLink?: string;
+  isDefault?: boolean; // New field to identify default exercises
 }
 
 export interface Template {

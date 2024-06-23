@@ -40,15 +40,19 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
               )}
             </div>
             <div className="flex space-x-2">
-              <Button variant="outline" onClick={() => onEdit(exercise)}>
-                Edit
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => onDelete(exercise.id as number)}
-              >
-                Delete
-              </Button>
+              {!exercise.isDefault && (
+                <>
+                  <Button variant="outline" onClick={() => onEdit(exercise)}>
+                    Edit
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => onDelete(exercise.id as number)}
+                  >
+                    Delete
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </li>

@@ -29,6 +29,8 @@ const Exercises = () => {
   }, []);
 
   const handleSave = (exercise: Exercise) => {
+    if (exercise.isDefault) return; // Prevent saving changes to default exercises
+
     if (isEditMode && selectedExercise) {
       setExercises(
         exercises.map((ex) => (ex.id === exercise.id ? exercise : ex))
@@ -39,6 +41,9 @@ const Exercises = () => {
   };
 
   const handleDelete = async (id: number) => {
+    const exercise = exercises.find((ex) => ex.id === id);
+    if (exercise?.isDefault) return; // Prevent deleting default exercises
+
     try {
       await deleteExercise(id);
       setExercises(exercises.filter((ex) => ex.id !== id));
