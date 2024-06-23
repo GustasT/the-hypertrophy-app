@@ -3,6 +3,14 @@ import db, { Exercise, ExerciseWithDetails } from "../database/db";
 // Function to add a new exercise
 export const addExercise = async (exercise: Exercise) => {
   try {
+    // Find the highest existing ID
+    const highestId = await db.exercises.orderBy("id").reverse().first();
+    const newId = (highestId?.id || 0) + 1;
+
+    // Set the new ID
+    exercise.id = newId;
+
+    // Add the new exercise
     const id = await db.table("exercises").add(exercise);
     return id;
   } catch (error) {
@@ -22,6 +30,7 @@ export const updateExercise = async (exercise: Exercise) => {
 // Function to fetch all exercises
 export const fetchAllExercises = async () => {
   try {
+    await db.populateDefaultExercises(); // Ensure default exercises are added
     const allExercises = await db.table("exercises").toArray();
     return allExercises;
   } catch (error) {
