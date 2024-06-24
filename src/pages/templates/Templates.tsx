@@ -25,7 +25,12 @@ const Templates = () => {
       }
     };
 
-    fetchTemplates();
+    const initializeDB = async () => {
+      await db.open(); // Open the database
+      await fetchTemplates(); // Fetch templates after database is ready
+    };
+
+    initializeDB();
   }, []);
 
   const handleSave = (template: Template) => {

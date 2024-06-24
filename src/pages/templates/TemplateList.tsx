@@ -6,14 +6,14 @@ interface TemplateListProps {
   templates: Template[];
   onEdit: (template: Template) => void;
   onDelete: (id: number) => void;
-  onStartMeso: (template: Template) => void; // Add this line
+  onStartMeso: (template: Template) => void;
 }
 
 const TemplateList: React.FC<TemplateListProps> = ({
   templates,
   onEdit,
   onDelete,
-  onStartMeso, // Add this line
+  onStartMeso,
 }) => {
   const [expandedTemplates, setExpandedTemplates] = useState<Set<number>>(
     new Set()
@@ -62,15 +62,19 @@ const TemplateList: React.FC<TemplateListProps> = ({
                 ))}
               </ul>
               <div className="flex space-x-2 mt-4">
-                <Button variant="outline" onClick={() => onEdit(template)}>
-                  Edit
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => onDelete(template.id as number)}
-                >
-                  Delete
-                </Button>
+                {!template.isDefault && (
+                  <>
+                    <Button variant="outline" onClick={() => onEdit(template)}>
+                      Edit
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      onClick={() => onDelete(template.id as number)}
+                    >
+                      Delete
+                    </Button>
+                  </>
+                )}
                 <Button variant="primary" onClick={() => onStartMeso(template)}>
                   New Meso
                 </Button>
