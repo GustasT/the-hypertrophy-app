@@ -1,5 +1,4 @@
 import { Template } from "./db";
-import db from "./db";
 
 const baseDefaultTemplates = [
   {
@@ -1919,21 +1918,3 @@ export const defaultTemplates: Template[] = baseDefaultTemplates.map(
     isDefault: true,
   })
 );
-
-// export async function populateDefaultTemplates() {
-//   const transaction = db.transaction("rw", db.templates, async () => {
-//     for (const template of defaultTemplates) {
-//       const existingTemplate = await db.templates
-//         .where("name")
-//         .equals(template.name)
-//         .first();
-//       if (!existingTemplate) {
-//         await db.templates.add(template);
-//       }
-//     }
-//   });
-
-//   await transaction.catch((e) => {
-//     console.error("Error populating default templates:", e);
-//   });
-// }

@@ -1,8 +1,7 @@
 import Dexie, { Table } from "dexie";
 import { defaultExercises } from "./defaultExercises"; // Import default exercises
-import { populateDefaultTemplates } from "./defaultTemplates"; // Import default templates
+import { defaultTemplates } from "./defaultTemplates";
 
-// Define the database
 class ExerciseDB extends Dexie {
   exercises!: Table<Exercise>;
   templates!: Table<Template>;
@@ -52,17 +51,23 @@ class ExerciseDB extends Dexie {
     });
 
     this.on("populate", async () => {
+      await this.populateDefaultTemplates();
       await this.populateDefaultExercises();
-      await populateDefaultTemplates(this); // Populate default templates
-    });
-
-    // Ensure default templates are populated on database creation/upgrade
-    this.on("ready", async () => {
-      await populateDefaultTemplates(this); // Populate default templates
     });
   }
 
+  async populateDefaultTemplates() {
+    console.log("Populating default templates...");
+    for (const template of defaultTemplates) {
+      const existingTemplate = await this.templates.get(template.id);
+      if (!existingTemplate) {
+        await this.templates.add(template);
+      }
+    }
+  }
+
   async populateDefaultExercises() {
+    console.log("Populating default exercises...");
     for (const exercise of defaultExercises) {
       const existingExercise = await this.exercises.get(exercise.id);
       if (!existingExercise) {
