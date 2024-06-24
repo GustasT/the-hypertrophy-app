@@ -155,7 +155,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                       )
                     }
                     isClearable={true}
-                    isSearchable={false}
+                    isSearchable={true}
                   />
                 </div>
               );
