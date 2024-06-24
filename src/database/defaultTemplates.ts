@@ -1,7 +1,7 @@
 import { Template } from "./db";
-import Dexie from "dexie";
+import db from "./db";
 
-export const defaultTemplates: Omit<Template, "id">[] = [
+const baseDefaultTemplates = [
   {
     name: "Superman Workout",
     timesPerWeek: 5,
@@ -513,6 +513,358 @@ export const defaultTemplates: Omit<Template, "id">[] = [
       },
     ],
   },
+  {
+    name: "Glutes & Abs Emphasis",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: ["Glutes", "Glutes", "Abs", "Back", "Chest", "Shoulders"],
+      },
+      {
+        name: "Tue",
+        muscleGroups: [
+          "Quads",
+          "Quads",
+          "Hamstrings",
+          "Calves",
+          "Triceps",
+          "Biceps",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: ["Glutes", "Glutes", "Abs", "Shoulders", "Back", "Chest"],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Hamstrings",
+          "Hamstrings",
+          "Quads",
+          "Calves",
+          "Biceps",
+          "Triceps",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: ["Glutes", "Glutes", "Abs", "Shoulders", "Chest", "Back"],
+      },
+    ],
+  },
+  {
+    name: "Chest & Triceps Emphasis",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Chest",
+          "Triceps",
+          "Back",
+          "Shoulders",
+        ],
+      },
+      {
+        name: "Tue",
+        muscleGroups: ["Quads", "Glutes", "Hamstrings", "Calves"],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Triceps",
+          "Triceps",
+          "Back",
+          "Biceps",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: ["Hamstrings", "Calves", "Quads", "Glutes"],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Triceps",
+          "Triceps",
+          "Triceps",
+          "Chest",
+          "Biceps",
+          "Shoulders",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Back & Biceps Emphasis",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Back",
+          "Biceps",
+          "Forearms",
+          "Chest",
+          "Shoulders",
+        ],
+      },
+      {
+        name: "Tue",
+        muscleGroups: ["Quads", "Glutes", "Hamstrings", "Calves"],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Biceps",
+          "Biceps",
+          "Forearms",
+          "Chest",
+          "Triceps",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: ["Hamstrings", "Calves", "Quads", "Glutes"],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Biceps",
+          "Biceps",
+          "Biceps",
+          "Back",
+          "Forearms",
+          "Triceps",
+          "Shoulders",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Arms & Shoulders Emphasis",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Triceps",
+          "Triceps",
+          "Triceps",
+          "Biceps",
+          "Shoulders",
+          "Forearms",
+        ],
+      },
+      {
+        name: "Tue",
+        muscleGroups: [
+          "Chest",
+          "Back",
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Biceps",
+          "Biceps",
+          "Biceps",
+          "Triceps",
+          "Shoulders",
+          "Forearms",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Back",
+          "Chest",
+          "Hamstrings",
+          "Calves",
+          "Quads",
+          "Glutes",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Shoulders",
+          "Shoulders",
+          "Shoulders",
+          "Triceps",
+          "Biceps",
+          "Forearms",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Chest & Back Emphasis",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: ["Chest", "Chest", "Chest", "Back", "Shoulders"],
+      },
+      {
+        name: "Tue",
+        muscleGroups: [
+          "Triceps",
+          "Biceps",
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: ["Back", "Back", "Back", "Chest", "Shoulders"],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Biceps",
+          "Triceps",
+          "Hamstrings",
+          "Calves",
+          "Quads",
+          "Glutes",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: ["Chest", "Chest", "Back", "Back", "Shoulders"],
+      },
+    ],
+  },
+
+  {
+    name: "Lower Body Emphasis",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: ["Quads", "Hamstrings", "Glutes", "Calves"],
+      },
+      {
+        name: "Tue",
+        muscleGroups: ["Chest", "Triceps", "Back", "Biceps", "Shoulders"],
+      },
+      {
+        name: "Wed",
+        muscleGroups: ["Glutes", "Glutes", "Quads", "Hamstrings", "Calves"],
+      },
+      {
+        name: "Thu",
+        muscleGroups: ["Shoulders", "Biceps", "Back", "Triceps", "Chest"],
+      },
+      {
+        name: "Fri",
+        muscleGroups: ["Hamstrings", "Hamstrings", "Glutes", "Quads", "Calves"],
+      },
+    ],
+  },
+
+  {
+    name: "Upper Body Emphasis",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Chest",
+          "Triceps",
+          "Shoulders",
+          "Quads",
+          "Glutes",
+        ],
+      },
+      {
+        name: "Tue",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Back",
+          "Biceps",
+          "Forearms",
+          "Hamstrings",
+          "Calves",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: ["Triceps", "Triceps", "Triceps", "Chest", "Shoulders"],
+      },
+      {
+        name: "Thu",
+        muscleGroups: ["Biceps", "Biceps", "Biceps", "Back", "Forearms"],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Shoulders",
+          "Shoulders",
+          "Shoulders",
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Whole Body Split",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: ["Quads", "Quads", "Hamstrings", "Glutes", "Calves"],
+      },
+      {
+        name: "Tue",
+        muscleGroups: ["Chest", "Chest", "Triceps", "Triceps", "Shoulders"],
+      },
+      {
+        name: "Wed",
+        muscleGroups: ["Back", "Back", "Biceps", "Biceps", "Shoulders"],
+      },
+      {
+        name: "Thu",
+        muscleGroups: ["Glutes", "Hamstrings", "Quads", "Quads", "Calves"],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Shoulders",
+          "Triceps",
+          "Triceps",
+          "Chest",
+          "Biceps",
+          "Biceps",
+          "Back",
+        ],
+      },
+    ],
+  },
 
   {
     name: "Glutes & Abs Emphasis",
@@ -927,17 +1279,661 @@ export const defaultTemplates: Omit<Template, "id">[] = [
       },
     ],
   },
+
+  {
+    name: "Glutes & Abs Emphasis",
+    timesPerWeek: 3,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Glutes",
+          "Glutes",
+          "Abs",
+          "Quads",
+          "Hamstrings",
+          "Back",
+          "Chest",
+          "Shoulders",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Quads",
+          "Hamstrings",
+          "Abs",
+          "Glutes",
+          "Shoulders",
+          "Chest",
+          "Back",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Glutes",
+          "Glutes",
+          "Abs",
+          "Quads",
+          "Hamstrings",
+          "Back",
+          "Chest",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Chest & Triceps Emphasis",
+    timesPerWeek: 3,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Triceps",
+          "Shoulders",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Triceps",
+          "Triceps",
+          "Chest",
+          "Shoulders",
+          "Back",
+          "Biceps",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Triceps",
+          "Triceps",
+          "Shoulders",
+          "Back",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Back & Biceps Emphasis",
+    timesPerWeek: 3,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Biceps",
+          "Shoulders",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Biceps",
+          "Biceps",
+          "Back",
+          "Shoulders",
+          "Chest",
+          "Triceps",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Biceps",
+          "Biceps",
+          "Shoulders",
+          "Chest",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Arms & Shoulders Emphasis",
+    timesPerWeek: 3,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Triceps",
+          "Triceps",
+          "Shoulders",
+          "Biceps",
+          "Chest",
+          "Quads",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Biceps",
+          "Biceps",
+          "Triceps",
+          "Shoulders",
+          "Back",
+          "Hamstrings",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Shoulders",
+          "Shoulders",
+          "Biceps",
+          "Triceps",
+          "Chest",
+          "Back",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Chest and Back Emphasis",
+    timesPerWeek: 3,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: ["Chest", "Back", "Triceps", "Shoulders", "Quads"],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Chest",
+          "Biceps",
+          "Shoulders",
+          "Hamstrings",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Back",
+          "Chest",
+          "Triceps",
+          "Biceps",
+          "Shoulders",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Lower Body Emphasis",
+    timesPerWeek: 3,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Quads",
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+          "Chest",
+          "Shoulders",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Glutes",
+          "Glutes",
+          "Quads",
+          "Hamstrings",
+          "Calves",
+          "Chest",
+          "Back",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Hamstrings",
+          "Hamstrings",
+          "Glutes",
+          "Quads",
+          "Calves",
+          "Back",
+          "Shoulders",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Upper Body Emphasis",
+    timesPerWeek: 3,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Back",
+          "Triceps",
+          "Biceps",
+          "Shoulders",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Biceps",
+          "Biceps",
+          "Triceps",
+          "Triceps",
+          "Back",
+          "Chest",
+          "Shoulders",
+          "Quads",
+          "Glutes",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Shoulders",
+          "Biceps",
+          "Triceps",
+          "Chest",
+          "Glutes",
+          "Hamstrings",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Whole Body Daily",
+    timesPerWeek: 5,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Triceps",
+          "Back",
+          "Biceps",
+          "Shoulders",
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+        ],
+      },
+      {
+        name: "Tue",
+        muscleGroups: [
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+          "Chest",
+          "Triceps",
+          "Back",
+          "Biceps",
+          "Shoulders",
+        ],
+      },
+      {
+        name: "Wed",
+        muscleGroups: [
+          "Shoulders",
+          "Biceps",
+          "Back",
+          "Triceps",
+          "Chest",
+          "Calves",
+          "Hamstrings",
+          "Glutes",
+          "Quads",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+          "Shoulders",
+          "Biceps",
+          "Back",
+          "Triceps",
+          "Chest",
+        ],
+      },
+      {
+        name: "Fri",
+        muscleGroups: [
+          "Shoulders",
+          "Biceps",
+          "Back",
+          "Triceps",
+          "Chest",
+          "Calves",
+          "Hamstrings",
+          "Glutes",
+          "Quads",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Glutes & Abs Emphasis",
+    timesPerWeek: 2,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Glutes",
+          "Glutes",
+          "Abs",
+          "Quads",
+          "Hamstrings",
+          "Back",
+          "Shoulders",
+          "Chest",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Glutes",
+          "Glutes",
+          "Abs",
+          "Hamstrings",
+          "Quads",
+          "Back",
+          "Shoulders",
+          "Chest",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Chest & Triceps Emphasis",
+    timesPerWeek: 2,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Triceps",
+          "Triceps",
+          "Shoulders",
+          "Back",
+          "Biceps",
+          "Quads",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Triceps",
+          "Triceps",
+          "Chest",
+          "Chest",
+          "Shoulders",
+          "Biceps",
+          "Back",
+          "Hamstrings",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Back & Biceps Emphasis",
+    timesPerWeek: 2,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Biceps",
+          "Biceps",
+          "Back",
+          "Back",
+          "Shoulders",
+          "Chest",
+          "Triceps",
+          "Quads",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Biceps",
+          "Biceps",
+          "Shoulders",
+          "Triceps",
+          "Chest",
+          "Hamstrings",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Arms & Shoulders Emphasis",
+    timesPerWeek: 2,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Triceps",
+          "Triceps",
+          "Biceps",
+          "Biceps",
+          "Shoulders",
+          "Chest",
+          "Back",
+          "Quads",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Biceps",
+          "Biceps",
+          "Triceps",
+          "Triceps",
+          "Shoulders",
+          "Back",
+          "Chest",
+          "Hamstrings",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Chest & Back Emphasis",
+    timesPerWeek: 2,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Back",
+          "Back",
+          "Biceps",
+          "Shoulders",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Chest",
+          "Chest",
+          "Triceps",
+          "Shoulders",
+          "Hamstrings",
+          "Quads",
+        ],
+      },
+    ],
+  },
+
+  {
+    name: "Lower Body Emphasis",
+    timesPerWeek: 2,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Quads",
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+          "Chest",
+          "Back",
+          "Shoulders",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Hamstrings",
+          "Hamstrings",
+          "Glutes",
+          "Quads",
+          "Calves",
+          "Back",
+          "Chest",
+          "Shoulders",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Upper Body Emphasis",
+    timesPerWeek: 2,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Chest",
+          "Triceps",
+          "Back",
+          "Biceps",
+          "Shoulders",
+          "Quads",
+          "Hamstrings",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Back",
+          "Back",
+          "Biceps",
+          "Triceps",
+          "Chest",
+          "Shoulders",
+          "Hamstrings",
+          "Quads",
+        ],
+      },
+    ],
+  },
+  {
+    name: "Whole Body Daily",
+    timesPerWeek: 2,
+    days: [
+      {
+        name: "Mon",
+        muscleGroups: [
+          "Chest",
+          "Triceps",
+          "Back",
+          "Biceps",
+          "Shoulders",
+          "Quads",
+          "Glutes",
+          "Hamstrings",
+          "Calves",
+        ],
+      },
+      {
+        name: "Thu",
+        muscleGroups: [
+          "Calves",
+          "Hamstrings",
+          "Glutes",
+          "Quads",
+          "Shoulders",
+          "Biceps",
+          "Back",
+          "Triceps",
+          "Chest",
+        ],
+      },
+    ],
+  },
 ];
 
-// Function to populate default templates into the database
-export async function populateDefaultTemplates(db: Dexie) {
-  for (const template of defaultTemplates) {
-    const existingTemplate = await db
-      .table("templates")
-      .where({ name: template.name })
-      .first();
-    if (!existingTemplate) {
-      await db.table("templates").add({ ...template, isDefault: true });
-    }
-  }
-}
+export const defaultTemplates: Template[] = baseDefaultTemplates.map(
+  (template, index) => ({
+    id: index + 1,
+    ...template,
+    isDefault: true,
+  })
+);
+
+// export async function populateDefaultTemplates() {
+//   const transaction = db.transaction("rw", db.templates, async () => {
+//     for (const template of defaultTemplates) {
+//       const existingTemplate = await db.templates
+//         .where("name")
+//         .equals(template.name)
+//         .first();
+//       if (!existingTemplate) {
+//         await db.templates.add(template);
+//       }
+//     }
+//   });
+
+//   await transaction.catch((e) => {
+//     console.error("Error populating default templates:", e);
+//   });
+// }
