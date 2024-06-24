@@ -5,6 +5,7 @@ import NewExerciseForm from "./NewExerciseForm";
 import ExerciseList from "./ExerciseList";
 import Dialog from "../../components/Dialog";
 import PageHeader from "../../components/common/PageHeader";
+import Button from "../../components/common/Button"; // Import the Button component
 
 const Exercises = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -13,6 +14,11 @@ const Exercises = () => {
     null
   );
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [exerciseFilter, setExerciseFilter] = useState<
+    "all" | "default" | "custom"
+  >("all"); // Filter state
+  const [groupFilter, setGroupFilter] = useState<string>("all"); // Group filter state
+  const [typeFilter, setTypeFilter] = useState<string>("all"); // Type filter state
 
   // Fetch exercises from IndexedDB when the component mounts
   useEffect(() => {
@@ -69,6 +75,17 @@ const Exercises = () => {
     setSelectedExercise(null);
   };
 
+  const filteredExercises = exercises.filter((exercise) => {
+    if (exerciseFilter === "default" && !exercise.isDefault) return false;
+    if (exerciseFilter === "custom" && exercise.isDefault) return false;
+    if (groupFilter !== "all" && exercise.group !== groupFilter) return false;
+    if (typeFilter !== "all" && exercise.type !== typeFilter) return false;
+    return true;
+  });
+
+  const uniqueGroups = Array.from(new Set(exercises.map((ex) => ex.group)));
+  const uniqueTypes = Array.from(new Set(exercises.map((ex) => ex.type)));
+
   return (
     <>
       <PageHeader
@@ -77,8 +94,67 @@ const Exercises = () => {
         buttonAction={openAddDialog}
       />
       <div className="p-4">
+        <div className="mb-4 flex space-x-2">
+          <Button
+            onClick={() => setExerciseFilter("all")}
+            variant={exerciseFilter === "all" ? "primary" : "outline"}
+            size="small"
+          >
+            All Exercises
+          </Button>
+          <Button
+            onClick={() => setExerciseFilter("default")}
+            variant={exerciseFilter === "default" ? "primary" : "outline"}
+            size="small"
+          >
+            Default
+          </Button>
+          <Button
+            onClick={() => setExerciseFilter("custom")}
+            variant={exerciseFilter === "custom" ? "primary" : "outline"}
+            size="small"
+          >
+            Custom
+          </Button>
+        </div>
+        <div className="mb-4 flex space-x-2">
+          <label htmlFor="groupFilter" className="mr-2">
+            Group:
+          </label>
+          <select
+            id="groupFilter"
+            value={groupFilter}
+            onChange={(e) => setGroupFilter(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="all">All Groups</option>
+            {uniqueGroups.map((group) => (
+              <option key={group} value={group}>
+                {group}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4 flex space-x-2">
+          <label htmlFor="typeFilter" className="mr-2">
+            Type:
+          </label>
+          <select
+            id="typeFilter"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="all">All Types</option>
+            {uniqueTypes.map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
         <ExerciseList
-          exercises={exercises}
+          exercises={filteredExercises}
           onEdit={openEditDialog}
           onDelete={handleDelete}
         />

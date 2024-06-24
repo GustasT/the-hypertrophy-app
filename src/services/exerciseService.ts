@@ -7,8 +7,9 @@ export const addExercise = async (exercise: Exercise) => {
     const highestId = await db.exercises.orderBy("id").reverse().first();
     const newId = (highestId?.id || 0) + 1;
 
-    // Set the new ID
+    // Set the new ID and ensure isDefault is false
     exercise.id = newId;
+    exercise.isDefault = false;
 
     // Add the new exercise
     const id = await db.table("exercises").add(exercise);
@@ -21,6 +22,10 @@ export const addExercise = async (exercise: Exercise) => {
 // Function to update an existing exercise
 export const updateExercise = async (exercise: Exercise) => {
   try {
+    if (exercise.isDefault) {
+      console.warn("Default exercises cannot be updated.");
+      return;
+    }
     await db.table("exercises").put(exercise);
   } catch (error) {
     console.error("Failed to update exercise:", error);
@@ -59,12 +64,18 @@ export const fetchExercisesByWorkoutId = async (
 // Function to delete an exercise
 export const deleteExercise = async (id: number) => {
   try {
+    const exercise = await db.exercises.get(id);
+    if (exercise?.isDefault) {
+      console.warn("Default exercises cannot be deleted.");
+      return;
+    }
     await db.table("exercises").delete(id);
   } catch (error) {
     console.error("Failed to delete exercise:", error);
   }
 };
 
+// Clear local storage exercises
 export const clearLocalStorageExercises = () => {
   Object.keys(localStorage).forEach((key) => {
     if (key.includes("exercise")) {
