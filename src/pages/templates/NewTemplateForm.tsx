@@ -55,6 +55,7 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
       name: templateName,
       timesPerWeek: timesPerWeek as number,
       days,
+      isDefault: false,
     };
 
     try {

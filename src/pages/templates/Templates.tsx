@@ -7,6 +7,7 @@ import TemplateList from "./TemplateList";
 import NewMesocycleForm from "../new_mesocycle/NewMesocycleForm";
 import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils"; // Import the utility function
 import PageHeader from "../../components/common/PageHeader";
+import Button from "../../components/common/Button";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -16,6 +17,10 @@ const Templates = () => {
   );
   const [templates, setTemplates] = useState<Template[]>([]);
   const [isMesoDialogOpen, setIsMesoDialogOpen] = useState(false);
+  const [templateFilter, setTemplateFilter] = useState<
+    "all" | "default" | "custom"
+  >("all");
+  const [timesPerWeekFilter, setTimesPerWeekFilter] = useState<string>("all");
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -87,6 +92,21 @@ const Templates = () => {
     setIsMesoDialogOpen(false);
   };
 
+  const filteredTemplates = templates.filter((template) => {
+    if (templateFilter === "default" && !template.isDefault) return false;
+    if (templateFilter === "custom" && template.isDefault) return false;
+    if (
+      timesPerWeekFilter !== "all" &&
+      template.timesPerWeek.toString() !== timesPerWeekFilter
+    )
+      return false;
+    return true;
+  });
+
+  const uniqueTimesPerWeek = Array.from(
+    new Set(templates.map((template) => template.timesPerWeek.toString()))
+  ).sort((a, b) => Number(a) - Number(b));
+
   return (
     <>
       <PageHeader
@@ -95,8 +115,46 @@ const Templates = () => {
         buttonAction={openAddDialog}
       />
       <div className="p-4">
+        <div className="mb-4 flex space-x-2">
+          <Button
+            onClick={() => setTemplateFilter("all")}
+            variant={templateFilter === "all" ? "primary" : "outline"}
+          >
+            All Templates
+          </Button>
+          <Button
+            onClick={() => setTemplateFilter("default")}
+            variant={templateFilter === "default" ? "primary" : "outline"}
+          >
+            Default Templates
+          </Button>
+          <Button
+            onClick={() => setTemplateFilter("custom")}
+            variant={templateFilter === "custom" ? "primary" : "outline"}
+          >
+            Custom Templates
+          </Button>
+        </div>
+        <div className="mb-4 flex space-x-2">
+          <label htmlFor="timesPerWeekFilter" className="mr-2">
+            Times Per Week:
+          </label>
+          <select
+            id="timesPerWeekFilter"
+            value={timesPerWeekFilter}
+            onChange={(e) => setTimesPerWeekFilter(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="all">All</option>
+            {uniqueTimesPerWeek.map((times) => (
+              <option key={times} value={times}>
+                {times}
+              </option>
+            ))}
+          </select>
+        </div>
         <TemplateList
-          templates={templates}
+          templates={filteredTemplates}
           onEdit={openEditDialog}
           onDelete={handleDelete}
           onStartMeso={openMesoDialog} // Add this line
