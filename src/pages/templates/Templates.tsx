@@ -119,20 +119,23 @@ const Templates = () => {
           <Button
             onClick={() => setTemplateFilter("all")}
             variant={templateFilter === "all" ? "primary" : "outline"}
+            size="small"
           >
             All Templates
           </Button>
           <Button
             onClick={() => setTemplateFilter("default")}
             variant={templateFilter === "default" ? "primary" : "outline"}
+            size="small"
           >
-            Default Templates
+            Default
           </Button>
           <Button
             onClick={() => setTemplateFilter("custom")}
             variant={templateFilter === "custom" ? "primary" : "outline"}
+            size="small"
           >
-            Custom Templates
+            Custom
           </Button>
         </div>
         <div className="mb-4 flex space-x-2">

@@ -1,10 +1,8 @@
-import React, { useEffect } from "react";
-
+import React, { useEffect, useState, useCallback } from "react";
 import db, { Template } from "../../database/db";
 import DayForm from "./DayForm";
 import TabNavigation from "../../components/TabNavigation";
 import useTemplateForm from "../../components/hooks/useTemplateForm";
-import ErrorList from "../../components/ErrorList";
 import Button from "../../components/common/Button";
 import InputField from "../../components/common/InputField";
 import SelectField from "../../components/common/SelectField";
@@ -14,6 +12,16 @@ interface NewTemplateFormProps {
   onClose: () => void;
   initialData?: Template | null;
 }
+
+const validateForm = (templateName: string, days: any[]): boolean => {
+  if (!templateName) return false;
+  for (const day of days) {
+    if (!day.name || day.muscleGroups.length === 0) {
+      return false;
+    }
+  }
+  return true;
+};
 
 const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
   onSave,
@@ -25,17 +33,17 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     timesPerWeek,
     days,
     activeTab,
-    errors,
     setTemplateName,
     setTimesPerWeek,
     setDays,
     setActiveTab,
     handleTimesPerWeekChange,
     handleDayChange,
-    validateForm,
   } = useTemplateForm(
     initialData ? initialData.days : [{ name: "", muscleGroups: [] }]
   );
+
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -45,9 +53,13 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     }
   }, [initialData, setTemplateName, setTimesPerWeek, setDays]);
 
+  useEffect(() => {
+    setIsFormValid(validateForm(templateName, days));
+  }, [templateName, timesPerWeek, days]);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!validateForm()) {
+    if (!isFormValid) {
       return;
     }
 
@@ -112,12 +124,11 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
           />
         </>
       )}
-      <ErrorList errors={errors} />
       <div className="flex justify-end">
         <Button variant="outline" className="mr-2" onClick={onClose}>
           Cancel
         </Button>
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" disabled={!isFormValid}>
           Save
         </Button>
       </div>
