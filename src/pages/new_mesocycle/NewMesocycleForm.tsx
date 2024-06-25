@@ -129,6 +129,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                 (exercise) => ({
                   value: exercise.id ?? -1, // Handle undefined case
                   label: exercise.name,
+                  youtubeLink: exercise.youtubeLink, // Add YouTube link to options
                 })
               );
               return (
