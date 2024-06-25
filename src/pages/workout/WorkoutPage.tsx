@@ -25,6 +25,9 @@ const WorkoutPage = () => {
   const navigate = useNavigate();
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithDetails[]>([]);
+  const [historicalExercises, setHistoricalExercises] = useState<
+    ExerciseWithDetails[]
+  >([]);
   const [activeMesocycle, setActiveMesocycle] = useState<Mesocycle | null>(
     null
   );
@@ -67,6 +70,26 @@ const WorkoutPage = () => {
     }
   };
 
+  const fetchHistoricalData = async (
+    mesocycleId: number,
+    week: number,
+    day: number
+  ) => {
+    const previousWeek = week - 1;
+    if (previousWeek > 0) {
+      const previousWorkout = await db
+        .table("workouts")
+        .where({ mesocycleId, week: previousWeek, day })
+        .first();
+      if (previousWorkout) {
+        const previousExercises = await fetchExercisesByWorkoutId(
+          previousWorkout.id!
+        );
+        setHistoricalExercises(previousExercises);
+      }
+    }
+  };
+
   const fetchData = async () => {
     try {
       const mesocycle = await fetchActiveMesocycle();
@@ -86,6 +109,9 @@ const WorkoutPage = () => {
                 : [{ reps: 0, weight: 0 }],
           }));
           setExercises(exercisesWithSets);
+
+          // Fetch historical data
+          await fetchHistoricalData(mesocycle.id!, workout.week, workout.day);
         }
       } else {
         navigate("/mesocycles"); // Redirect if no active mesocycle
@@ -198,17 +224,23 @@ const WorkoutPage = () => {
         <h2 className="text-xl font-semibold p-4">Loading workout info...</h2>
       )}
       <div className="p-4">
-        {exercises.map((exercise, index) => (
-          <ExerciseItem
-            key={exercise.id}
-            exercise={exercise}
-            index={index}
-            onInputChange={handleInputChange}
-            onRemoveSet={handleRemoveSet}
-            workoutId={activeWorkout ? activeWorkout.id! : -1}
-            checkUnloggedSets={checkUnloggedSets}
-          />
-        ))}
+        {exercises.map((exercise, index) => {
+          const historicalExercise = historicalExercises.find(
+            (histEx) => histEx.id === exercise.id
+          );
+          return (
+            <ExerciseItem
+              key={exercise.id}
+              exercise={exercise}
+              index={index}
+              onInputChange={handleInputChange}
+              onRemoveSet={handleRemoveSet}
+              workoutId={activeWorkout ? activeWorkout.id! : -1}
+              checkUnloggedSets={checkUnloggedSets}
+              historicalSets={historicalExercise?.sets} // Pass historical sets
+            />
+          );
+        })}
       </div>
     </div>
   );
