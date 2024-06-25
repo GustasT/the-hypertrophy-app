@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Template } from "../../database/db";
 import Button from "../../components/common/Button";
 import ConfirmationDialog from "../../components/common/ConfirmationDialog";
+import Accordion from "../../components/Accordion";
 
 interface TemplateListProps {
   templates: Template[];
@@ -16,23 +17,8 @@ const TemplateList: React.FC<TemplateListProps> = ({
   onDelete,
   onStartMeso,
 }) => {
-  const [expandedTemplates, setExpandedTemplates] = useState<Set<number>>(
-    new Set()
-  );
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<number | null>(null);
-
-  const toggleTemplate = (id: number) => {
-    setExpandedTemplates((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
 
   const handleDeleteClick = (id: number) => {
     setTemplateToDelete(id);
@@ -56,23 +42,18 @@ const TemplateList: React.FC<TemplateListProps> = ({
     <>
       <ul className="space-y-4">
         {templates.map((template) => (
-          <li key={template.id} className="p-4 border rounded">
-            <div
-              className="flex justify-between items-center cursor-pointer"
-              onClick={() => toggleTemplate(template.id as number)}
+          <li key={template.id}>
+            <Accordion
+              title={
+                <div>
+                  <h3 className="text-lg font-semibold">{template.name}</h3>
+                  <p>
+                    <strong>Times per week:</strong> {template.timesPerWeek}
+                  </p>
+                </div>
+              }
             >
               <div>
-                <h3 className="text-lg font-semibold">{template.name}</h3>
-                <p>
-                  <strong>Times per week:</strong> {template.timesPerWeek}
-                </p>
-              </div>
-              <Button variant="outline">
-                {expandedTemplates.has(template.id as number) ? "-" : "+"}
-              </Button>
-            </div>
-            {expandedTemplates.has(template.id as number) && (
-              <div className="mt-4">
                 <ul className="list-disc ml-5">
                   {template.days.map((day, index) => (
                     <li key={index}>
@@ -108,7 +89,7 @@ const TemplateList: React.FC<TemplateListProps> = ({
                   </Button>
                 </div>
               </div>
-            )}
+            </Accordion>
           </li>
         ))}
       </ul>
