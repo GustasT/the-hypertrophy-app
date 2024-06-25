@@ -205,7 +205,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
           </div>
         </div>
       )}
-      <div className="flex justify-end gap-x-2 mt-4 pb-4">
+      <div className="flex justify-end gap-x-2 mt-4 pb-7">
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>
