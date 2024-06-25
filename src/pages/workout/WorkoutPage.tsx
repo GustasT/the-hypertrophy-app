@@ -12,7 +12,6 @@ import {
 } from "../../services";
 import db from "../../database/db"; // Import the Dexie db instance
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
-
 import ExerciseItem from "./ExerciseItem";
 import {
   getFromLocalStorage,
@@ -20,17 +19,22 @@ import {
   saveToLocalStorage,
 } from "../../utils/localStorageUtils";
 import PageHeader from "../../components/common/PageHeader"; // Import the PageHeader component
+import ConfirmationDialog from "../../components/common/ConfirmationDialog"; // Import ConfirmationDialog
 
 const WorkoutPage = () => {
   const navigate = useNavigate();
   const [activeWorkout, setActiveWorkout] = useState<Workout | null>(null);
   const [exercises, setExercises] = useState<ExerciseWithDetails[]>([]);
+  const [historicalExercises, setHistoricalExercises] = useState<
+    ExerciseWithDetails[]
+  >([]);
   const [activeMesocycle, setActiveMesocycle] = useState<Mesocycle | null>(
     null
   );
   const [loadingWorkout, setLoadingWorkout] = useState(true);
   const [isFinishWorkoutButtonDisabled, setIsFinishWorkoutButtonDisabled] =
     useState(true);
+  const [isDialogVisible, setIsDialogVisible] = useState(false); // State for dialog visibility
 
   const checkUnloggedSets = () => {
     const savedWorkoutSets = getFromLocalStorage(
@@ -67,6 +71,26 @@ const WorkoutPage = () => {
     }
   };
 
+  const fetchHistoricalData = async (
+    mesocycleId: number,
+    week: number,
+    day: number
+  ) => {
+    const previousWeek = week - 1;
+    if (previousWeek > 0) {
+      const previousWorkout = await db
+        .table("workouts")
+        .where({ mesocycleId, week: previousWeek, day })
+        .first();
+      if (previousWorkout) {
+        const previousExercises = await fetchExercisesByWorkoutId(
+          previousWorkout.id!
+        );
+        setHistoricalExercises(previousExercises);
+      }
+    }
+  };
+
   const fetchData = async () => {
     try {
       const mesocycle = await fetchActiveMesocycle();
@@ -86,6 +110,9 @@ const WorkoutPage = () => {
                 : [{ reps: 0, weight: 0 }],
           }));
           setExercises(exercisesWithSets);
+
+          // Fetch historical data
+          await fetchHistoricalData(mesocycle.id!, workout.week, workout.day);
         }
       } else {
         navigate("/mesocycles"); // Redirect if no active mesocycle
@@ -182,12 +209,25 @@ const WorkoutPage = () => {
     }
   };
 
+  const handleFinishWorkout = () => {
+    setIsDialogVisible(true);
+  };
+
+  const handleDialogContinue = async () => {
+    setIsDialogVisible(false);
+    await handleSave();
+  };
+
+  const handleDialogCancel = () => {
+    setIsDialogVisible(false);
+  };
+
   return (
     <div>
       <PageHeader
         title="Workout"
         buttonText="Finish Workout"
-        buttonAction={handleSave}
+        buttonAction={handleFinishWorkout} // Show dialog instead of directly saving
         buttonDisabled={isFinishWorkoutButtonDisabled} // Pass the disabled state
       />
       {activeMesocycle && !loadingWorkout ? (
@@ -198,18 +238,32 @@ const WorkoutPage = () => {
         <h2 className="text-xl font-semibold p-4">Loading workout info...</h2>
       )}
       <div className="p-4">
-        {exercises.map((exercise, index) => (
-          <ExerciseItem
-            key={exercise.id}
-            exercise={exercise}
-            index={index}
-            onInputChange={handleInputChange}
-            onRemoveSet={handleRemoveSet}
-            workoutId={activeWorkout ? activeWorkout.id! : -1}
-            checkUnloggedSets={checkUnloggedSets}
-          />
-        ))}
+        {exercises.map((exercise, index) => {
+          const historicalExercise = historicalExercises.find(
+            (histEx) => histEx.id === exercise.id
+          );
+          return (
+            <ExerciseItem
+              key={exercise.id}
+              exercise={exercise}
+              index={index}
+              onInputChange={handleInputChange}
+              onRemoveSet={handleRemoveSet}
+              workoutId={activeWorkout ? activeWorkout.id! : -1}
+              checkUnloggedSets={checkUnloggedSets}
+              historicalSets={historicalExercise?.sets} // Pass historical sets
+            />
+          );
+        })}
       </div>
+      <ConfirmationDialog
+        message="Finish workout?"
+        continueText="Continue"
+        cancelText="Cancel"
+        onContinue={handleDialogContinue}
+        onCancel={handleDialogCancel}
+        isVisible={isDialogVisible}
+      />
     </div>
   );
 };

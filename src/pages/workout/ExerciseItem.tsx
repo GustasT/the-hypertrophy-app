@@ -20,7 +20,8 @@ interface ExerciseItemProps {
   ) => void;
   onRemoveSet: (exerciseIndex: number) => void;
   workoutId: number;
-  checkUnloggedSets: () => void; // Add the prop type
+  checkUnloggedSets: () => void;
+  historicalSets?: { reps: number; weight: number }[];
 }
 
 const ExerciseItem: React.FC<ExerciseItemProps> = ({
@@ -30,6 +31,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
   onRemoveSet,
   workoutId,
   checkUnloggedSets,
+  historicalSets,
 }) => {
   const initialSets = exercise.sets?.length
     ? exercise.sets.map((set) => ({
@@ -232,6 +234,17 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           -
         </Button>
       </div>
+      {/* Display historical sets separately */}
+      {historicalSets && historicalSets.length > 0 && (
+        <div className="mt-4 text-gray-600">
+          <h3 className="text-sm font-semibold">Previous Workout:</h3>
+          {historicalSets.map((set, setIndex) => (
+            <div key={setIndex} className="text-center">
+              {set.reps} x {set.weight}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
