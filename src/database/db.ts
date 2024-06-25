@@ -1,6 +1,7 @@
 import Dexie, { Table } from "dexie";
+import { defaultExercises } from "./defaultExercises"; // Import default exercises
+import { defaultTemplates } from "./defaultTemplates";
 
-// Define the database
 class ExerciseDB extends Dexie {
   exercises!: Table<Exercise>;
   templates!: Table<Template>;
@@ -48,6 +49,31 @@ class ExerciseDB extends Dexie {
       workouts:
         "++id,mesocycleId,week,day,completed,isActive,[mesocycleId+isActive],[mesocycleId+id]", // Add compound index
     });
+
+    this.on("populate", async () => {
+      await this.populateDefaultTemplates();
+      await this.populateDefaultExercises();
+    });
+  }
+
+  async populateDefaultTemplates() {
+    console.log("Populating default templates...");
+    for (const template of defaultTemplates) {
+      const existingTemplate = await this.templates.get(template.id);
+      if (!existingTemplate) {
+        await this.templates.add(template);
+      }
+    }
+  }
+
+  async populateDefaultExercises() {
+    console.log("Populating default exercises...");
+    for (const exercise of defaultExercises) {
+      const existingExercise = await this.exercises.get(exercise.id);
+      if (!existingExercise) {
+        await this.exercises.add(exercise);
+      }
+    }
   }
 }
 
@@ -61,6 +87,7 @@ export interface Exercise {
   group: string;
   type: string;
   youtubeLink?: string;
+  isDefault?: boolean; // New field to identify default exercises
 }
 
 export interface Template {
@@ -68,6 +95,7 @@ export interface Template {
   name: string;
   timesPerWeek: number;
   days: { name: string; muscleGroups: string[] }[];
+  isDefault?: boolean; // New field to identify default templates
 }
 
 export interface Mesocycle {
