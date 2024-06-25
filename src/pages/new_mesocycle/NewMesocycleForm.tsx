@@ -148,7 +148,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                       handleExerciseSelect(
                         key,
                         exercises.find(
-                          (ex) => ex.id === (option as any).value
+                          (ex) => ex.id === (option as any)?.value
                         ) || null
                       )
                     }
@@ -184,7 +184,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
               value={
                 weekOptions.find((option) => option.value === weeks) || null
               }
-              onChange={(option) => setWeeks(option.value)}
+              onChange={(option) => setWeeks(option?.value || 4)}
               isClearable={false}
               zIndex={1000} // Adjust zIndex if needed
             />
@@ -198,7 +198,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                   (option) => option.value === weightUnit
                 ) || null
               }
-              onChange={(option) => setWeightUnit(option.value)}
+              onChange={(option) => setWeightUnit(option?.value || "KG")}
               isClearable={false}
               zIndex={1000} // Adjust zIndex if needed
             />
