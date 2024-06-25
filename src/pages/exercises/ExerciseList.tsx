@@ -1,7 +1,7 @@
 import React from "react";
 import { Exercise } from "../../database/db";
 import Button from "../../components/common/Button";
-
+import { AiOutlineYoutube } from "react-icons/ai";
 interface ExerciseListProps {
   exercises: Exercise[];
   onEdit: (exercise: Exercise) => void;
@@ -28,13 +28,13 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
               </p>
               {exercise.youtubeLink && (
                 <p>
-                  <strong>YouTube Link:</strong>{" "}
                   <a
                     href={exercise.youtubeLink}
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="text-red-500 hover:text-red-700"
                   >
-                    {exercise.youtubeLink}
+                    <AiOutlineYoutube size={24} />
                   </a>
                 </p>
               )}
