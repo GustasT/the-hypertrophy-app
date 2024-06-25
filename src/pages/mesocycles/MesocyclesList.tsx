@@ -98,13 +98,13 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                   <Button
                     variant="outline"
                     onClick={() => handleSetActive(mesocycle.id as number)}
-                    size="small"
+                    size="sm"
                   >
                     Make Active
                   </Button>
                 )}
                 <Link to={`/mesocycles/${mesocycle.id}`}>
-                  <Button variant="outline" size="small">
+                  <Button variant="outline" size="sm">
                     View
                   </Button>
                 </Link>
@@ -112,7 +112,7 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                 <Button
                   variant="secondary"
                   onClick={() => handleDeleteClick(mesocycle.id as number)}
-                  size="small"
+                  size="sm"
                 >
                   Delete
                 </Button>

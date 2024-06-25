@@ -119,21 +119,21 @@ const Templates = () => {
           <Button
             onClick={() => setTemplateFilter("all")}
             variant={templateFilter === "all" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             All Templates
           </Button>
           <Button
             onClick={() => setTemplateFilter("default")}
             variant={templateFilter === "default" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             Default
           </Button>
           <Button
             onClick={() => setTemplateFilter("custom")}
             variant={templateFilter === "custom" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             Custom
           </Button>

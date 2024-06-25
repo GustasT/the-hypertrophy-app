@@ -221,7 +221,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           variant="outline"
           onClick={handleAddSet}
           disabled={isAddButtonDisabled}
-          size="small"
+          size="sm"
         >
           +
         </Button>
@@ -229,7 +229,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           variant="secondary"
           onClick={handleRemoveLastSet}
           disabled={isRemoveButtonDisabled}
-          size="small"
+          size="sm"
         >
           -
         </Button>

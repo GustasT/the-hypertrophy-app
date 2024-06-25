@@ -98,21 +98,21 @@ const Exercises = () => {
           <Button
             onClick={() => setExerciseFilter("all")}
             variant={exerciseFilter === "all" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             All Exercises
           </Button>
           <Button
             onClick={() => setExerciseFilter("default")}
             variant={exerciseFilter === "default" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             Default
           </Button>
           <Button
             onClick={() => setExerciseFilter("custom")}
             variant={exerciseFilter === "custom" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             Custom
           </Button>
