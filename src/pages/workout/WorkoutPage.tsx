@@ -12,7 +12,6 @@ import {
 } from "../../services";
 import db from "../../database/db"; // Import the Dexie db instance
 import { Workout, ExerciseWithDetails, Mesocycle } from "../../database/db";
-
 import ExerciseItem from "./ExerciseItem";
 import {
   getFromLocalStorage,
@@ -20,6 +19,7 @@ import {
   saveToLocalStorage,
 } from "../../utils/localStorageUtils";
 import PageHeader from "../../components/common/PageHeader"; // Import the PageHeader component
+import ConfirmationDialog from "../../components/common/ConfirmationDialog"; // Import ConfirmationDialog
 
 const WorkoutPage = () => {
   const navigate = useNavigate();
@@ -34,6 +34,7 @@ const WorkoutPage = () => {
   const [loadingWorkout, setLoadingWorkout] = useState(true);
   const [isFinishWorkoutButtonDisabled, setIsFinishWorkoutButtonDisabled] =
     useState(true);
+  const [isDialogVisible, setIsDialogVisible] = useState(false); // State for dialog visibility
 
   const checkUnloggedSets = () => {
     const savedWorkoutSets = getFromLocalStorage(
@@ -208,12 +209,25 @@ const WorkoutPage = () => {
     }
   };
 
+  const handleFinishWorkout = () => {
+    setIsDialogVisible(true);
+  };
+
+  const handleDialogContinue = async () => {
+    setIsDialogVisible(false);
+    await handleSave();
+  };
+
+  const handleDialogCancel = () => {
+    setIsDialogVisible(false);
+  };
+
   return (
     <div>
       <PageHeader
         title="Workout"
         buttonText="Finish Workout"
-        buttonAction={handleSave}
+        buttonAction={handleFinishWorkout} // Show dialog instead of directly saving
         buttonDisabled={isFinishWorkoutButtonDisabled} // Pass the disabled state
       />
       {activeMesocycle && !loadingWorkout ? (
@@ -242,6 +256,14 @@ const WorkoutPage = () => {
           );
         })}
       </div>
+      <ConfirmationDialog
+        message="Finish workout?"
+        continueText="Continue"
+        cancelText="Cancel"
+        onContinue={handleDialogContinue}
+        onCancel={handleDialogCancel}
+        isVisible={isDialogVisible}
+      />
     </div>
   );
 };
