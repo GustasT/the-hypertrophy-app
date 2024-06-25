@@ -15,12 +15,18 @@ const Accordion: React.FC<AccordionProps> = ({
   const [isOpen, setIsOpen] = useState(isExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<string | number>(isOpen ? "auto" : 0);
+  const [isVisible, setIsVisible] = useState(isExpanded);
 
   useEffect(() => {
     if (isOpen) {
+      setIsVisible(true);
       setHeight(contentRef.current?.scrollHeight || "auto");
     } else {
       setHeight(0);
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 500); // Match this duration with the height transition duration
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -48,7 +54,13 @@ const Accordion: React.FC<AccordionProps> = ({
         style={{ height }}
         className={`transition-height duration-500 ease-in-out overflow-hidden`}
       >
-        {isOpen && <div className="mt-4">{children}</div>}
+        <div
+          className={`transition-opacity duration-500 ease-in-out ${
+            isVisible ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
