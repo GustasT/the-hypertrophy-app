@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Select from "react-select";
 import { Template, Exercise, Mesocycle } from "../../database/db";
 import {
   fetchAllExercises,
@@ -8,6 +7,7 @@ import {
 } from "../../services/";
 import TabNavigation from "../../components/TabNavigation";
 import Button from "../../components/common/Button";
+import SelectField from "../../components/common/SelectField"; // Adjust the import path if necessary
 
 interface NewMesocycleFormProps {
   template: Template;
@@ -127,21 +127,19 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
               const key = `${dayIndex}-${mgIndex}-${muscleGroup}`;
               const options = getAvailableExercises(dayIndex, muscleGroup).map(
                 (exercise) => ({
-                  value: exercise.id,
+                  value: exercise.id ?? -1, // Handle undefined case
                   label: exercise.name,
                 })
               );
               return (
                 <div key={key} className="mb-2">
-                  <label className="block text-gray-700 mb-1">
-                    {muscleGroup}
-                  </label>
-                  <Select
+                  <SelectField
+                    label={muscleGroup}
                     options={options}
                     value={
                       selectedExercises[key]
                         ? {
-                            value: selectedExercises[key]!.id,
+                            value: selectedExercises[key]!.id!,
                             label: selectedExercises[key]!.name,
                           }
                         : null
@@ -156,6 +154,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                     }
                     isClearable={true}
                     isSearchable={true}
+                    zIndex={1000} // Adjust zIndex if needed
                   />
                 </div>
               );
@@ -179,22 +178,29 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
             <label className="block text-gray-700">
               How many weeks will you train (including deload)
             </label>
-            <Select
+            <SelectField
+              label="Weeks"
               options={weekOptions}
-              value={weekOptions.find((option) => option.value === weeks)}
-              onChange={(option) => setWeeks((option as any).value)}
+              value={
+                weekOptions.find((option) => option.value === weeks) || null
+              }
+              onChange={(option) => setWeeks(option.value)}
               isClearable={false}
+              zIndex={1000} // Adjust zIndex if needed
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Weight Units</label>
-            <Select
+            <SelectField
+              label="Weight Units"
               options={weightUnitOptions}
-              value={weightUnitOptions.find(
-                (option) => option.value === weightUnit
-              )}
-              onChange={(option) => setWeightUnit((option as any).value)}
+              value={
+                weightUnitOptions.find(
+                  (option) => option.value === weightUnit
+                ) || null
+              }
+              onChange={(option) => setWeightUnit(option.value)}
               isClearable={false}
+              zIndex={1000} // Adjust zIndex if needed
             />
           </div>
         </div>

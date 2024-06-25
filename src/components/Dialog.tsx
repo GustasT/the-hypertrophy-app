@@ -36,24 +36,22 @@ const Dialog: React.FC<DialogProps> = ({
           onClick={onClose}
         >
           <div
-            className={`bg-white rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform ${
+            className={`bg-white rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform overflow-y-auto ${
               visible ? "translate-y-0" : "translate-y-full"
             }`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the dialog
-            style={{ maxHeight: "70vh", marginBottom: "4rem" }}
+            style={{
+              height: "80dvh",
+              marginBottom: "4rem",
+            }}
           >
-            <div className="sticky top-0 bg-white p-6 rounded-t-lg flex justify-between items-center border-b">
+            <div className="sticky top-0 bg-white p-6 rounded-t-lg flex justify-between items-center border-b z-20">
               <h2 className="text-xl font-bold">{title}</h2>
               <button className="text-xl font-bold" onClick={onClose}>
                 &times;
               </button>
             </div>
-            <div
-              className="p-6 overflow-y-auto"
-              style={{ maxHeight: "calc(70vh - 4rem)" }}
-            >
-              {children}
-            </div>
+            <div className="p-6 h-full ">{children}</div>
           </div>
         </div>
       )}

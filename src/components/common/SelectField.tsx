@@ -9,6 +9,7 @@ interface SelectFieldProps {
   isClearable?: boolean;
   isSearchable?: boolean;
   placeholder?: string;
+  zIndex?: number; // Add zIndex prop
 }
 
 const SelectField: React.FC<SelectFieldProps> = ({
@@ -19,6 +20,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   isClearable = false,
   isSearchable = false,
   placeholder = "",
+  zIndex = 100, // Default zIndex to 100
 }) => (
   <div className="mb-4">
     <label className="block text-gray-700">{label}</label>
@@ -29,6 +31,20 @@ const SelectField: React.FC<SelectFieldProps> = ({
       isClearable={isClearable}
       isSearchable={isSearchable}
       placeholder={placeholder}
+      styles={{
+        control: (provided) => ({
+          ...provided,
+        }),
+        menu: (provided) => ({
+          ...provided,
+          zIndex,
+        }),
+        menuPortal: (base) => ({
+          ...base,
+          zIndex,
+        }),
+      }}
+      menuPortalTarget={document.body} // Render menu in portal
     />
   </div>
 );

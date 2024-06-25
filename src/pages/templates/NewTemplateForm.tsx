@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import db, { Template } from "../../database/db";
 import DayForm from "./DayForm";
 import TabNavigation from "../../components/TabNavigation";
-import useTemplateForm from "../../components/hooks/useTemplateForm";
 import Button from "../../components/common/Button";
 import InputField from "../../components/common/InputField";
 import SelectField from "../../components/common/SelectField";
+import useTemplateForm from "../../hooks/useTemplateForm";
 
 interface NewTemplateFormProps {
   onSave: (template: Template) => void;
@@ -124,7 +124,7 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
           />
         </>
       )}
-      <div className="flex justify-end">
+      <div className="flex justify-end pb-4">
         <Button variant="outline" className="mr-2" onClick={onClose}>
           Cancel
         </Button>

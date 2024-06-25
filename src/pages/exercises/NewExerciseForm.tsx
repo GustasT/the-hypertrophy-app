@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Select from "react-select";
 import { Exercise } from "../../database/db";
 import { addExercise, updateExercise } from "../../services";
 import { muscleGroups, exerciseTypes } from "../../config/exerciseOptions";
 import Button from "../../components/common/Button";
+import SelectField from "../../components/common/SelectField"; // Make sure to adjust the import path if necessary
 
 interface NewExerciseFormProps {
   onSave: (exercise: Exercise) => void;
@@ -81,30 +81,30 @@ const NewExerciseForm: React.FC<NewExerciseFormProps> = ({
           required
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Muscle Group</label>
-        <Select
-          options={muscleGroupOptions}
-          value={muscleGroupOptions.find(
-            (option) => option.value === muscleGroup
-          )}
-          onChange={(option) => setMuscleGroup((option as any).value)}
-          isClearable={false}
-          isSearchable={false}
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Exercise Type</label>
-        <Select
-          options={exerciseTypeOptions}
-          value={exerciseTypeOptions.find(
-            (option) => option.value === exerciseType
-          )}
-          onChange={(option) => setExerciseType((option as any).value)}
-          isClearable={false}
-          isSearchable={false}
-        />
-      </div>
+      <SelectField
+        label="Muscle Group"
+        options={muscleGroupOptions}
+        value={
+          muscleGroupOptions.find((option) => option.value === muscleGroup) ||
+          null
+        }
+        onChange={(option) => setMuscleGroup((option as any).value)}
+        isClearable={false}
+        isSearchable={false}
+        zIndex={1000} // Adjust zIndex if needed
+      />
+      <SelectField
+        label="Exercise Type"
+        options={exerciseTypeOptions}
+        value={
+          exerciseTypeOptions.find((option) => option.value === exerciseType) ||
+          null
+        }
+        onChange={(option) => setExerciseType((option as any).value)}
+        isClearable={false}
+        isSearchable={false}
+        zIndex={1000} // Adjust zIndex if needed
+      />
       <div className="mb-4">
         <label className="block text-gray-700">YouTube Link (optional)</label>
         <input
