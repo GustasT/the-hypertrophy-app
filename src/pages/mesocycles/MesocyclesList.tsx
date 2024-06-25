@@ -75,7 +75,7 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
           <li key={mesocycle.id} className="p-4 border rounded">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-semibold">{mesocycle.name}</h2>
+                <h3 className="text-lg font-semibold">{mesocycle.name}</h3>
                 <p>
                   <strong>Weeks:</strong> {mesocycle.weeks}
                 </p>

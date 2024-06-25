@@ -62,7 +62,7 @@ const TemplateList: React.FC<TemplateListProps> = ({
               onClick={() => toggleTemplate(template.id as number)}
             >
               <div>
-                <h2 className="text-xl font-semibold">{template.name}</h2>
+                <h3 className="text-lg font-semibold">{template.name}</h3>
                 <p>
                   <strong>Times per week:</strong> {template.timesPerWeek}
                 </p>

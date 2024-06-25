@@ -178,8 +178,8 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
 
   return (
     <div className="mb-4">
-      <h2 className="text-lg font-semibold">{exercise.name}</h2>
-      <div className="grid grid-cols-5 gap-4 items-center font-semibold mb-2">
+      <h3 className="  font-semibold">{exercise.name}</h3>
+      <div className="grid grid-cols-5 gap-4 items-center font-medium mb-2">
         <div className="col-span-2 text-center">Reps</div>
         <div className="col-span-2 text-center">Weight</div>
       </div>
@@ -237,7 +237,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
       {/* Display historical sets separately */}
       {historicalSets && historicalSets.length > 0 && (
         <div className="mt-4 text-gray-600">
-          <h3 className="text-sm font-semibold">Previous Workout:</h3>
+          <span className="text-sm font-semibold">Previous Workout:</span>
           {historicalSets.map((set, setIndex) => (
             <div key={setIndex} className="text-center">
               {set.reps} x {set.weight}
