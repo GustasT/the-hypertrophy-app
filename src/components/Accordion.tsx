@@ -3,6 +3,7 @@ import { HiOutlineChevronDown } from "react-icons/hi2";
 import {
   saveToSessionStorage,
   getFromSessionStorage,
+  removeFromSessionStorage,
 } from "../utils/sessionStorageUtils"; // Adjust the import path as needed
 
 interface AccordionProps {
@@ -30,15 +31,18 @@ const Accordion: React.FC<AccordionProps> = ({
     if (isOpen) {
       setIsVisible(true);
       setHeight(contentRef.current?.scrollHeight || "auto");
+      if (id) {
+        saveToSessionStorage(id, isOpen);
+      }
     } else {
       setHeight(0);
       const timer = setTimeout(() => {
         setIsVisible(false);
-      }, 0); // Match this duration with the height transition duration
+        if (id) {
+          removeFromSessionStorage(id);
+        }
+      }, 300); // Match this duration with the height transition duration
       return () => clearTimeout(timer);
-    }
-    if (id) {
-      saveToSessionStorage(id, isOpen);
     }
   }, [isOpen, id]);
 
@@ -48,7 +52,7 @@ const Accordion: React.FC<AccordionProps> = ({
 
   return (
     <div className="p-4 border rounded">
-      <div className="flex justify-between items-center ">
+      <div className="flex justify-between items-center">
         <div className="w-11/12 mr-4">{title}</div>
         <span
           className={`transform transition-transform duration-300 cursor-pointer ${

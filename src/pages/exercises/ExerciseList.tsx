@@ -4,6 +4,7 @@ import Button from "../../components/common/Button";
 import { AiOutlineYoutube } from "react-icons/ai";
 import ConfirmationDialog from "../../components/common/ConfirmationDialog";
 import Accordion from "../../components/Accordion"; // Adjust the import path as needed
+import AnimatedList from "../../components/common/AnimatedList"; // Import the AnimatedList component
 
 interface ExerciseListProps {
   exercises: Exercise[];
@@ -41,8 +42,11 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
 
   return (
     <>
-      <ul className="space-y-4">
-        {exercises.map((exercise) => (
+      <AnimatedList
+        className="space-y-4"
+        items={exercises}
+        keyExtractor={(exercise) => exercise.id.toString()}
+        renderItem={(exercise) => (
           <li key={exercise.id}>
             <Accordion
               id={`accordion-${exercise.id}`} // Pass a unique identifier
@@ -68,7 +72,9 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
                 <p>
                   <strong>Group:</strong> {exercise.group}
                 </p>
-                <strong>Type:</strong> {exercise.type}
+                <p>
+                  <strong>Type:</strong> {exercise.type}
+                </p>
                 <div className="flex space-x-2 mt-2">
                   {!exercise.isDefault && (
                     <>
@@ -90,8 +96,8 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
               </div>
             </Accordion>
           </li>
-        ))}
-      </ul>
+        )}
+      />
       <ConfirmationDialog
         message={`Delete exercise? `}
         continueText="Delete"
