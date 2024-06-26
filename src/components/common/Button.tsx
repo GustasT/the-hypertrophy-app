@@ -55,7 +55,7 @@ const Button: React.FC<ButtonProps> = ({
       break;
     case "lg":
       // sizeClassName = "px-6 py-3 text-lg";
-      sizeClassName = "px-4 py-2 text-lg";
+      sizeClassName = "px-4 py-2 text-base";
       break;
   }
 

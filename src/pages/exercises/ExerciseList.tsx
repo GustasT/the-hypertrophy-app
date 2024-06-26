@@ -69,18 +69,6 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
                   <strong>Group:</strong> {exercise.group}
                 </p>
                 <strong>Type:</strong> {exercise.type}
-                {/* {exercise.youtubeLink && (
-                  <p>
-                    <a
-                      href={exercise.youtubeLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <AiOutlineYoutube size={24} />
-                    </a>
-                  </p>
-                )} */}
                 <div className="flex space-x-2 mt-2">
                   {!exercise.isDefault && (
                     <>
@@ -105,8 +93,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
         ))}
       </ul>
       <ConfirmationDialog
-        title="Confirm Deletion"
-        message={`Are you sure you want to delete the exercise "${exerciseToDelete?.name}"?`}
+        message={`Delete exercise? `}
         continueText="Delete"
         cancelText="Cancel"
         onContinue={handleConfirmDelete}

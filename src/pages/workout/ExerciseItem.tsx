@@ -3,6 +3,7 @@ import { ExerciseWithDetails } from "../../database/db";
 import NumericInput from "../../components/common/NumericInput";
 import DecimalInput from "../../components/common/DecimalInput";
 import Button from "../../components/common/Button";
+import { AiOutlineYoutube } from "react-icons/ai";
 import {
   saveToLocalStorage,
   getFromLocalStorage,
@@ -178,15 +179,28 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
 
   return (
     <div className="mb-4">
-      <h3 className="  font-semibold">{exercise.name}</h3>
-      <div className="grid grid-cols-5 gap-4 items-center font-medium mb-2">
+      <div className="flex justify-between items-center">
+        <h3 className="font-semibold">{exercise.name}</h3>
+        {exercise.youtubeLink && (
+          <a
+            href={exercise.youtubeLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-red-500 hover:text-red-700"
+          >
+            <AiOutlineYoutube size={24} />
+          </a>
+        )}
+      </div>
+      <p className="text-sm text-gray-500">{exercise.group}</p>
+      <div className="grid grid-cols-5 gap-2 items-center font-medium mb-2 mt-2">
         <div className="col-span-2 text-center">Reps</div>
         <div className="col-span-2 text-center">Weight</div>
       </div>
       {sets.map((set, setIndex) => (
         <div
           key={setIndex}
-          className="grid grid-cols-5 gap-4 items-center mb-2"
+          className="grid grid-cols-5 gap-2 items-center mb-2"
         >
           <NumericInput
             value={set.reps === "0" ? "" : set.reps}
@@ -221,7 +235,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           variant="outline"
           onClick={handleAddSet}
           disabled={isAddButtonDisabled}
-          size="sm"
+          // size="sm"
         >
           +
         </Button>
@@ -229,7 +243,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           variant="secondary"
           onClick={handleRemoveLastSet}
           disabled={isRemoveButtonDisabled}
-          size="sm"
+          // size="sm"
         >
           -
         </Button>
