@@ -48,7 +48,7 @@ const Navbar = () => {
       removeFromSessionStorage("groupFilter");
       removeFromSessionStorage("typeFilter");
       Object.keys(sessionStorage).forEach((key) => {
-        if (key.startsWith("accordion-")) {
+        if (key.startsWith("exercise-")) {
           removeFromSessionStorage(key);
         }
       });
@@ -69,7 +69,7 @@ const Navbar = () => {
       removeFromSessionStorage("templateFilter");
       removeFromSessionStorage("timesPerWeekFilter");
       Object.keys(sessionStorage).forEach((key) => {
-        if (key.startsWith("accordion-")) {
+        if (key.startsWith("template-")) {
           removeFromSessionStorage(key);
         }
       });
