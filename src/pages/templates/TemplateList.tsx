@@ -44,6 +44,7 @@ const TemplateList: React.FC<TemplateListProps> = ({
         {templates.map((template) => (
           <li key={template.id}>
             <Accordion
+              id={`template-${template.id}`}
               title={
                 <div>
                   <h3 className="text-lg font-semibold">{template.name}</h3>

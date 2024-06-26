@@ -3,11 +3,14 @@ import NewTemplateForm from "./NewTemplateForm";
 import Dialog from "../../components/Dialog";
 import db, { Template, Mesocycle } from "../../database/db";
 import TemplateList from "./TemplateList";
-
 import NewMesocycleForm from "../new_mesocycle/NewMesocycleForm";
-import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils"; // Import the utility function
+import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils";
 import PageHeader from "../../components/common/PageHeader";
 import Button from "../../components/common/Button";
+import {
+  saveToSessionStorage,
+  getFromSessionStorage,
+} from "../../utils/sessionStorageUtils";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -19,8 +22,10 @@ const Templates = () => {
   const [isMesoDialogOpen, setIsMesoDialogOpen] = useState(false);
   const [templateFilter, setTemplateFilter] = useState<
     "all" | "default" | "custom"
-  >("all");
-  const [timesPerWeekFilter, setTimesPerWeekFilter] = useState<string>("all");
+  >(() => getFromSessionStorage("templateFilter") || "all");
+  const [timesPerWeekFilter, setTimesPerWeekFilter] = useState<string>(
+    () => getFromSessionStorage("timesPerWeekFilter") || "all"
+  );
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -33,12 +38,20 @@ const Templates = () => {
     };
 
     const initializeDB = async () => {
-      await db.open(); // Open the database
-      await fetchTemplates(); // Fetch templates after database is ready
+      await db.open();
+      await fetchTemplates();
     };
 
     initializeDB();
   }, []);
+
+  useEffect(() => {
+    saveToSessionStorage("templateFilter", templateFilter);
+  }, [templateFilter]);
+
+  useEffect(() => {
+    saveToSessionStorage("timesPerWeekFilter", timesPerWeekFilter);
+  }, [timesPerWeekFilter]);
 
   const handleSave = (template: Template) => {
     if (isEditMode && selectedTemplate) {
@@ -88,7 +101,7 @@ const Templates = () => {
 
   const handleMesoSave = async (newMesocycle: Mesocycle) => {
     console.log("New mesocycle saved:", newMesocycle);
-    await setActiveMesocycleAndWorkout(newMesocycle.id!); // Use the utility function
+    await setActiveMesocycleAndWorkout(newMesocycle.id!);
     setIsMesoDialogOpen(false);
   };
 
@@ -164,7 +177,7 @@ const Templates = () => {
           templates={filteredTemplates}
           onEdit={openEditDialog}
           onDelete={handleDelete}
-          onStartMeso={openMesoDialog} // Add this line
+          onStartMeso={openMesoDialog}
         />
         <Dialog
           isOpen={isDialogOpen}

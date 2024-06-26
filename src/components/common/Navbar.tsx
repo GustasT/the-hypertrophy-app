@@ -61,6 +61,27 @@ const Navbar = () => {
     }
   };
 
+  const handleTemplatesClick = () => {
+    const isViewingTemplates = location.pathname === "/templates";
+
+    if (isViewingTemplates) {
+      // Clear session storage only if already on the "Templates" page
+      removeFromSessionStorage("templateFilter");
+      removeFromSessionStorage("timesPerWeekFilter");
+      Object.keys(sessionStorage).forEach((key) => {
+        if (key.startsWith("accordion-")) {
+          removeFromSessionStorage(key);
+        }
+      });
+
+      // Refresh the page
+      window.location.reload();
+    } else {
+      // Navigate to the "Templates" page
+      navigate("/templates");
+    }
+  };
+
   const isActiveMesocycles =
     location.pathname === "/mesocycles" ||
     (viewedMesocycleId &&
@@ -72,6 +93,7 @@ const Navbar = () => {
       ));
 
   const isActiveExercises = location.pathname === "/exercises";
+  const isActiveTemplates = location.pathname === "/templates";
 
   return (
     <nav className="fixed bottom-0 w-full h-16 bg-white border-t border-gray-200 z-20">
@@ -97,6 +119,19 @@ const Navbar = () => {
                 onClick={handleExercisesClick}
                 className={`flex flex-col items-center cursor-pointer ${
                   isActiveExercises ? "text-blue-600" : ""
+                }`}
+              >
+                {link.icon}
+                <span className="text-xs">{link.label}</span>
+              </div>
+            );
+          } else if (link.to === "/templates") {
+            return (
+              <div
+                key={link.to}
+                onClick={handleTemplatesClick}
+                className={`flex flex-col items-center cursor-pointer ${
+                  isActiveTemplates ? "text-blue-600" : ""
                 }`}
               >
                 {link.icon}
