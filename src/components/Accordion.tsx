@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, ReactNode } from "react";
-import { FaChevronDown } from "react-icons/fa";
+import { HiOutlineChevronDown } from "react-icons/hi2";
 
 interface AccordionProps {
   title: ReactNode;
@@ -36,17 +36,15 @@ const Accordion: React.FC<AccordionProps> = ({
 
   return (
     <div className="p-4 border rounded">
-      <div
-        className="flex justify-between items-center cursor-pointer"
-        onClick={toggleAccordion}
-      >
-        <div className="w-11/12">{title}</div>
+      <div className="flex justify-between items-center ">
+        <div className="w-11/12 mr-4">{title}</div>
         <span
-          className={`transform transition-transform duration-300 ${
+          className={`transform transition-transform duration-300 cursor-pointer  ${
             isOpen ? "rotate-180" : "rotate-0"
           }`}
+          onClick={toggleAccordion}
         >
-          <FaChevronDown />
+          <HiOutlineChevronDown size={22} />
         </span>
       </div>
       <div

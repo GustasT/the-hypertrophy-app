@@ -117,14 +117,11 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                 </p>
                 <div className="flex space-x-2 mt-2">
                   <Link to={`/mesocycles/${mesocycle.id}`}>
-                    <Button variant="outline" size="sm">
-                      View
-                    </Button>
+                    <Button variant="outline">View</Button>
                   </Link>
                   <Button
                     variant="secondary"
                     onClick={() => handleDeleteClick(mesocycle.id as number)}
-                    size="sm"
                   >
                     Delete
                   </Button>
