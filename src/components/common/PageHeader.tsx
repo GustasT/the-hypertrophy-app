@@ -25,7 +25,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           (buttonAction || buttonLink) &&
           (buttonLink ? (
             <Link to={buttonLink}>
-              <Button variant="primary" disabled={buttonDisabled} size="lg">
+              <Button variant="primary" disabled={buttonDisabled}>
                 {buttonText}
               </Button>
             </Link>
@@ -34,7 +34,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               variant="primary"
               onClick={buttonAction}
               disabled={buttonDisabled}
-              size="lg"
             >
               {buttonText}
             </Button>

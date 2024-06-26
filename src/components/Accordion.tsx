@@ -25,7 +25,7 @@ const Accordion: React.FC<AccordionProps> = ({
       setHeight(0);
       const timer = setTimeout(() => {
         setIsVisible(false);
-      }, 500); // Match this duration with the height transition duration
+      }, 0); // Match this duration with the height transition duration
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -40,7 +40,7 @@ const Accordion: React.FC<AccordionProps> = ({
         className="flex justify-between items-center cursor-pointer"
         onClick={toggleAccordion}
       >
-        <div>{title}</div>
+        <div className="w-11/12">{title}</div>
         <span
           className={`transform transition-transform duration-300 ${
             isOpen ? "rotate-180" : "rotate-0"
@@ -52,10 +52,10 @@ const Accordion: React.FC<AccordionProps> = ({
       <div
         ref={contentRef}
         style={{ height }}
-        className={`transition-height duration-500 ease-in-out overflow-hidden`}
+        className={`transition-height duration-300 ease-in-out overflow-hidden`}
       >
         <div
-          className={`transition-opacity duration-500 ease-in-out ${
+          className={`transition-opacity duration-300 ease-in-out ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
         >

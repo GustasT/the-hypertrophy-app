@@ -23,7 +23,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-20">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-30">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg mx-4 sm:w-2/3 lg:w-1/3">
         {title && <h2 className="text-xl font-bold mb-4">{title}</h2>}
         <p className="mb-4">{message}</p>
