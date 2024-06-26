@@ -48,19 +48,22 @@ const TemplateList: React.FC<TemplateListProps> = ({
                 <div>
                   <h3 className="text-lg font-semibold">{template.name}</h3>
                   <p>
-                    <strong>Times per week:</strong> {template.timesPerWeek}
+                    <strong>{template.timesPerWeek} Days/Week:</strong>
                   </p>
                 </div>
               }
             >
               <div>
-                <ul className="list-disc ml-5">
+                <ul className="list-none ml-5 grid grid-cols-3 gap-4">
                   {template.days.map((day, index) => (
-                    <li key={index}>
-                      <strong>
-                        Day {index + 1} ({day.name}):
-                      </strong>{" "}
-                      {day.muscleGroups.join(", ")}
+                    <li key={index} className="flex flex-col space-y-1">
+                      <div className="font-bold">Day {index + 1}</div>
+                      <div className="font-semibold">({day.name})</div>
+                      <div>
+                        {day.muscleGroups.map((muscleGroup, idx) => (
+                          <div key={idx}>{muscleGroup}</div>
+                        ))}
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -70,12 +73,14 @@ const TemplateList: React.FC<TemplateListProps> = ({
                       <Button
                         variant="outline"
                         onClick={() => onEdit(template)}
+                        size="sm"
                       >
                         Edit
                       </Button>
                       <Button
                         variant="secondary"
                         onClick={() => handleDeleteClick(template.id as number)}
+                        size="sm"
                       >
                         Delete
                       </Button>

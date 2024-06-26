@@ -55,7 +55,7 @@ const Accordion: React.FC<AccordionProps> = ({
         className={`transition-height duration-300 ease-in-out overflow-hidden`}
       >
         <div
-          className={`transition-opacity duration-300 ease-in-out ${
+          className={`transition-opacity duration-300 ease-in-out mt-2 ${
             isVisible ? "opacity-100" : "opacity-0"
           }`}
         >
