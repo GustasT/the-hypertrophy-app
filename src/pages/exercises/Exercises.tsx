@@ -5,7 +5,11 @@ import NewExerciseForm from "./NewExerciseForm";
 import ExerciseList from "./ExerciseList";
 import Dialog from "../../components/Dialog";
 import PageHeader from "../../components/common/PageHeader";
-import Button from "../../components/common/Button"; // Import the Button component
+import Button from "../../components/common/Button";
+import {
+  saveToSessionStorage,
+  getFromSessionStorage,
+} from "../../utils/sessionStorageUtils"; // Adjust the import path as needed
 
 const Exercises = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -16,11 +20,14 @@ const Exercises = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [exerciseFilter, setExerciseFilter] = useState<
     "all" | "default" | "custom"
-  >("all"); // Filter state
-  const [groupFilter, setGroupFilter] = useState<string>("all"); // Group filter state
-  const [typeFilter, setTypeFilter] = useState<string>("all"); // Type filter state
+  >(getFromSessionStorage("exerciseFilter") || "all"); // Load from session storage
+  const [groupFilter, setGroupFilter] = useState<string>(
+    getFromSessionStorage("groupFilter") || "all"
+  ); // Load from session storage
+  const [typeFilter, setTypeFilter] = useState<string>(
+    getFromSessionStorage("typeFilter") || "all"
+  ); // Load from session storage
 
-  // Fetch exercises from IndexedDB when the component mounts
   useEffect(() => {
     const fetchExercisesData = async () => {
       try {
@@ -33,6 +40,18 @@ const Exercises = () => {
 
     fetchExercisesData();
   }, []);
+
+  useEffect(() => {
+    saveToSessionStorage("exerciseFilter", exerciseFilter);
+  }, [exerciseFilter]);
+
+  useEffect(() => {
+    saveToSessionStorage("groupFilter", groupFilter);
+  }, [groupFilter]);
+
+  useEffect(() => {
+    saveToSessionStorage("typeFilter", typeFilter);
+  }, [typeFilter]);
 
   const handleSave = (exercise: Exercise) => {
     if (exercise.isDefault) return; // Prevent saving changes to default exercises
