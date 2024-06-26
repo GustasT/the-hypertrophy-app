@@ -63,7 +63,7 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
       return;
     }
 
-    const newTemplate: Template = {
+    const newTemplateData = {
       name: templateName,
       timesPerWeek: timesPerWeek as number,
       days,
@@ -71,15 +71,18 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     };
 
     try {
+      let newTemplate: Template;
+
       if (initialData) {
         await db
           .table("templates")
-          .update(initialData.id as number, newTemplate);
-        newTemplate.id = initialData.id;
+          .update(initialData.id as number, newTemplateData);
+        newTemplate = { ...newTemplateData, id: initialData.id };
       } else {
-        const id = await db.table("templates").add(newTemplate);
-        newTemplate.id = id as number;
+        const id = await db.table("templates").add(newTemplateData);
+        newTemplate = { ...newTemplateData, id: id as number };
       }
+
       onSave(newTemplate);
       onClose();
     } catch (error) {
