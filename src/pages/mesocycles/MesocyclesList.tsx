@@ -6,6 +6,7 @@ import db from "../../database/db";
 import ConfirmationDialog from "../../components/common/ConfirmationDialog";
 import Accordion from "../../components/Accordion";
 import { Flipper, Flipped } from "react-flip-toolkit";
+import AnimatedList from "../../components/common/AnimatedList"; // Import the AnimatedList component
 
 interface MesocyclesListProps {
   mesocycles: Mesocycle[];
@@ -73,8 +74,11 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
   return (
     <>
       <Flipper flipKey={mesocycles.map((mesocycle) => mesocycle.id).join("-")}>
-        <ul className="space-y-4">
-          {mesocycles.map((mesocycle) => (
+        <AnimatedList
+          className="space-y-4"
+          items={mesocycles}
+          keyExtractor={(mesocycle) => mesocycle.id.toString()}
+          renderItem={(mesocycle) => (
             <Flipped key={mesocycle.id} flipId={mesocycle.id}>
               <li>
                 <Accordion
@@ -139,8 +143,8 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                 </Accordion>
               </li>
             </Flipped>
-          ))}
-        </ul>
+          )}
+        />
       </Flipper>
       <ConfirmationDialog
         message="Delete mesocycle?"
