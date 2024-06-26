@@ -30,32 +30,27 @@ const Dialog: React.FC<DialogProps> = ({
     <>
       {showDialog && (
         <div
-          className={`fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end transition-opacity duration-300 z-20  ${
+          className={`fixed inset-0 bg-black bg-opacity-50 flex justify-center items-end transition-opacity duration-300 z-20 ${
             visible ? "opacity-100" : "opacity-0"
           }`}
-          style={{
-            height: "91dvh",
-            // paddingBottom: "",
-          }}
           onClick={onClose}
         >
           <div
-            className={`bg-white rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform overflow-y-hidden -mt-4 ${
+            className={`bg-white rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform overflow-hidden ${
               visible ? "translate-y-0" : "translate-y-full"
             }`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the dialog
-            // style={{
-            //   height: "80dvh",
-            //   paddingBottom: "4rem",
-            // }}
+            style={{ height: "calc(90dvh - 4rem)", marginBottom: "4rem" }} // Adjust for bottom navbar with margin
           >
-            <div className="sticky top-0 bg-white p-6 rounded-t-lg flex justify-between items-center border-b z-20">
-              <h2 className="text-xl font-bold">{title}</h2>
-              <button className="text-xl font-bold" onClick={onClose}>
-                &times;
-              </button>
+            <div className="flex flex-col h-full">
+              <div className="flex-none p-6 border-b h-1/12 flex justify-between items-center">
+                <h2 className="text-xl font-bold">{title}</h2>
+                <button className="text-xl font-bold" onClick={onClose}>
+                  &times;
+                </button>
+              </div>
+              <div className="flex-auto p-6 overflow-y-auto">{children}</div>
             </div>
-            <div className="p-6 h-full overflow-y-auto">{children}</div>
           </div>
         </div>
       )}
