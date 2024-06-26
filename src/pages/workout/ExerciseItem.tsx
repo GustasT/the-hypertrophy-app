@@ -9,6 +9,7 @@ import {
   getFromLocalStorage,
 } from "../../utils/localStorageUtils";
 import { updateWorkoutSets } from "../../services";
+import AnimatedList from "../../components/common/AnimatedList"; // Import the new AnimatedList component
 
 interface ExerciseItemProps {
   exercise: ExerciseWithDetails;
@@ -197,45 +198,50 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
         <div className="col-span-2 text-center">Reps</div>
         <div className="col-span-2 text-center">Weight</div>
       </div>
-      {sets.map((set, setIndex) => (
-        <div
-          key={setIndex}
-          className="grid grid-cols-5 gap-2 items-center mb-2"
-        >
-          <NumericInput
-            value={set.reps === "0" ? "" : set.reps}
-            setIndex={setIndex}
-            field="reps"
-            onInputChange={handleSetInputChange}
-            className={inputClassNames(set.logged)}
-            placeholder=""
-            disabled={set.logged}
-          />
-          <DecimalInput
-            value={set.weight === "0" ? "" : set.weight}
-            setIndex={setIndex}
-            field="weight"
-            onInputChange={handleSetInputChange}
-            className={inputClassNames(set.logged)}
-            placeholder=""
-            disabled={set.logged}
-          />
-          <Button
-            variant="primary"
-            onClick={() => handleLogSetToggle(setIndex)}
-            className="col-span-1"
-            disabled={!isValid[setIndex]}
+      <AnimatedList
+        items={sets}
+        keyExtractor={(set, i) => `${set.reps}-${set.weight}-${i}`}
+        renderItem={(set, setIndex) => (
+          <div
+            key={setIndex}
+            className="grid grid-cols-5 gap-2 items-center mb-2"
           >
-            {set.logged ? "Unlog" : "Log"}
-          </Button>
-        </div>
-      ))}
+            <NumericInput
+              value={set.reps === "0" ? "" : set.reps}
+              setIndex={setIndex}
+              field="reps"
+              onInputChange={handleSetInputChange}
+              className={inputClassNames(set.logged)}
+              placeholder=""
+              disabled={set.logged}
+            />
+            <DecimalInput
+              value={set.weight === "0" ? "" : set.weight}
+              setIndex={setIndex}
+              field="weight"
+              onInputChange={handleSetInputChange}
+              className={inputClassNames(set.logged)}
+              placeholder=""
+              disabled={set.logged}
+            />
+            <Button
+              variant="primary"
+              onClick={() => handleLogSetToggle(setIndex)}
+              className="col-span-1"
+              disabled={!isValid[setIndex]}
+            >
+              {set.logged ? "Unlog" : "Log"}
+            </Button>
+          </div>
+        )}
+      />
       <div className="flex space-x-2 mt-2">
         <Button
           variant="outline"
           onClick={handleAddSet}
           disabled={isAddButtonDisabled}
           // size="sm"
+          className="transition-transform transform hover:scale-105 duration-300"
         >
           +
         </Button>
@@ -244,6 +250,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           onClick={handleRemoveLastSet}
           disabled={isRemoveButtonDisabled}
           // size="sm"
+          className="transition-transform transform hover:scale-105 duration-300"
         >
           -
         </Button>

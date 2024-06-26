@@ -91,7 +91,7 @@ const db = new ExerciseDB();
 export default db;
 
 export interface Exercise {
-  id?: number;
+  id: number;
   name: string;
   group: string;
   type: string;
@@ -100,7 +100,7 @@ export interface Exercise {
 }
 
 export interface Template {
-  id?: number;
+  id: number;
   name: string;
   timesPerWeek: number;
   days: { name: string; muscleGroups: string[] }[];
@@ -108,7 +108,7 @@ export interface Template {
 }
 
 export interface Mesocycle {
-  id?: number;
+  id: number;
   name: string;
   templateId: number;
   timesPerWeek: number;
@@ -119,7 +119,7 @@ export interface Mesocycle {
 }
 
 export interface Workout {
-  id?: number;
+  id: number;
   mesocycleId: number;
   week: number;
   day: number;

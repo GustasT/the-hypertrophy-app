@@ -4,7 +4,8 @@ import { Mesocycle, Template } from "../../database/db";
 import Button from "../../components/common/Button";
 import db from "../../database/db";
 import ConfirmationDialog from "../../components/common/ConfirmationDialog";
-import Accordion from "../../components/Accordion"; // Import the Accordion component
+import Accordion from "../../components/Accordion";
+import { Flipper, Flipped } from "react-flip-toolkit";
 
 interface MesocyclesListProps {
   mesocycles: Mesocycle[];
@@ -71,66 +72,76 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
 
   return (
     <>
-      <ul className="space-y-4">
-        {mesocycles.map((mesocycle) => (
-          <li key={mesocycle.id}>
-            <Accordion
-              title={
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex flex-col">
-                    <h3 className="text-lg font-semibold">{mesocycle.name}</h3>
-                    <p>
-                      <strong>Template:</strong>{" "}
-                      {templateNames[mesocycle.templateId] ||
-                        mesocycle.templateId}
-                    </p>
-                  </div>
-                  <div className="flex space-x-2 z-10">
-                    {mesocycle.completed ? (
-                      <span className="text-green-400 px-2 py-1">
-                        Completed
-                      </span>
-                    ) : mesocycle.isActive ? (
-                      <div className="bg-green-400 text-white px-2 py-1 text-sm rounded">
-                        Active
+      <Flipper flipKey={mesocycles.map((mesocycle) => mesocycle.id).join("-")}>
+        <ul className="space-y-4">
+          {mesocycles.map((mesocycle) => (
+            <Flipped key={mesocycle.id} flipId={mesocycle.id}>
+              <li>
+                <Accordion
+                  title={
+                    <div className="flex justify-between items-center w-full">
+                      <div className="flex flex-col">
+                        <h3 className="text-lg font-semibold">
+                          {mesocycle.name}
+                        </h3>
+                        <p>
+                          <strong>Template:</strong>{" "}
+                          {templateNames[mesocycle.templateId] ||
+                            mesocycle.templateId}
+                        </p>
                       </div>
-                    ) : (
+                      <div className="flex space-x-2 z-10">
+                        {mesocycle.completed ? (
+                          <span className="text-green-400 px-2 py-1">
+                            Completed
+                          </span>
+                        ) : mesocycle.isActive ? (
+                          <div className="bg-green-400 text-white px-2 py-1 text-sm rounded">
+                            Active
+                          </div>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              handleSetActive(mesocycle.id as number)
+                            }
+                            size="sm"
+                          >
+                            Make Active
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  }
+                  isExpanded={false}
+                >
+                  <div>
+                    <p>
+                      <strong>Weeks:</strong> {mesocycle.weeks}
+                    </p>
+                    <p>
+                      <strong>Times/week</strong> {mesocycle.timesPerWeek}
+                    </p>
+                    <div className="flex space-x-2 mt-2">
+                      <Link to={`/mesocycles/${mesocycle.id}`}>
+                        <Button variant="outline">View</Button>
+                      </Link>
                       <Button
-                        variant="outline"
-                        onClick={() => handleSetActive(mesocycle.id as number)}
-                        size="sm"
+                        variant="secondary"
+                        onClick={() =>
+                          handleDeleteClick(mesocycle.id as number)
+                        }
                       >
-                        Make Active
+                        Delete
                       </Button>
-                    )}
+                    </div>
                   </div>
-                </div>
-              }
-              isExpanded={false}
-            >
-              <div>
-                <p>
-                  <strong>Weeks:</strong> {mesocycle.weeks}
-                </p>
-                <p>
-                  <strong>Times/week</strong> {mesocycle.timesPerWeek}
-                </p>
-                <div className="flex space-x-2 mt-2">
-                  <Link to={`/mesocycles/${mesocycle.id}`}>
-                    <Button variant="outline">View</Button>
-                  </Link>
-                  <Button
-                    variant="secondary"
-                    onClick={() => handleDeleteClick(mesocycle.id as number)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </div>
-            </Accordion>
-          </li>
-        ))}
-      </ul>
+                </Accordion>
+              </li>
+            </Flipped>
+          ))}
+        </ul>
+      </Flipper>
       <ConfirmationDialog
         message="Delete mesocycle?"
         continueText="Continue"

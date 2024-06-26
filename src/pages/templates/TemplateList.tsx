@@ -3,6 +3,7 @@ import { Template } from "../../database/db";
 import Button from "../../components/common/Button";
 import ConfirmationDialog from "../../components/common/ConfirmationDialog";
 import Accordion from "../../components/Accordion";
+import AnimatedList from "../../components/common/AnimatedList"; // Import the AnimatedList component
 
 interface TemplateListProps {
   templates: Template[];
@@ -40,8 +41,11 @@ const TemplateList: React.FC<TemplateListProps> = ({
 
   return (
     <>
-      <ul className="space-y-4">
-        {templates.map((template) => (
+      <AnimatedList
+        className="space-y-4"
+        items={templates}
+        keyExtractor={(template) => template.id.toString()}
+        renderItem={(template) => (
           <li key={template.id}>
             <Accordion
               id={`template-${template.id}`}
@@ -97,8 +101,8 @@ const TemplateList: React.FC<TemplateListProps> = ({
               </div>
             </Accordion>
           </li>
-        ))}
-      </ul>
+        )}
+      />
       <ConfirmationDialog
         message="Delete template?"
         continueText="Continue"
