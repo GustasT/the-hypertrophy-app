@@ -92,7 +92,11 @@ const Templates = () => {
     setIsMesoDialogOpen(false);
   };
 
-  const filteredTemplates = templates.filter((template) => {
+  const sortedTemplates = templates
+    .slice()
+    .sort((a, b) => a.timesPerWeek - b.timesPerWeek);
+
+  const filteredTemplates = sortedTemplates.filter((template) => {
     if (templateFilter === "default" && !template.isDefault) return false;
     if (templateFilter === "custom" && template.isDefault) return false;
     if (

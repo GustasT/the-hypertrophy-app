@@ -94,7 +94,11 @@ const Exercises = () => {
     setSelectedExercise(null);
   };
 
-  const filteredExercises = exercises.filter((exercise) => {
+  const sortedExercises = exercises
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const filteredExercises = sortedExercises.filter((exercise) => {
     if (exerciseFilter === "default" && !exercise.isDefault) return false;
     if (exerciseFilter === "custom" && exercise.isDefault) return false;
     if (groupFilter !== "all" && exercise.group !== groupFilter) return false;

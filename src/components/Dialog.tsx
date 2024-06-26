@@ -36,7 +36,7 @@ const Dialog: React.FC<DialogProps> = ({
           onClick={onClose}
         >
           <div
-            className={`bg-white rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform overflow-y-auto ${
+            className={`bg-white rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform overflow-y-hidden ${
               visible ? "translate-y-0" : "translate-y-full"
             }`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the dialog
@@ -51,7 +51,7 @@ const Dialog: React.FC<DialogProps> = ({
                 &times;
               </button>
             </div>
-            <div className="p-6 h-full ">{children}</div>
+            <div className="p-6 h-full overflow-y-auto">{children}</div>
           </div>
         </div>
       )}
