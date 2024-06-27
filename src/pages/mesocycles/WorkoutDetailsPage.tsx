@@ -37,7 +37,7 @@ const WorkoutDetailsPage = () => {
   }, [workoutId, setViewedWorkoutId]);
 
   return (
-    <div className="p-4">
+    <div className="pt-4">
       {loadingWorkout ? (
         <div className="flex justify-center items-center h-full">
           <h2 className="text-xl font-semibold">Loading workout info...</h2>

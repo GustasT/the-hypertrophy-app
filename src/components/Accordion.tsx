@@ -35,7 +35,7 @@ const Accordion: React.FC<AccordionProps> = ({
   };
 
   return (
-    <div className="p-4 border rounded">
+    <div className="bg-white p-4 rounded-lg shadow-md">
       <div className="flex justify-between items-center">
         <div className="w-11/12 mr-4">{title}</div>
         <span
