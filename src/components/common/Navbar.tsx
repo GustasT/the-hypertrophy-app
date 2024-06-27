@@ -96,7 +96,7 @@ const Navbar = () => {
   const isActiveTemplates = location.pathname === "/templates";
 
   return (
-    <nav className="fixed bottom-0 w-full h-16 bg-white border-t border-gray-200 z-20">
+    <nav className="fixed bottom-0 w-full h-20 bg-white border-t border-gray-200 z-20">
       <div className="flex justify-around p-4">
         {navbarLinks.map((link) => {
           if (link.to === "/mesocycles") {

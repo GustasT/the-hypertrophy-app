@@ -10,6 +10,7 @@ import {
   saveToSessionStorage,
   getFromSessionStorage,
 } from "../../utils/sessionStorageUtils"; // Adjust the import path as needed
+import StickyDiv from "../../components/common/StickyDiv";
 
 const Exercises = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -117,65 +118,67 @@ const Exercises = () => {
         buttonAction={openAddDialog}
       />
       <div className="p-4">
-        <div className="mb-4 flex space-x-2">
-          <Button
-            onClick={() => setExerciseFilter("all")}
-            variant={exerciseFilter === "all" ? "primary" : "outline"}
-            size="sm"
-          >
-            All Exercises
-          </Button>
-          <Button
-            onClick={() => setExerciseFilter("default")}
-            variant={exerciseFilter === "default" ? "primary" : "outline"}
-            size="sm"
-          >
-            Default
-          </Button>
-          <Button
-            onClick={() => setExerciseFilter("custom")}
-            variant={exerciseFilter === "custom" ? "primary" : "outline"}
-            size="sm"
-          >
-            Custom
-          </Button>
-        </div>
-        <div className="mb-4 flex space-x-2">
-          <label htmlFor="groupFilter" className="mr-2">
-            Group:
-          </label>
-          <select
-            id="groupFilter"
-            value={groupFilter}
-            onChange={(e) => setGroupFilter(e.target.value)}
-            className="p-2 border rounded"
-          >
-            <option value="all">All Groups</option>
-            {uniqueGroups.map((group) => (
-              <option key={group} value={group}>
-                {group}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="mb-4 flex space-x-2">
-          <label htmlFor="typeFilter" className="mr-2">
-            Type:
-          </label>
-          <select
-            id="typeFilter"
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="p-2 border rounded"
-          >
-            <option value="all">All Types</option>
-            {uniqueTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
+        <StickyDiv>
+          <div className="mb-4 flex space-x-2">
+            <Button
+              onClick={() => setExerciseFilter("all")}
+              variant={exerciseFilter === "all" ? "primary" : "outline"}
+              size="sm"
+            >
+              All Exercises
+            </Button>
+            <Button
+              onClick={() => setExerciseFilter("default")}
+              variant={exerciseFilter === "default" ? "primary" : "outline"}
+              size="sm"
+            >
+              Default
+            </Button>
+            <Button
+              onClick={() => setExerciseFilter("custom")}
+              variant={exerciseFilter === "custom" ? "primary" : "outline"}
+              size="sm"
+            >
+              Custom
+            </Button>
+          </div>
+          <div className="mb-4 flex space-x-2">
+            <label htmlFor="groupFilter" className="mr-2">
+              Group:
+            </label>
+            <select
+              id="groupFilter"
+              value={groupFilter}
+              onChange={(e) => setGroupFilter(e.target.value)}
+              className="p-2 border rounded"
+            >
+              <option value="all">All Groups</option>
+              {uniqueGroups.map((group) => (
+                <option key={group} value={group}>
+                  {group}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4 flex space-x-2">
+            <label htmlFor="typeFilter" className="mr-2">
+              Type:
+            </label>
+            <select
+              id="typeFilter"
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="p-2 border rounded"
+            >
+              <option value="all">All Types</option>
+              {uniqueTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </div>
+        </StickyDiv>
         <ExerciseList
           exercises={filteredExercises}
           onEdit={openEditDialog}
