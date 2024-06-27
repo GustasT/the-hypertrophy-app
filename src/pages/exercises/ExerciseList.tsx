@@ -49,7 +49,6 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
         renderItem={(exercise) => (
           <li key={exercise.id}>
             <Accordion
-              id={`exercise-${exercise.id}`} // Pass a unique identifier
               title={
                 <div className="flex justify-between items-center w-full">
                   <h3 className="text-lg font-semibold">{exercise.name}</h3>

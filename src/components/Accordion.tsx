@@ -1,28 +1,18 @@
 import React, { useState, useRef, useEffect, ReactNode } from "react";
 import { HiOutlineChevronDown } from "react-icons/hi2";
-import {
-  saveToSessionStorage,
-  getFromSessionStorage,
-  removeFromSessionStorage,
-} from "../utils/sessionStorageUtils"; // Adjust the import path as needed
 
 interface AccordionProps {
-  id?: string; // Make id optional
   title: ReactNode;
   isExpanded?: boolean;
   children: ReactNode;
 }
 
 const Accordion: React.FC<AccordionProps> = ({
-  id,
   title,
   isExpanded = false,
   children,
 }) => {
-  const storedState = id ? getFromSessionStorage(id) : null;
-  const [isOpen, setIsOpen] = useState<boolean>(
-    storedState !== null ? storedState : isExpanded
-  );
+  const [isOpen, setIsOpen] = useState<boolean>(isExpanded);
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState<string | number>(isOpen ? "auto" : 0);
   const [isVisible, setIsVisible] = useState(isOpen);
@@ -31,20 +21,14 @@ const Accordion: React.FC<AccordionProps> = ({
     if (isOpen) {
       setIsVisible(true);
       setHeight(contentRef.current?.scrollHeight || "auto");
-      if (id) {
-        saveToSessionStorage(id, isOpen);
-      }
     } else {
       setHeight(0);
       const timer = setTimeout(() => {
         setIsVisible(false);
-        if (id) {
-          removeFromSessionStorage(id);
-        }
       }, 300); // Match this duration with the height transition duration
       return () => clearTimeout(timer);
     }
-  }, [isOpen, id]);
+  }, [isOpen]);
 
   const toggleAccordion = () => {
     setIsOpen((prevIsOpen: boolean) => !prevIsOpen); // Explicitly define the type of prevIsOpen
