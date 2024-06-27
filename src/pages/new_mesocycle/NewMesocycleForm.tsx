@@ -8,6 +8,7 @@ import {
 import TabNavigation from "../../components/TabNavigation";
 import Button from "../../components/common/Button";
 import SelectField from "../../components/common/SelectField"; // Adjust the import path if necessary
+import { useNavigate } from "react-router-dom";
 
 interface NewMesocycleFormProps {
   template: Template;
@@ -34,6 +35,8 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
   const [mesocycleName, setMesocycleName] = useState(initialData?.name || "");
   const [weeks, setWeeks] = useState<number>(initialData?.weeks || 4);
   const [weightUnit, setWeightUnit] = useState("KG");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchExercisesData = async () => {
@@ -78,13 +81,16 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
       weeks,
       timesPerWeek: template.timesPerWeek,
       completed: 0,
-      isActive: 1, // Set the new mesocycle as active
+      isActive: 1,
       workouts: [],
     };
     const mesocycleId = await createMesocycle(newMesocycle, selectedExercises);
     onSave({ id: mesocycleId, ...newMesocycle });
     clearLocalStorageExercises();
-    onClose(); // Close the dialog after saving
+    onClose();
+    setTimeout(() => {
+      navigate("/mesocycles");
+    }, 200);
   };
 
   const getAvailableExercises = (dayIndex: number, muscleGroup: string) => {

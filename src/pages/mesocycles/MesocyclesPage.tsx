@@ -84,11 +84,6 @@ const MesocyclesPage = () => {
         buttonLink="/templates"
       />
       <div className="p-4">
-        {/* {mesocycles.length === 0 ? (
-          <p>Please create a mesocycle</p>
-        ) : !activeMesocycle ? (
-          <p>Please activate a mesocycle</p>
-        ) : null} */}
         <MesocyclesList
           mesocycles={sortedMesocycles}
           onDelete={handleDelete}

@@ -6,7 +6,7 @@ import { useCurrentView } from "../../contexts/CurrentViewContext"; // Import th
 import AnimatedList from "../../components/common/AnimatedList"; // Import the AnimatedList component
 
 const WorkoutDetailsPage = () => {
-  const { mesocycleId, workoutId } = useParams<{
+  const { workoutId } = useParams<{
     mesocycleId: string;
     workoutId: string;
   }>();
@@ -46,9 +46,6 @@ const WorkoutDetailsPage = () => {
         workout && (
           <div>
             <h2 className="text-xl font-bold mb-4">
-              Mesocycle {mesocycleId} - Workout {workoutId}
-            </h2>
-            <h2 className="text-lg font-semibold mb-6">
               {`Week ${workout.week}, Day ${workout.day}`}
             </h2>
             <AnimatedList

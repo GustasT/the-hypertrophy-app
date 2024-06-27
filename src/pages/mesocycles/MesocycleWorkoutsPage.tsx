@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, NavLink, useNavigate, Outlet } from "react-router-dom";
 import { fetchMesocycleById, fetchWorkoutsByMesocycle } from "../../services";
-import { Workout } from "../../database/db";
+import { Mesocycle, Workout } from "../../database/db";
 import { useCurrentView } from "../../contexts/CurrentViewContext"; // Import the context
 import Button from "../../components/common/Button"; // Import the Button component
 import CurrentViewDebug from "../../contexts/CurrentViewDebug";
@@ -11,6 +11,7 @@ const MesocycleWorkoutsPage = () => {
   const { mesocycleId } = useParams<{ mesocycleId: string }>();
   const { setViewedMesocycleId, setViewedWorkoutId, viewedWorkoutId } =
     useCurrentView(); // Use the context
+  const [mesocycle, setMesocycle] = useState<Mesocycle | null>(null);
   const [workoutsByWeek, setWorkoutsByWeek] = useState<{
     [week: number]: Workout[];
   }>({});
@@ -21,11 +22,14 @@ const MesocycleWorkoutsPage = () => {
     const fetchData = async () => {
       try {
         if (mesocycleId) {
-          const mesocycle = await fetchMesocycleById(Number(mesocycleId));
-          if (!mesocycle) {
+          const fetchedMesocycle = await fetchMesocycleById(
+            Number(mesocycleId)
+          );
+          if (!fetchedMesocycle) {
             setMesocycleExists(false);
             return;
           }
+          setMesocycle(fetchedMesocycle);
           const workoutsData = await fetchWorkoutsByMesocycle(
             Number(mesocycleId)
           );
@@ -67,7 +71,7 @@ const MesocycleWorkoutsPage = () => {
 
   return (
     <>
-      <PageHeader title={`Workouts for Mesocycle ${mesocycleId}`} />
+      <PageHeader title={` ${mesocycle?.name} history`} />
       <div className="p-4">
         {mesocycleExists ? (
           <div>
