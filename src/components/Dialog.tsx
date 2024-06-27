@@ -20,10 +20,17 @@ const Dialog: React.FC<DialogProps> = ({
     if (isOpen) {
       setShowDialog(true);
       setTimeout(() => setVisible(true), 10); // Slight delay to trigger animation
+      document.body.classList.add("overflow-hidden"); // Disable background scroll
     } else {
       setVisible(false);
       setTimeout(() => setShowDialog(false), 300); // Match the duration of the animation
+      document.body.classList.remove("overflow-hidden"); // Re-enable background scroll
     }
+
+    // Clean up function to ensure no-scroll class is removed when the component unmounts
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
   }, [isOpen]);
 
   return (
