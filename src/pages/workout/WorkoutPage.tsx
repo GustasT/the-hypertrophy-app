@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+// WorkoutPage.tsx
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchActiveMesocycle,
@@ -35,6 +36,8 @@ const WorkoutPage = () => {
   const [isFinishWorkoutButtonDisabled, setIsFinishWorkoutButtonDisabled] =
     useState(true);
   const [isDialogVisible, setIsDialogVisible] = useState(false); // State for dialog visibility
+
+  const topRef = useRef<HTMLDivElement>(null);
 
   const checkUnloggedSets = () => {
     const savedWorkoutSets = getFromLocalStorage(
@@ -216,6 +219,7 @@ const WorkoutPage = () => {
   const handleDialogContinue = async () => {
     setIsDialogVisible(false);
     await handleSave();
+    topRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to top after finishing the workout
   };
 
   const handleDialogCancel = () => {
@@ -224,6 +228,7 @@ const WorkoutPage = () => {
 
   return (
     <div>
+      <div ref={topRef}></div> {/* Add this div to mark the top of the page */}
       <PageHeader
         title="Workout"
         buttonText="Finish Workout"
