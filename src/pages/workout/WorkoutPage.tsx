@@ -38,6 +38,7 @@ const WorkoutPage = () => {
   const [isDialogVisible, setIsDialogVisible] = useState(false); // State for dialog visibility
 
   const topRef = useRef<HTMLDivElement>(null);
+  const exerciseRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const checkUnloggedSets = () => {
     const savedWorkoutSets = getFromLocalStorage(
@@ -226,6 +227,12 @@ const WorkoutPage = () => {
     setIsDialogVisible(false);
   };
 
+  const handleInputFocus = (index: number) => {
+    if (exerciseRefs.current[index]) {
+      exerciseRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div>
       <div ref={topRef}></div> {/* Add this div to mark the top of the page */}
@@ -248,16 +255,21 @@ const WorkoutPage = () => {
             (histEx) => histEx.id === exercise.id
           );
           return (
-            <ExerciseItem
+            <div
               key={exercise.id}
-              exercise={exercise}
-              index={index}
-              onInputChange={handleInputChange}
-              onRemoveSet={handleRemoveSet}
-              workoutId={activeWorkout ? activeWorkout.id! : -1}
-              checkUnloggedSets={checkUnloggedSets}
-              historicalSets={historicalExercise?.sets} // Pass historical sets
-            />
+              ref={(el) => (exerciseRefs.current[index] = el)}
+            >
+              <ExerciseItem
+                exercise={exercise}
+                index={index}
+                onInputChange={handleInputChange}
+                onRemoveSet={handleRemoveSet}
+                workoutId={activeWorkout ? activeWorkout.id! : -1}
+                checkUnloggedSets={checkUnloggedSets}
+                historicalSets={historicalExercise?.sets} // Pass historical sets
+                onInputFocus={handleInputFocus}
+              />
+            </div>
           );
         })}
       </div>

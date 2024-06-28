@@ -8,6 +8,7 @@ interface DecimalInputProps {
   className?: string;
   placeholder?: string;
   disabled?: boolean;
+  onFocus?: () => void;
 }
 
 const DecimalInput: React.FC<DecimalInputProps> = ({
@@ -18,6 +19,7 @@ const DecimalInput: React.FC<DecimalInputProps> = ({
   className,
   placeholder,
   disabled,
+  onFocus,
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const allowedKeys = [
@@ -66,6 +68,7 @@ const DecimalInput: React.FC<DecimalInputProps> = ({
       placeholder={placeholder}
       className={`border p-2 ${className}`}
       disabled={disabled}
+      onFocus={onFocus}
     />
   );
 };

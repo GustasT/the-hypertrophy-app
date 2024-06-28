@@ -23,6 +23,7 @@ interface ExerciseItemProps {
   workoutId: number;
   checkUnloggedSets: () => void;
   historicalSets?: { reps: number; weight: number }[];
+  onInputFocus: (index: number) => void;
 }
 
 const ExerciseItem: React.FC<ExerciseItemProps> = ({
@@ -33,6 +34,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
   workoutId,
   checkUnloggedSets,
   historicalSets,
+  onInputFocus,
 }) => {
   const initialSets = exercise.sets?.length
     ? exercise.sets.map((set) => ({
@@ -171,6 +173,10 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
     checkUnloggedSets();
   };
 
+  const handleFocus = () => {
+    onInputFocus(index);
+  };
+
   const inputClassNames = (logged: boolean) =>
     `col-span-2 ${logged ? "bg-gray-200" : ""}`;
 
@@ -210,6 +216,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
             className={inputClassNames(set.logged)}
             placeholder=""
             disabled={set.logged}
+            onFocus={handleFocus}
           />
           <DecimalInput
             value={set.weight === "0" ? "" : set.weight}
@@ -219,6 +226,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
             className={inputClassNames(set.logged)}
             placeholder=""
             disabled={set.logged}
+            onFocus={handleFocus}
           />
           <Button
             variant="primary"
