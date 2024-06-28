@@ -179,7 +179,9 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
       {isExerciseSelectionComplete && (
         <div className="mt-4">
           <div className="mb-4">
-            <label className="block text-gray-700">Mesocycle Name</label>
+            <label className="block text-lg text-gray-700 font-semibold">
+              Mesocycle Name
+            </label>
             <input
               type="text"
               className="w-full mt-2 p-2 border rounded"

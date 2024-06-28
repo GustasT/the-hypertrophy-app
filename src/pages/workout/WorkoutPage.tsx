@@ -1,4 +1,3 @@
-// WorkoutPage.tsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -38,7 +37,6 @@ const WorkoutPage = () => {
   const [isDialogVisible, setIsDialogVisible] = useState(false); // State for dialog visibility
 
   const topRef = useRef<HTMLDivElement>(null);
-  const exerciseRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const checkUnloggedSets = () => {
     const savedWorkoutSets = getFromLocalStorage(
@@ -220,17 +218,14 @@ const WorkoutPage = () => {
   const handleDialogContinue = async () => {
     setIsDialogVisible(false);
     await handleSave();
-    topRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to top after finishing the workout
+    setTimeout(
+      () => topRef.current?.scrollIntoView({ behavior: "smooth" }),
+      100
+    );
   };
 
   const handleDialogCancel = () => {
     setIsDialogVisible(false);
-  };
-
-  const handleInputFocus = (index: number) => {
-    if (exerciseRefs.current[index]) {
-      exerciseRefs.current[index]?.scrollIntoView({ behavior: "smooth" });
-    }
   };
 
   return (
@@ -255,10 +250,7 @@ const WorkoutPage = () => {
             (histEx) => histEx.id === exercise.id
           );
           return (
-            <div
-              key={exercise.id}
-              ref={(el) => (exerciseRefs.current[index] = el)}
-            >
+            <div key={exercise.id}>
               <ExerciseItem
                 exercise={exercise}
                 index={index}
@@ -267,7 +259,6 @@ const WorkoutPage = () => {
                 workoutId={activeWorkout ? activeWorkout.id! : -1}
                 checkUnloggedSets={checkUnloggedSets}
                 historicalSets={historicalExercise?.sets} // Pass historical sets
-                onInputFocus={handleInputFocus}
               />
             </div>
           );
