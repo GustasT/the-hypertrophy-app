@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Template, Exercise, Mesocycle } from "../../database/db";
 import {
   fetchAllExercises,
@@ -37,6 +37,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
   const [weightUnit, setWeightUnit] = useState("KG");
 
   const navigate = useNavigate();
+  const botRef = useRef<HTMLDivElement>(null); // Add reference to the bottom of the component
 
   useEffect(() => {
     const fetchExercisesData = async () => {
@@ -68,6 +69,12 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
 
     const isAdditionalFormComplete = mesocycleName !== "" && weightUnit !== "";
     setIsFormComplete(isExerciseComplete && isAdditionalFormComplete);
+
+    if (isExerciseComplete) {
+      setTimeout(() => {
+        botRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the bottom when all inputs for a day are filled
+      }, 100); // Add a delay of 100ms
+    }
   }, [selectedExercises, template, mesocycleName, weightUnit]);
 
   const handleExerciseSelect = (key: string, exercise: Exercise | null) => {
@@ -212,7 +219,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
           </div>
         </div>
       )}
-      <div className="flex justify-end gap-x-2 mt-4 pb-7">
+      <div className="flex justify-end gap-x-2 mt-4 pb-7" ref={botRef}>
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>

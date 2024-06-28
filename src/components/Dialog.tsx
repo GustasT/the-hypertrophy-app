@@ -50,7 +50,7 @@ const Dialog: React.FC<DialogProps> = ({
             style={{ height: "calc(90dvh - 4rem)", marginBottom: "4rem" }} // Adjust for bottom navbar with margin
           >
             <div className="flex flex-col h-full">
-              <div className="flex-none p-6 border-b h-1/12 flex justify-between items-center">
+              <div className="flex-none px-6 py-4 border-b  flex justify-between items-center">
                 <h2 className="text-xl font-bold">{title}</h2>
                 <button className="text-xl font-bold" onClick={onClose}>
                   &times;
