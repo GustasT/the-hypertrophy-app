@@ -1,3 +1,4 @@
+// Exercises.tsx
 import { useState, useEffect } from "react";
 import { fetchAllExercises, deleteExercise } from "../../services";
 import { Exercise } from "../../database/db";
@@ -9,8 +10,10 @@ import Button from "../../components/common/Button";
 import {
   saveToSessionStorage,
   getFromSessionStorage,
-} from "../../utils/sessionStorageUtils"; // Adjust the import path as needed
+} from "../../utils/sessionStorageUtils";
 import StickyDiv from "../../components/common/StickyDiv";
+import ScrollToTopButton from "../../components/common/ScrollToTopButton";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const Exercises = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -21,13 +24,15 @@ const Exercises = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [exerciseFilter, setExerciseFilter] = useState<
     "all" | "default" | "custom"
-  >(getFromSessionStorage("exerciseFilter") || "all"); // Load from session storage
+  >(getFromSessionStorage("exerciseFilter") || "all");
   const [groupFilter, setGroupFilter] = useState<string>(
     getFromSessionStorage("groupFilter") || "all"
-  ); // Load from session storage
+  );
   const [typeFilter, setTypeFilter] = useState<string>(
     getFromSessionStorage("typeFilter") || "all"
-  ); // Load from session storage
+  );
+
+  const { topRef, isScrollButtonVisible } = useScrollToTop();
 
   useEffect(() => {
     const fetchExercisesData = async () => {
@@ -55,7 +60,7 @@ const Exercises = () => {
   }, [typeFilter]);
 
   const handleSave = (exercise: Exercise) => {
-    if (exercise.isDefault) return; // Prevent saving changes to default exercises
+    if (exercise.isDefault) return;
 
     if (isEditMode && selectedExercise) {
       setExercises(
@@ -68,7 +73,7 @@ const Exercises = () => {
 
   const handleDelete = async (id: number) => {
     const exercise = exercises.find((ex) => ex.id === id);
-    if (exercise?.isDefault) return; // Prevent deleting default exercises
+    if (exercise?.isDefault) return;
 
     try {
       await deleteExercise(id);
@@ -112,6 +117,7 @@ const Exercises = () => {
 
   return (
     <>
+      <div ref={topRef}></div>
       <PageHeader
         title="Exercise List"
         buttonText="New Exercise"
@@ -195,6 +201,7 @@ const Exercises = () => {
             initialData={selectedExercise || undefined}
           />
         </Dialog>
+        <ScrollToTopButton topRef={topRef} isVisible={isScrollButtonVisible} />
       </div>
     </>
   );

@@ -1,3 +1,4 @@
+// Templates.tsx
 import { useState, useEffect } from "react";
 import NewTemplateForm from "./NewTemplateForm";
 import Dialog from "../../components/Dialog";
@@ -12,6 +13,8 @@ import {
   getFromSessionStorage,
 } from "../../utils/sessionStorageUtils";
 import StickyDiv from "../../components/common/StickyDiv";
+import ScrollToTopButton from "../../components/common/ScrollToTopButton";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -27,6 +30,8 @@ const Templates = () => {
   const [timesPerWeekFilter, setTimesPerWeekFilter] = useState<string>(
     () => getFromSessionStorage("timesPerWeekFilter") || "all"
   );
+
+  const { topRef, isScrollButtonVisible } = useScrollToTop();
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -127,6 +132,7 @@ const Templates = () => {
 
   return (
     <>
+      <div ref={topRef}></div>
       <PageHeader
         title="Template List"
         buttonText="New Template"
@@ -207,6 +213,7 @@ const Templates = () => {
             />
           )}
         </Dialog>
+        <ScrollToTopButton topRef={topRef} isVisible={isScrollButtonVisible} />
       </div>
     </>
   );
