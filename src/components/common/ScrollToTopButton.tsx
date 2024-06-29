@@ -18,7 +18,7 @@ const ScrollToTopButton: React.FC<ScrollToTopButtonProps> = ({
   return (
     <button
       onClick={scrollToTop}
-      className={`fixed bottom-4 right-4 mb-20 p-2 bg-blue-500 text-white rounded-full shadow-lg transition-opacity duration-300 ${
+      className={`fixed bottom-4 right-4 mb-20 p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg transition-opacity duration-300 ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
       style={{ pointerEvents: isVisible ? "auto" : "none" }}
