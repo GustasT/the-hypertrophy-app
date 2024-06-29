@@ -7,7 +7,7 @@ import {
 } from "../../services/";
 import TabNavigation from "../../components/TabNavigation";
 import Button from "../../components/common/Button";
-import SelectField from "../../components/common/SelectField"; // Adjust the import path if necessary
+import SelectField from "../../components/common/SelectField";
 import { useNavigate } from "react-router-dom";
 
 interface NewMesocycleFormProps {
@@ -73,7 +73,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
     if (isExerciseComplete) {
       setTimeout(() => {
         botRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the bottom when all inputs for a day are filled
-      }, 100); // Add a delay of 100ms
+      }, 100);
     }
   }, [selectedExercises, template, mesocycleName, weightUnit]);
 
@@ -140,9 +140,9 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
               const key = `${dayIndex}-${mgIndex}-${muscleGroup}`;
               const options = getAvailableExercises(dayIndex, muscleGroup).map(
                 (exercise) => ({
-                  value: exercise.id ?? -1, // Handle undefined case
+                  value: exercise.id ?? -1,
                   label: exercise.name,
-                  youtubeLink: exercise.youtubeLink, // Add YouTube link to options
+                  youtubeLink: exercise.youtubeLink,
                 })
               );
               return (
@@ -168,7 +168,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                     }
                     isClearable={true}
                     isSearchable={true}
-                    zIndex={1000} // Adjust zIndex if needed
+                    zIndex={1000}
                   />
                 </div>
               );
@@ -202,7 +202,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
               }
               onChange={(option) => setWeeks(option?.value || 4)}
               isClearable={false}
-              zIndex={1000} // Adjust zIndex if needed
+              zIndex={1000}
             />
           </div>
           <div className="mb-4">
@@ -216,7 +216,7 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
               }
               onChange={(option) => setWeightUnit(option?.value || "KG")}
               isClearable={false}
-              zIndex={1000} // Adjust zIndex if needed
+              zIndex={1000}
             />
           </div>
         </div>

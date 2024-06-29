@@ -20,6 +20,7 @@ import {
 } from "../../utils/localStorageUtils";
 import PageHeader from "../../components/common/PageHeader"; // Import the PageHeader component
 import ConfirmationDialog from "../../components/common/ConfirmationDialog"; // Import ConfirmationDialog
+import StickyDiv from "../../components/common/StickyDiv";
 
 const WorkoutPage = () => {
   const navigate = useNavigate();
@@ -76,7 +77,8 @@ const WorkoutPage = () => {
   const fetchHistoricalData = async (
     mesocycleId: number,
     week: number,
-    day: number
+    day: number,
+    name: string
   ) => {
     const previousWeek = week - 1;
     if (previousWeek > 0) {
@@ -114,7 +116,12 @@ const WorkoutPage = () => {
           setExercises(exercisesWithSets);
 
           // Fetch historical data
-          await fetchHistoricalData(mesocycle.id!, workout.week, workout.day);
+          await fetchHistoricalData(
+            mesocycle.id!,
+            workout.week,
+            workout.day,
+            workout.name
+          );
         }
       } else {
         navigate("/mesocycles"); // Redirect if no active mesocycle
@@ -238,9 +245,17 @@ const WorkoutPage = () => {
         buttonDisabled={isFinishWorkoutButtonDisabled} // Pass the disabled state
       />
       {activeMesocycle && !loadingWorkout ? (
-        <h2 className="text-xl font-semibold p-4">
-          {`${activeMesocycle.name} - Week ${activeWorkout?.week}, Day ${activeWorkout?.day}`}
-        </h2>
+        <StickyDiv>
+          <h2 className="text-sm font-semibold px-4 mt-3">
+            {`${activeMesocycle.name}`}
+          </h2>
+          {/* <h3 className="font-bold p-4">{`Week ${activeWorkout?.week}, Day ${activeWorkout?.day}`}</h3> */}
+          <h3 className="font-bold px-4 pb-4">
+            WEEK <span className="text-lg">{`${activeWorkout?.week}`}</span> DAY{" "}
+            <span className="text-lg">{`${activeWorkout?.day}`}</span>{" "}
+            {`${activeWorkout?.name}`}
+          </h3>
+        </StickyDiv>
       ) : (
         <h2 className="text-xl font-semibold p-4">Loading workout info...</h2>
       )}
