@@ -51,9 +51,9 @@ const TemplateList: React.FC<TemplateListProps> = ({
               title={
                 <div>
                   <h3 className="text-lg font-semibold">{template.name}</h3>
-                  <p>
-                    <strong>{template.timesPerWeek} Days/Week:</strong>
-                  </p>
+                  <span className="text-gray-600 text-sm">
+                    {template.timesPerWeek}/WEEK:
+                  </span>
                 </div>
               }
             >

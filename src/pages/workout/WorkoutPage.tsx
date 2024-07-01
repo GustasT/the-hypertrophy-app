@@ -236,8 +236,7 @@ const WorkoutPage = () => {
   };
 
   return (
-    <div>
-      <div ref={topRef}></div> {/* Add this div to mark the top of the page */}
+    <div ref={topRef}>
       <PageHeader
         title="Workout"
         buttonText="Finish Workout"
@@ -246,11 +245,9 @@ const WorkoutPage = () => {
       />
       {activeMesocycle && !loadingWorkout ? (
         <StickyDiv>
-          <h2 className="text-sm font-semibold px-4 mt-3">
-            {`${activeMesocycle.name}`}
-          </h2>
+          <h2 className=" text-sm mt-4">{`${activeMesocycle.name}`}</h2>
           {/* <h3 className="font-bold p-4">{`Week ${activeWorkout?.week}, Day ${activeWorkout?.day}`}</h3> */}
-          <h3 className="font-bold px-4 pb-4">
+          <h3 className="font-bold pb-4">
             WEEK <span className="text-lg">{`${activeWorkout?.week}`}</span> DAY{" "}
             <span className="text-lg">{`${activeWorkout?.day}`}</span>{" "}
             {`${activeWorkout?.name}`}

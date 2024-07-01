@@ -138,51 +138,51 @@ const Templates = () => {
         buttonText="New Template"
         buttonAction={openAddDialog}
       />
-      <div className="p-4">
-        <StickyDiv>
-          <div className="mb-4 flex space-x-2">
-            <Button
-              onClick={() => setTemplateFilter("all")}
-              variant={templateFilter === "all" ? "primary" : "outline"}
-              size="sm"
-            >
-              All Templates
-            </Button>
-            <Button
-              onClick={() => setTemplateFilter("default")}
-              variant={templateFilter === "default" ? "primary" : "outline"}
-              size="sm"
-            >
-              Default
-            </Button>
-            <Button
-              onClick={() => setTemplateFilter("custom")}
-              variant={templateFilter === "custom" ? "primary" : "outline"}
-              size="sm"
-            >
-              Custom
-            </Button>
-          </div>
+      <StickyDiv>
+        <div className="mb-4 mt-4 flex space-x-2">
+          <Button
+            onClick={() => setTemplateFilter("all")}
+            variant={templateFilter === "all" ? "primary" : "outline"}
+            size="sm"
+          >
+            All Templates
+          </Button>
+          <Button
+            onClick={() => setTemplateFilter("default")}
+            variant={templateFilter === "default" ? "primary" : "outline"}
+            size="sm"
+          >
+            Default
+          </Button>
+          <Button
+            onClick={() => setTemplateFilter("custom")}
+            variant={templateFilter === "custom" ? "primary" : "outline"}
+            size="sm"
+          >
+            Custom
+          </Button>
+        </div>
 
-          <div className="mb-4 flex space-x-2">
-            <label htmlFor="timesPerWeekFilter" className="mr-2">
-              Times Per Week:
-            </label>
-            <select
-              id="timesPerWeekFilter"
-              value={timesPerWeekFilter}
-              onChange={(e) => setTimesPerWeekFilter(e.target.value)}
-              className="p-2 border rounded"
-            >
-              <option value="all">All</option>
-              {uniqueTimesPerWeek.map((times) => (
-                <option key={times} value={times}>
-                  {times}
-                </option>
-              ))}
-            </select>
-          </div>
-        </StickyDiv>
+        <div className="mb-4 flex space-x-2">
+          <label htmlFor="timesPerWeekFilter" className="mr-2">
+            Times Per Week:
+          </label>
+          <select
+            id="timesPerWeekFilter"
+            value={timesPerWeekFilter}
+            onChange={(e) => setTimesPerWeekFilter(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="all">All</option>
+            {uniqueTimesPerWeek.map((times) => (
+              <option key={times} value={times}>
+                {times}
+              </option>
+            ))}
+          </select>
+        </div>
+      </StickyDiv>
+      <div className="p-4">
         <TemplateList
           templates={filteredTemplates}
           onEdit={openEditDialog}

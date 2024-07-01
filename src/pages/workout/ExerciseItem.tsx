@@ -178,7 +178,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
     sets.length === 1 || sets[sets.length - 1]?.logged;
 
   return (
-    <div className="mb-4">
+    <div className="pb-4 mb-4 border-b">
       <div className="flex justify-between items-center">
         <h3 className="font-semibold">{exercise.name}</h3>
         {exercise.youtubeLink && (
@@ -192,10 +192,10 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           </a>
         )}
       </div>
-      <p className="text-sm text-gray-500">{exercise.group}</p>
+      <p className="text-sm text-gray-500 uppercase">{exercise.group}</p>
       <div className="grid grid-cols-5 gap-2 items-center font-medium mb-2 mt-2">
-        <div className="col-span-2 text-center">Reps</div>
-        <div className="col-span-2 text-center">Weight</div>
+        <div className="col-span-2 text-center">REPS</div>
+        <div className="col-span-2 text-center">WEIGHT</div>
       </div>
       {sets.map((set, setIndex) => (
         <div

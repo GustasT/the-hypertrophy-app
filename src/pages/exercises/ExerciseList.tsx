@@ -3,7 +3,6 @@ import { Exercise } from "../../database/db";
 import Button from "../../components/common/Button";
 import { AiOutlineYoutube } from "react-icons/ai";
 import ConfirmationDialog from "../../components/common/ConfirmationDialog";
-import Accordion from "../../components/Accordion"; // Adjust the import path as needed
 import AnimatedList from "../../components/common/AnimatedList"; // Import the AnimatedList component
 
 interface ExerciseListProps {
@@ -48,32 +47,28 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
         keyExtractor={(exercise) => exercise.id.toString()}
         renderItem={(exercise) => (
           <li key={exercise.id}>
-            <Accordion
-              title={
-                <div className="flex justify-between items-center w-full">
-                  <h3 className="text-lg font-semibold">{exercise.name}</h3>
-                  {exercise.youtubeLink && (
-                    <p>
-                      <a
-                        href={exercise.youtubeLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <AiOutlineYoutube size={24} />
-                      </a>
-                    </p>
-                  )}
-                </div>
-              }
-            >
+            <div className="bg-white p-4 rounded-lg shadow-md">
+              <div className="flex justify-between items-center w-full">
+                <h3 className="text-sm uppercase text-gray-600">
+                  {exercise.group}
+                </h3>
+                {exercise.youtubeLink && (
+                  <p>
+                    <a
+                      href={exercise.youtubeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <AiOutlineYoutube size={24} />
+                    </a>
+                  </p>
+                )}
+              </div>
               <div>
-                <p>
-                  <strong>Group:</strong> {exercise.group}
-                </p>
-                <p>
-                  <strong>Type:</strong> {exercise.type}
-                </p>
+                <span className="font-semibold">{exercise.name}</span>
+                <br />
+                <span className="text-sm text-gray-600">{exercise.type}</span>
                 <div className="flex space-x-2 mt-2">
                   {!exercise.isDefault && (
                     <>
@@ -93,7 +88,7 @@ const ExerciseList: React.FC<ExerciseListProps> = ({
                   )}
                 </div>
               </div>
-            </Accordion>
+            </div>
           </li>
         )}
       />

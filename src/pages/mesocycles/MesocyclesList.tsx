@@ -89,7 +89,6 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                           {mesocycle.name}
                         </h3>
                         <p>
-                          <strong>Template:</strong>{" "}
                           {templateNames[mesocycle.templateId] ||
                             mesocycle.templateId}
                         </p>
@@ -119,13 +118,9 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                   }
                   isExpanded={false}
                 >
-                  <div>
-                    <p>
-                      <strong>Weeks:</strong> {mesocycle.weeks}
-                    </p>
-                    <p>
-                      <strong>Times/week</strong> {mesocycle.timesPerWeek}
-                    </p>
+                  <div className="text-sm text-gray-600">
+                    {mesocycle.weeks} <span>WEEKS</span> -{" "}
+                    {mesocycle.timesPerWeek} <span>DAYS/WEEK</span>
                     <div className="flex space-x-2 mt-2">
                       <Link to={`/mesocycles/${mesocycle.id}`}>
                         <Button variant="outline">View</Button>
