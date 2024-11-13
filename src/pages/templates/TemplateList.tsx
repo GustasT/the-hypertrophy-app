@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Template } from "../../database/db";
 import Button from "../../components/common/Button";
 import ConfirmationDialog from "../../components/common/ConfirmationDialog";
+import Accordion from "../../components/Accordion";
+import AnimatedList from "../../components/common/AnimatedList"; // Import the AnimatedList component
 
 interface TemplateListProps {
   templates: Template[];
@@ -16,23 +18,8 @@ const TemplateList: React.FC<TemplateListProps> = ({
   onDelete,
   onStartMeso,
 }) => {
-  const [expandedTemplates, setExpandedTemplates] = useState<Set<number>>(
-    new Set()
-  );
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<number | null>(null);
-
-  const toggleTemplate = (id: number) => {
-    setExpandedTemplates((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  };
 
   const handleDeleteClick = (id: number) => {
     setTemplateToDelete(id);
@@ -54,32 +41,33 @@ const TemplateList: React.FC<TemplateListProps> = ({
 
   return (
     <>
-      <ul className="space-y-4">
-        {templates.map((template) => (
-          <li key={template.id} className="p-4 border rounded">
-            <div
-              className="flex justify-between items-center cursor-pointer"
-              onClick={() => toggleTemplate(template.id as number)}
+      <AnimatedList
+        className="space-y-4"
+        items={templates}
+        keyExtractor={(template) => template.id.toString()}
+        renderItem={(template) => (
+          <li key={template.id}>
+            <Accordion
+              title={
+                <div>
+                  <h3 className="font-semibold">{template.name}</h3>
+                  <span className="text-gray-600 text-sm">
+                    {template.timesPerWeek}/WEEK:
+                  </span>
+                </div>
+              }
             >
               <div>
-                <h2 className="text-xl font-semibold">{template.name}</h2>
-                <p>
-                  <strong>Times per week:</strong> {template.timesPerWeek}
-                </p>
-              </div>
-              <Button variant="outline">
-                {expandedTemplates.has(template.id as number) ? "-" : "+"}
-              </Button>
-            </div>
-            {expandedTemplates.has(template.id as number) && (
-              <div className="mt-4">
-                <ul className="list-disc ml-5">
+                <ul className="list-none ml-5 grid grid-cols-3 gap-4">
                   {template.days.map((day, index) => (
-                    <li key={index}>
-                      <strong>
-                        Day {index + 1} ({day.name}):
-                      </strong>{" "}
-                      {day.muscleGroups.join(", ")}
+                    <li key={index} className="flex flex-col space-y-1">
+                      <div className="font-bold">Day {index + 1}</div>
+                      <div className="font-semibold">({day.name})</div>
+                      <div>
+                        {day.muscleGroups.map((muscleGroup, idx) => (
+                          <div key={idx}>{muscleGroup}</div>
+                        ))}
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -89,12 +77,14 @@ const TemplateList: React.FC<TemplateListProps> = ({
                       <Button
                         variant="outline"
                         onClick={() => onEdit(template)}
+                        size="sm"
                       >
                         Edit
                       </Button>
                       <Button
                         variant="secondary"
                         onClick={() => handleDeleteClick(template.id as number)}
+                        size="sm"
                       >
                         Delete
                       </Button>
@@ -108,10 +98,10 @@ const TemplateList: React.FC<TemplateListProps> = ({
                   </Button>
                 </div>
               </div>
-            )}
+            </Accordion>
           </li>
-        ))}
-      </ul>
+        )}
+      />
       <ConfirmationDialog
         message="Delete template?"
         continueText="Continue"

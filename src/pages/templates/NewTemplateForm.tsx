@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import db, { Template } from "../../database/db";
 import DayForm from "./DayForm";
 import TabNavigation from "../../components/TabNavigation";
-import useTemplateForm from "../../components/hooks/useTemplateForm";
 import Button from "../../components/common/Button";
 import InputField from "../../components/common/InputField";
 import SelectField from "../../components/common/SelectField";
+import useTemplateForm from "../../hooks/useTemplateForm";
 
 interface NewTemplateFormProps {
   onSave: (template: Template) => void;
@@ -63,7 +63,7 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
       return;
     }
 
-    const newTemplate: Template = {
+    const newTemplateData = {
       name: templateName,
       timesPerWeek: timesPerWeek as number,
       days,
@@ -71,15 +71,18 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
     };
 
     try {
+      let newTemplate: Template;
+
       if (initialData) {
         await db
           .table("templates")
-          .update(initialData.id as number, newTemplate);
-        newTemplate.id = initialData.id;
+          .update(initialData.id as number, newTemplateData);
+        newTemplate = { ...newTemplateData, id: initialData.id };
       } else {
-        const id = await db.table("templates").add(newTemplate);
-        newTemplate.id = id as number;
+        const id = await db.table("templates").add(newTemplateData);
+        newTemplate = { ...newTemplateData, id: id as number };
       }
+
       onSave(newTemplate);
       onClose();
     } catch (error) {
@@ -124,7 +127,7 @@ const NewTemplateForm: React.FC<NewTemplateFormProps> = ({
           />
         </>
       )}
-      <div className="flex justify-end">
+      <div className="flex justify-end pb-4">
         <Button variant="outline" className="mr-2" onClick={onClose}>
           Cancel
         </Button>

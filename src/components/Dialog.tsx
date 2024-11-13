@@ -20,10 +20,17 @@ const Dialog: React.FC<DialogProps> = ({
     if (isOpen) {
       setShowDialog(true);
       setTimeout(() => setVisible(true), 10); // Slight delay to trigger animation
+      document.body.classList.add("overflow-hidden"); // Disable background scroll
     } else {
       setVisible(false);
       setTimeout(() => setShowDialog(false), 300); // Match the duration of the animation
+      document.body.classList.remove("overflow-hidden"); // Re-enable background scroll
     }
+
+    // Clean up function to ensure no-scroll class is removed when the component unmounts
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
   }, [isOpen]);
 
   return (
@@ -36,23 +43,20 @@ const Dialog: React.FC<DialogProps> = ({
           onClick={onClose}
         >
           <div
-            className={`bg-white rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform ${
+            className={`bg-white rounded-t-lg shadow-lg w-full max-w-lg transition-transform duration-300 transform overflow-hidden ${
               visible ? "translate-y-0" : "translate-y-full"
             }`}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the dialog
-            style={{ maxHeight: "70vh", marginBottom: "4rem" }}
+            style={{ height: "calc(90dvh - 4rem)", marginBottom: "4rem" }} // Adjust for bottom navbar with margin
           >
-            <div className="sticky top-0 bg-white p-6 rounded-t-lg flex justify-between items-center border-b">
-              <h2 className="text-xl font-bold">{title}</h2>
-              <button className="text-xl font-bold" onClick={onClose}>
-                &times;
-              </button>
-            </div>
-            <div
-              className="p-6 overflow-y-auto"
-              style={{ maxHeight: "calc(70vh - 4rem)" }}
-            >
-              {children}
+            <div className="flex flex-col h-full">
+              <div className="flex-none px-6 py-4 border-b  flex justify-between items-center">
+                <h2 className="text-xl font-bold">{title}</h2>
+                <button className="text-xl font-bold" onClick={onClose}>
+                  &times;
+                </button>
+              </div>
+              <div className="flex-auto p-6 overflow-y-auto">{children}</div>
             </div>
           </div>
         </div>

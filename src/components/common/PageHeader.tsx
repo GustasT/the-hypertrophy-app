@@ -18,14 +18,14 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   buttonDisabled,
 }) => {
   return (
-    <div className="fixed top-0 w-full h-16 bg-white border-b border-gray-200 z-10">
-      <div className="flex justify-between p-4">
+    <div className="fixed top-0 w-full h-20 bg-white border-b border-gray-200 z-10 flex items-center">
+      <div className="flex items-center justify-between w-full px-4">
         <h1 className="text-2xl font-bold">{title}</h1>
         {buttonText &&
           (buttonAction || buttonLink) &&
           (buttonLink ? (
             <Link to={buttonLink}>
-              <Button variant="primary" disabled={buttonDisabled}>
+              <Button variant="primary" disabled={buttonDisabled} size="lg">
                 {buttonText}
               </Button>
             </Link>
@@ -34,6 +34,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               variant="primary"
               onClick={buttonAction}
               disabled={buttonDisabled}
+              size="lg"
             >
               {buttonText}
             </Button>

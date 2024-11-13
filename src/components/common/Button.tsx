@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react";
 
 type ButtonVariant = "primary" | "secondary" | "outline";
 type ButtonType = "button" | "submit" | "reset";
-type ButtonSize = "small" | "medium" | "large";
+type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {
   onClick?: () => void;
@@ -23,7 +23,7 @@ const Button: React.FC<ButtonProps> = ({
   className = "",
   disabled = false,
   style = {},
-  size = "medium", // Default size
+  size = "md", // Default size
 }) => {
   let baseClassName;
   let disabledClassName;
@@ -47,14 +47,15 @@ const Button: React.FC<ButtonProps> = ({
 
   // Determine the size classes based on the size
   switch (size) {
-    case "small":
+    case "sm":
       sizeClassName = "px-2 py-1 text-sm";
       break;
-    case "medium":
-      sizeClassName = "px-4 py-2 text-base";
+    case "md":
+      sizeClassName = "px-3 py-1.5 text-base";
       break;
-    case "large":
-      sizeClassName = "px-6 py-3 text-lg";
+    case "lg":
+      // sizeClassName = "px-6 py-3 text-lg";
+      sizeClassName = "px-4 py-2 text-base";
       break;
   }
 

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Select from "react-select";
+import React, { useEffect, useState, useRef } from "react";
 import { Template, Exercise, Mesocycle } from "../../database/db";
 import {
   fetchAllExercises,
@@ -8,6 +7,8 @@ import {
 } from "../../services/";
 import TabNavigation from "../../components/TabNavigation";
 import Button from "../../components/common/Button";
+import SelectField from "../../components/common/SelectField";
+import { useNavigate } from "react-router-dom";
 
 interface NewMesocycleFormProps {
   template: Template;
@@ -34,6 +35,9 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
   const [mesocycleName, setMesocycleName] = useState(initialData?.name || "");
   const [weeks, setWeeks] = useState<number>(initialData?.weeks || 4);
   const [weightUnit, setWeightUnit] = useState("KG");
+
+  const navigate = useNavigate();
+  const botRef = useRef<HTMLDivElement>(null); // Add reference to the bottom of the component
 
   useEffect(() => {
     const fetchExercisesData = async () => {
@@ -65,6 +69,12 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
 
     const isAdditionalFormComplete = mesocycleName !== "" && weightUnit !== "";
     setIsFormComplete(isExerciseComplete && isAdditionalFormComplete);
+
+    if (isExerciseComplete) {
+      setTimeout(() => {
+        botRef.current?.scrollIntoView({ behavior: "smooth" }); // Scroll to the bottom when all inputs for a day are filled
+      }, 100);
+    }
   }, [selectedExercises, template, mesocycleName, weightUnit]);
 
   const handleExerciseSelect = (key: string, exercise: Exercise | null) => {
@@ -78,13 +88,16 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
       weeks,
       timesPerWeek: template.timesPerWeek,
       completed: 0,
-      isActive: 1, // Set the new mesocycle as active
+      isActive: 1,
       workouts: [],
     };
     const mesocycleId = await createMesocycle(newMesocycle, selectedExercises);
     onSave({ id: mesocycleId, ...newMesocycle });
     clearLocalStorageExercises();
-    onClose(); // Close the dialog after saving
+    onClose();
+    setTimeout(() => {
+      navigate("/mesocycles");
+    }, 200);
   };
 
   const getAvailableExercises = (dayIndex: number, muscleGroup: string) => {
@@ -127,21 +140,20 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
               const key = `${dayIndex}-${mgIndex}-${muscleGroup}`;
               const options = getAvailableExercises(dayIndex, muscleGroup).map(
                 (exercise) => ({
-                  value: exercise.id,
+                  value: exercise.id ?? -1,
                   label: exercise.name,
+                  youtubeLink: exercise.youtubeLink,
                 })
               );
               return (
                 <div key={key} className="mb-2">
-                  <label className="block text-gray-700 mb-1">
-                    {muscleGroup}
-                  </label>
-                  <Select
+                  <SelectField
+                    label={muscleGroup}
                     options={options}
                     value={
                       selectedExercises[key]
                         ? {
-                            value: selectedExercises[key]!.id,
+                            value: selectedExercises[key]!.id!,
                             label: selectedExercises[key]!.name,
                           }
                         : null
@@ -150,12 +162,13 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
                       handleExerciseSelect(
                         key,
                         exercises.find(
-                          (ex) => ex.id === (option as any).value
+                          (ex) => ex.id === (option as any)?.value
                         ) || null
                       )
                     }
                     isClearable={true}
                     isSearchable={true}
+                    zIndex={1000}
                   />
                 </div>
               );
@@ -166,7 +179,9 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
       {isExerciseSelectionComplete && (
         <div className="mt-4">
           <div className="mb-4">
-            <label className="block text-gray-700">Mesocycle Name</label>
+            <label className="block text-lg text-gray-700 font-semibold">
+              Mesocycle Name
+            </label>
             <input
               type="text"
               className="w-full mt-2 p-2 border rounded"
@@ -179,27 +194,34 @@ const NewMesocycleForm: React.FC<NewMesocycleFormProps> = ({
             <label className="block text-gray-700">
               How many weeks will you train (including deload)
             </label>
-            <Select
+            <SelectField
+              label="Weeks"
               options={weekOptions}
-              value={weekOptions.find((option) => option.value === weeks)}
-              onChange={(option) => setWeeks((option as any).value)}
+              value={
+                weekOptions.find((option) => option.value === weeks) || null
+              }
+              onChange={(option) => setWeeks(option?.value || 4)}
               isClearable={false}
+              zIndex={1000}
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Weight Units</label>
-            <Select
+            <SelectField
+              label="Weight Units"
               options={weightUnitOptions}
-              value={weightUnitOptions.find(
-                (option) => option.value === weightUnit
-              )}
-              onChange={(option) => setWeightUnit((option as any).value)}
+              value={
+                weightUnitOptions.find(
+                  (option) => option.value === weightUnit
+                ) || null
+              }
+              onChange={(option) => setWeightUnit(option?.value || "KG")}
               isClearable={false}
+              zIndex={1000}
             />
           </div>
         </div>
       )}
-      <div className="flex justify-end gap-x-2 mt-4">
+      <div className="flex justify-end gap-x-2 mt-4 pb-7" ref={botRef}>
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>

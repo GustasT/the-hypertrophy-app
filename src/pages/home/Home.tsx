@@ -1,146 +1,47 @@
+import { useEffect, useState } from "react";
 import PageHeader from "../../components/common/PageHeader";
 
+// Extend the Navigator interface to include the standalone property
+declare global {
+  interface Navigator {
+    standalone?: boolean;
+  }
+}
+
 const Home = () => {
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  useEffect(() => {
+    const checkStandaloneMode = () => {
+      const isStandaloneMode =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        !!navigator.standalone;
+      setIsStandalone(isStandaloneMode);
+    };
+
+    checkStandaloneMode();
+
+    window.addEventListener("resize", checkStandaloneMode);
+    return () => window.removeEventListener("resize", checkStandaloneMode);
+  }, []);
+
   return (
     <>
       <PageHeader title="Home" />
-      <div className="p-4">
-        <p>
-          This is a sample text to test the scrolling behavior in the main
-          content area. Keep adding more text to ensure it scrolls properly.
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-          varius enim in eros elementum tristique. Duis cursus, mi quis viverra
-          ornare, eros dolor interdum nulla, ut commodo diam libero vitae erat.
-          Aenean faucibus nibh et justo cursus id rutrum lorem imperdiet. Nunc
-          ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-        <p>
-          Another paragraph for testing. Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit. Suspendisse varius enim in eros elementum tristique.
-          Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-          commodo diam libero vitae erat. Aenean faucibus nibh et justo cursus
-          id rutrum lorem imperdiet. Nunc ut sem vitae risus tristique posuere.
-        </p>
-      </div>
+      {isStandalone ? (
+        <div className="p-4">
+          2. Create a mesocycle using a Template <br />
+          3. Go to "Workout" and enjoy!
+        </div>
+      ) : (
+        <div className="p-4">
+          <div>1. Add to home screen</div>
+          <img
+            src="https://s3.amazonaws.com/groovehq/uploaded/6420cyp1i86fsm28gez11hqfg74cgovnd8zfqkpjp33f12hqks?1447801075"
+            alt="add to home screen"
+          />
+        </div>
+      )}
     </>
   );
 };

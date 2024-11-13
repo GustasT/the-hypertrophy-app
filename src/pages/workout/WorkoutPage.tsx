@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchActiveMesocycle,
@@ -20,6 +20,7 @@ import {
 } from "../../utils/localStorageUtils";
 import PageHeader from "../../components/common/PageHeader"; // Import the PageHeader component
 import ConfirmationDialog from "../../components/common/ConfirmationDialog"; // Import ConfirmationDialog
+import StickyDiv from "../../components/common/StickyDiv";
 
 const WorkoutPage = () => {
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ const WorkoutPage = () => {
   const [isFinishWorkoutButtonDisabled, setIsFinishWorkoutButtonDisabled] =
     useState(true);
   const [isDialogVisible, setIsDialogVisible] = useState(false); // State for dialog visibility
+
+  const topRef = useRef<HTMLDivElement>(null);
 
   const checkUnloggedSets = () => {
     const savedWorkoutSets = getFromLocalStorage(
@@ -216,6 +219,10 @@ const WorkoutPage = () => {
   const handleDialogContinue = async () => {
     setIsDialogVisible(false);
     await handleSave();
+    setTimeout(
+      () => topRef.current?.scrollIntoView({ behavior: "smooth" }),
+      100
+    );
   };
 
   const handleDialogCancel = () => {
@@ -223,7 +230,7 @@ const WorkoutPage = () => {
   };
 
   return (
-    <div>
+    <div ref={topRef}>
       <PageHeader
         title="Workout"
         buttonText="Finish Workout"
@@ -231,9 +238,15 @@ const WorkoutPage = () => {
         buttonDisabled={isFinishWorkoutButtonDisabled} // Pass the disabled state
       />
       {activeMesocycle && !loadingWorkout ? (
-        <h2 className="text-xl font-semibold p-4">
-          {`${activeMesocycle.name} - Week ${activeWorkout?.week}, Day ${activeWorkout?.day}`}
-        </h2>
+        <StickyDiv>
+          <h2 className=" text-sm mt-4">{`${activeMesocycle.name}`}</h2>
+          {/* <h3 className="font-bold p-4">{`Week ${activeWorkout?.week}, Day ${activeWorkout?.day}`}</h3> */}
+          <h3 className="font-bold pb-4">
+            WEEK <span className="text-lg">{`${activeWorkout?.week}`}</span> DAY{" "}
+            <span className="text-lg">{`${activeWorkout?.day}`}</span>{" "}
+            {`${activeWorkout?.name}`}
+          </h3>
+        </StickyDiv>
       ) : (
         <h2 className="text-xl font-semibold p-4">Loading workout info...</h2>
       )}
@@ -243,16 +256,17 @@ const WorkoutPage = () => {
             (histEx) => histEx.id === exercise.id
           );
           return (
-            <ExerciseItem
-              key={exercise.id}
-              exercise={exercise}
-              index={index}
-              onInputChange={handleInputChange}
-              onRemoveSet={handleRemoveSet}
-              workoutId={activeWorkout ? activeWorkout.id! : -1}
-              checkUnloggedSets={checkUnloggedSets}
-              historicalSets={historicalExercise?.sets} // Pass historical sets
-            />
+            <div key={exercise.id}>
+              <ExerciseItem
+                exercise={exercise}
+                index={index}
+                onInputChange={handleInputChange}
+                onRemoveSet={handleRemoveSet}
+                workoutId={activeWorkout ? activeWorkout.id! : -1}
+                checkUnloggedSets={checkUnloggedSets}
+                historicalSets={historicalExercise?.sets} // Pass historical sets
+              />
+            </div>
           );
         })}
       </div>

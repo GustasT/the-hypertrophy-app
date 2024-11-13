@@ -50,13 +50,20 @@ class ExerciseDB extends Dexie {
         "++id,mesocycleId,week,day,completed,isActive,[mesocycleId+isActive],[mesocycleId+id]", // Add compound index
     });
 
-    // Add version 7 to add the compound index [mesocycleId+week+day]
     this.version(7).stores({
       exercises: "++id,name,group,type,youtubeLink",
       templates: "++id,name,timesPerWeek,days",
       mesocycles: "++id,name,templateId,weeks,completed,isActive",
       workouts:
         "++id,mesocycleId,week,day,completed,isActive,[mesocycleId+isActive],[mesocycleId+id],[mesocycleId+week+day]", // Add compound index
+    });
+
+    this.version(8).stores({
+      exercises: "++id,name,group,type,youtubeLink",
+      templates: "++id,name,timesPerWeek,days",
+      mesocycles: "++id,name,templateId,weeks,completed,isActive",
+      workouts:
+        "++id,mesocycleId,week,day,name,completed,isActive,[mesocycleId+isActive],[mesocycleId+id],[mesocycleId+week+day]", // Add name to the schema
     });
 
     this.on("populate", async () => {
@@ -91,7 +98,7 @@ const db = new ExerciseDB();
 export default db;
 
 export interface Exercise {
-  id?: number;
+  id: number;
   name: string;
   group: string;
   type: string;
@@ -100,7 +107,7 @@ export interface Exercise {
 }
 
 export interface Template {
-  id?: number;
+  id: number;
   name: string;
   timesPerWeek: number;
   days: { name: string; muscleGroups: string[] }[];
@@ -108,7 +115,7 @@ export interface Template {
 }
 
 export interface Mesocycle {
-  id?: number;
+  id: number;
   name: string;
   templateId: number;
   timesPerWeek: number;
@@ -119,10 +126,11 @@ export interface Mesocycle {
 }
 
 export interface Workout {
-  id?: number;
+  id: number;
   mesocycleId: number;
   week: number;
   day: number;
+  name: string;
   exercises: ExerciseWithDetails[];
   completed: number;
   isActive: number;

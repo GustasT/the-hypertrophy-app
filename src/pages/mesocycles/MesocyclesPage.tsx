@@ -68,6 +68,14 @@ const MesocyclesPage = () => {
     }
   };
 
+  const sortedMesocycles = mesocycles.slice().sort((a, b) => {
+    if (a.isActive && !b.isActive) return -1;
+    if (!a.isActive && b.isActive) return 1;
+    if (a.completed && !b.completed) return 1;
+    if (!a.completed && b.completed) return -1;
+    return 0;
+  });
+
   return (
     <>
       <PageHeader
@@ -76,13 +84,8 @@ const MesocyclesPage = () => {
         buttonLink="/templates"
       />
       <div className="p-4">
-        {mesocycles.length === 0 ? (
-          <p>Please create a mesocycle</p>
-        ) : !activeMesocycle ? (
-          <p>Please activate a mesocycle</p>
-        ) : null}
         <MesocyclesList
-          mesocycles={mesocycles}
+          mesocycles={sortedMesocycles}
           onDelete={handleDelete}
           onSetActive={handleSetActive}
         />

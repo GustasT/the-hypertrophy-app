@@ -3,6 +3,7 @@ import { ExerciseWithDetails } from "../../database/db";
 import NumericInput from "../../components/common/NumericInput";
 import DecimalInput from "../../components/common/DecimalInput";
 import Button from "../../components/common/Button";
+import { AiOutlineYoutube } from "react-icons/ai";
 import {
   saveToLocalStorage,
   getFromLocalStorage,
@@ -177,16 +178,29 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
     sets.length === 1 || sets[sets.length - 1]?.logged;
 
   return (
-    <div className="mb-4">
-      <h2 className="text-lg font-semibold">{exercise.name}</h2>
-      <div className="grid grid-cols-5 gap-4 items-center font-semibold mb-2">
-        <div className="col-span-2 text-center">Reps</div>
-        <div className="col-span-2 text-center">Weight</div>
+    <div className="pb-4 mb-4 border-b">
+      <div className="flex justify-between items-center">
+        <h3 className="font-semibold">{exercise.name}</h3>
+        {exercise.youtubeLink && (
+          <a
+            href={exercise.youtubeLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-red-500 hover:text-red-700"
+          >
+            <AiOutlineYoutube size={24} />
+          </a>
+        )}
+      </div>
+      <p className="text-sm text-gray-500 uppercase">{exercise.group}</p>
+      <div className="grid grid-cols-5 gap-2 items-center font-medium mb-2 mt-2">
+        <div className="col-span-2 text-center">REPS</div>
+        <div className="col-span-2 text-center">WEIGHT</div>
       </div>
       {sets.map((set, setIndex) => (
         <div
           key={setIndex}
-          className="grid grid-cols-5 gap-4 items-center mb-2"
+          className="grid grid-cols-5 gap-2 items-center mb-2"
         >
           <NumericInput
             value={set.reps === "0" ? "" : set.reps}
@@ -221,7 +235,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           variant="outline"
           onClick={handleAddSet}
           disabled={isAddButtonDisabled}
-          size="small"
+          // size="sm"
         >
           +
         </Button>
@@ -229,7 +243,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
           variant="secondary"
           onClick={handleRemoveLastSet}
           disabled={isRemoveButtonDisabled}
-          size="small"
+          // size="sm"
         >
           -
         </Button>
@@ -237,7 +251,7 @@ const ExerciseItem: React.FC<ExerciseItemProps> = ({
       {/* Display historical sets separately */}
       {historicalSets && historicalSets.length > 0 && (
         <div className="mt-4 text-gray-600">
-          <h3 className="text-sm font-semibold">Previous Workout:</h3>
+          <span className="text-sm font-semibold">Previous Workout:</span>
           {historicalSets.map((set, setIndex) => (
             <div key={setIndex} className="text-center">
               {set.reps} x {set.weight}

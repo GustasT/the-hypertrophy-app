@@ -1,3 +1,4 @@
+// Exercises.tsx
 import { useState, useEffect } from "react";
 import { fetchAllExercises, deleteExercise } from "../../services";
 import { Exercise } from "../../database/db";
@@ -5,7 +6,14 @@ import NewExerciseForm from "./NewExerciseForm";
 import ExerciseList from "./ExerciseList";
 import Dialog from "../../components/Dialog";
 import PageHeader from "../../components/common/PageHeader";
-import Button from "../../components/common/Button"; // Import the Button component
+import Button from "../../components/common/Button";
+import {
+  saveToSessionStorage,
+  getFromSessionStorage,
+} from "../../utils/sessionStorageUtils";
+import StickyDiv from "../../components/common/StickyDiv";
+import ScrollToTopButton from "../../components/common/ScrollToTopButton";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const Exercises = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -16,11 +24,16 @@ const Exercises = () => {
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [exerciseFilter, setExerciseFilter] = useState<
     "all" | "default" | "custom"
-  >("all"); // Filter state
-  const [groupFilter, setGroupFilter] = useState<string>("all"); // Group filter state
-  const [typeFilter, setTypeFilter] = useState<string>("all"); // Type filter state
+  >(getFromSessionStorage("exerciseFilter") || "all");
+  const [groupFilter, setGroupFilter] = useState<string>(
+    getFromSessionStorage("groupFilter") || "all"
+  );
+  const [typeFilter, setTypeFilter] = useState<string>(
+    getFromSessionStorage("typeFilter") || "all"
+  );
 
-  // Fetch exercises from IndexedDB when the component mounts
+  const { topRef, isScrollButtonVisible } = useScrollToTop();
+
   useEffect(() => {
     const fetchExercisesData = async () => {
       try {
@@ -34,8 +47,20 @@ const Exercises = () => {
     fetchExercisesData();
   }, []);
 
+  useEffect(() => {
+    saveToSessionStorage("exerciseFilter", exerciseFilter);
+  }, [exerciseFilter]);
+
+  useEffect(() => {
+    saveToSessionStorage("groupFilter", groupFilter);
+  }, [groupFilter]);
+
+  useEffect(() => {
+    saveToSessionStorage("typeFilter", typeFilter);
+  }, [typeFilter]);
+
   const handleSave = (exercise: Exercise) => {
-    if (exercise.isDefault) return; // Prevent saving changes to default exercises
+    if (exercise.isDefault) return;
 
     if (isEditMode && selectedExercise) {
       setExercises(
@@ -48,7 +73,7 @@ const Exercises = () => {
 
   const handleDelete = async (id: number) => {
     const exercise = exercises.find((ex) => ex.id === id);
-    if (exercise?.isDefault) return; // Prevent deleting default exercises
+    if (exercise?.isDefault) return;
 
     try {
       await deleteExercise(id);
@@ -75,7 +100,11 @@ const Exercises = () => {
     setSelectedExercise(null);
   };
 
-  const filteredExercises = exercises.filter((exercise) => {
+  const sortedExercises = exercises
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const filteredExercises = sortedExercises.filter((exercise) => {
     if (exerciseFilter === "default" && !exercise.isDefault) return false;
     if (exerciseFilter === "custom" && exercise.isDefault) return false;
     if (groupFilter !== "all" && exercise.group !== groupFilter) return false;
@@ -88,31 +117,32 @@ const Exercises = () => {
 
   return (
     <>
+      <div ref={topRef}></div>
       <PageHeader
         title="Exercise List"
         buttonText="New Exercise"
         buttonAction={openAddDialog}
       />
-      <div className="p-4">
-        <div className="mb-4 flex space-x-2">
+      <StickyDiv>
+        <div className="mb-4 mt-4 flex space-x-2">
           <Button
             onClick={() => setExerciseFilter("all")}
             variant={exerciseFilter === "all" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             All Exercises
           </Button>
           <Button
             onClick={() => setExerciseFilter("default")}
             variant={exerciseFilter === "default" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             Default
           </Button>
           <Button
             onClick={() => setExerciseFilter("custom")}
             variant={exerciseFilter === "custom" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             Custom
           </Button>
@@ -153,6 +183,8 @@ const Exercises = () => {
             ))}
           </select>
         </div>
+      </StickyDiv>
+      <div className="p-4">
         <ExerciseList
           exercises={filteredExercises}
           onEdit={openEditDialog}
@@ -169,6 +201,7 @@ const Exercises = () => {
             initialData={selectedExercise || undefined}
           />
         </Dialog>
+        <ScrollToTopButton topRef={topRef} isVisible={isScrollButtonVisible} />
       </div>
     </>
   );

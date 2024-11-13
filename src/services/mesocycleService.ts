@@ -48,9 +48,15 @@ export const createMesocycle = async (
       isActive: 1, // New mesocycle is active
     })) as number;
 
+    const template = await db.table("templates").get(mesocycle.templateId);
+    if (!template) {
+      throw new Error("Template not found");
+    }
+
     const workouts: number[] = [];
     let isFirstWorkout = true;
 
+    // Generate workouts
     for (let week = 1; week <= mesocycle.weeks; week++) {
       for (let dayIndex = 0; dayIndex < mesocycle.timesPerWeek; dayIndex++) {
         const dayExercises = Object.keys(selectedExercises)
@@ -62,6 +68,7 @@ export const createMesocycle = async (
           mesocycleId,
           week,
           day: dayIndex + 1, // Increment dayIndex by 1
+          name: template.days[dayIndex].name, // Set the name from the template
           exercises: dayExercises.map((exercise) => ({
             ...exercise,
             weightRecommended: 0,

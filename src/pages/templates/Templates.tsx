@@ -1,13 +1,20 @@
+// Templates.tsx
 import { useState, useEffect } from "react";
 import NewTemplateForm from "./NewTemplateForm";
 import Dialog from "../../components/Dialog";
 import db, { Template, Mesocycle } from "../../database/db";
 import TemplateList from "./TemplateList";
-
 import NewMesocycleForm from "../new_mesocycle/NewMesocycleForm";
-import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils"; // Import the utility function
+import { setActiveMesocycleAndWorkout } from "../../utils/mesocycleUtils";
 import PageHeader from "../../components/common/PageHeader";
 import Button from "../../components/common/Button";
+import {
+  saveToSessionStorage,
+  getFromSessionStorage,
+} from "../../utils/sessionStorageUtils";
+import StickyDiv from "../../components/common/StickyDiv";
+import ScrollToTopButton from "../../components/common/ScrollToTopButton";
+import useScrollToTop from "../../hooks/useScrollToTop";
 
 const Templates = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -19,8 +26,12 @@ const Templates = () => {
   const [isMesoDialogOpen, setIsMesoDialogOpen] = useState(false);
   const [templateFilter, setTemplateFilter] = useState<
     "all" | "default" | "custom"
-  >("all");
-  const [timesPerWeekFilter, setTimesPerWeekFilter] = useState<string>("all");
+  >(() => getFromSessionStorage("templateFilter") || "all");
+  const [timesPerWeekFilter, setTimesPerWeekFilter] = useState<string>(
+    () => getFromSessionStorage("timesPerWeekFilter") || "all"
+  );
+
+  const { topRef, isScrollButtonVisible } = useScrollToTop();
 
   useEffect(() => {
     const fetchTemplates = async () => {
@@ -33,12 +44,20 @@ const Templates = () => {
     };
 
     const initializeDB = async () => {
-      await db.open(); // Open the database
-      await fetchTemplates(); // Fetch templates after database is ready
+      await db.open();
+      await fetchTemplates();
     };
 
     initializeDB();
   }, []);
+
+  useEffect(() => {
+    saveToSessionStorage("templateFilter", templateFilter);
+  }, [templateFilter]);
+
+  useEffect(() => {
+    saveToSessionStorage("timesPerWeekFilter", timesPerWeekFilter);
+  }, [timesPerWeekFilter]);
 
   const handleSave = (template: Template) => {
     if (isEditMode && selectedTemplate) {
@@ -88,11 +107,15 @@ const Templates = () => {
 
   const handleMesoSave = async (newMesocycle: Mesocycle) => {
     console.log("New mesocycle saved:", newMesocycle);
-    await setActiveMesocycleAndWorkout(newMesocycle.id!); // Use the utility function
+    await setActiveMesocycleAndWorkout(newMesocycle.id!);
     setIsMesoDialogOpen(false);
   };
 
-  const filteredTemplates = templates.filter((template) => {
+  const sortedTemplates = templates
+    .slice()
+    .sort((a, b) => a.timesPerWeek - b.timesPerWeek);
+
+  const filteredTemplates = sortedTemplates.filter((template) => {
     if (templateFilter === "default" && !template.isDefault) return false;
     if (templateFilter === "custom" && template.isDefault) return false;
     if (
@@ -109,35 +132,37 @@ const Templates = () => {
 
   return (
     <>
+      <div ref={topRef}></div>
       <PageHeader
         title="Template List"
         buttonText="New Template"
         buttonAction={openAddDialog}
       />
-      <div className="p-4">
-        <div className="mb-4 flex space-x-2">
+      <StickyDiv>
+        <div className="mb-4 mt-4 flex space-x-2">
           <Button
             onClick={() => setTemplateFilter("all")}
             variant={templateFilter === "all" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             All Templates
           </Button>
           <Button
             onClick={() => setTemplateFilter("default")}
             variant={templateFilter === "default" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             Default
           </Button>
           <Button
             onClick={() => setTemplateFilter("custom")}
             variant={templateFilter === "custom" ? "primary" : "outline"}
-            size="small"
+            size="sm"
           >
             Custom
           </Button>
         </div>
+
         <div className="mb-4 flex space-x-2">
           <label htmlFor="timesPerWeekFilter" className="mr-2">
             Times Per Week:
@@ -156,11 +181,13 @@ const Templates = () => {
             ))}
           </select>
         </div>
+      </StickyDiv>
+      <div className="p-4">
         <TemplateList
           templates={filteredTemplates}
           onEdit={openEditDialog}
           onDelete={handleDelete}
-          onStartMeso={openMesoDialog} // Add this line
+          onStartMeso={openMesoDialog}
         />
         <Dialog
           isOpen={isDialogOpen}
@@ -186,6 +213,7 @@ const Templates = () => {
             />
           )}
         </Dialog>
+        <ScrollToTopButton topRef={topRef} isVisible={isScrollButtonVisible} />
       </div>
     </>
   );

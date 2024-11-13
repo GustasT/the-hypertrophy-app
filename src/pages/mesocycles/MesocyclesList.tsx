@@ -4,6 +4,9 @@ import { Mesocycle, Template } from "../../database/db";
 import Button from "../../components/common/Button";
 import db from "../../database/db";
 import ConfirmationDialog from "../../components/common/ConfirmationDialog";
+import Accordion from "../../components/Accordion";
+import { Flipper, Flipped } from "react-flip-toolkit";
+import AnimatedList from "../../components/common/AnimatedList"; // Import the AnimatedList component
 
 interface MesocyclesListProps {
   mesocycles: Mesocycle[];
@@ -70,57 +73,72 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
 
   return (
     <>
-      <ul className="space-y-4">
-        {mesocycles.map((mesocycle) => (
-          <li key={mesocycle.id} className="p-4 border rounded">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="text-xl font-semibold">{mesocycle.name}</h2>
-                <p>
-                  <strong>Weeks:</strong> {mesocycle.weeks}
-                </p>
-                <p>
-                  <strong>Times/week</strong> {mesocycle.timesPerWeek}
-                </p>
-                <p>
-                  <strong>Template:</strong>{" "}
-                  {templateNames[mesocycle.templateId] || mesocycle.templateId}
-                </p>
-              </div>
-              <div className="flex space-x-2">
-                {mesocycle.completed ? (
-                  <span className="text-green-400 px-2 py-1">Completed</span>
-                ) : mesocycle.isActive ? (
-                  <div className="bg-green-400 text-white px-2 py-1 rounded-full">
-                    Active
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    onClick={() => handleSetActive(mesocycle.id as number)}
-                    size="small"
-                  >
-                    Make Active
-                  </Button>
-                )}
-                <Link to={`/mesocycles/${mesocycle.id}`}>
-                  <Button variant="outline" size="small">
-                    View
-                  </Button>
-                </Link>
-
-                <Button
-                  variant="secondary"
-                  onClick={() => handleDeleteClick(mesocycle.id as number)}
-                  size="small"
+      <Flipper flipKey={mesocycles.map((mesocycle) => mesocycle.id).join("-")}>
+        <AnimatedList
+          className="space-y-4"
+          items={mesocycles}
+          keyExtractor={(mesocycle) => mesocycle.id.toString()}
+          renderItem={(mesocycle) => (
+            <Flipped key={mesocycle.id} flipId={mesocycle.id}>
+              <li>
+                <Accordion
+                  title={
+                    <div className="flex justify-between items-center w-full">
+                      <div className="flex flex-col">
+                        <h3 className="font-semibold">{mesocycle.name}</h3>
+                        <p>
+                          {templateNames[mesocycle.templateId] ||
+                            mesocycle.templateId}
+                        </p>
+                      </div>
+                      <div className="flex space-x-2 z-10">
+                        {mesocycle.completed ? (
+                          <span className="text-green-400 px-2 py-1">
+                            Completed
+                          </span>
+                        ) : mesocycle.isActive ? (
+                          <div className="bg-green-400 text-white px-2 py-1 text-sm rounded">
+                            Active
+                          </div>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            onClick={() =>
+                              handleSetActive(mesocycle.id as number)
+                            }
+                            size="sm"
+                          >
+                            Make Active
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  }
+                  isExpanded={false}
                 >
-                  Delete
-                </Button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+                  <div className="text-sm text-gray-600">
+                    {mesocycle.weeks} <span>WEEKS</span> -{" "}
+                    {mesocycle.timesPerWeek} <span>DAYS/WEEK</span>
+                    <div className="flex space-x-2 mt-2">
+                      <Link to={`/mesocycles/${mesocycle.id}`}>
+                        <Button variant="outline">View</Button>
+                      </Link>
+                      <Button
+                        variant="secondary"
+                        onClick={() =>
+                          handleDeleteClick(mesocycle.id as number)
+                        }
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </Accordion>
+              </li>
+            </Flipped>
+          )}
+        />
+      </Flipper>
       <ConfirmationDialog
         message="Delete mesocycle?"
         continueText="Continue"

@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import { fetchWorkoutById } from "../../services";
 import { Workout, ExerciseWithDetails } from "../../database/db";
 import { useCurrentView } from "../../contexts/CurrentViewContext"; // Import the context
+import AnimatedList from "../../components/common/AnimatedList"; // Import the AnimatedList component
 
 const WorkoutDetailsPage = () => {
-  const { mesocycleId, workoutId } = useParams<{
+  const { workoutId } = useParams<{
     mesocycleId: string;
     workoutId: string;
   }>();
@@ -36,7 +37,7 @@ const WorkoutDetailsPage = () => {
   }, [workoutId, setViewedWorkoutId]);
 
   return (
-    <div className="p-4">
+    <div className="pt-4">
       {loadingWorkout ? (
         <div className="flex justify-center items-center h-full">
           <h2 className="text-xl font-semibold">Loading workout info...</h2>
@@ -44,19 +45,19 @@ const WorkoutDetailsPage = () => {
       ) : (
         workout && (
           <div>
-            <h1 className="text-3xl font-bold mb-4">
-              Mesocycle {mesocycleId} - Workout {workoutId}
-            </h1>
-            <h2 className="text-2xl font-semibold mb-6">
+            <h2 className="text-xl font-bold mb-4">
               {`Week ${workout.week}, Day ${workout.day}`}
             </h2>
-            <div className="space-y-4">
-              {exercises.map((exercise) => (
+            <AnimatedList
+              className="space-y-4"
+              items={exercises}
+              keyExtractor={(exercise) => exercise.id.toString()}
+              renderItem={(exercise) => (
                 <div
                   key={exercise.id}
                   className="bg-white p-4 rounded-lg shadow-md"
                 >
-                  <h3 className="text-xl font-semibold mb-2">
+                  <h3 className="text-lg font-semibold mb-2">
                     {exercise.name}
                   </h3>
                   <div className="space-y-1">
@@ -72,8 +73,8 @@ const WorkoutDetailsPage = () => {
                     ))}
                   </div>
                 </div>
-              ))}
-            </div>
+              )}
+            />
           </div>
         )
       )}
