@@ -85,9 +85,7 @@ const MesocyclesList: React.FC<MesocyclesListProps> = ({
                   title={
                     <div className="flex justify-between items-center w-full">
                       <div className="flex flex-col">
-                        <h3 className="text-lg font-semibold">
-                          {mesocycle.name}
-                        </h3>
+                        <h3 className="font-semibold">{mesocycle.name}</h3>
                         <p>
                           {templateNames[mesocycle.templateId] ||
                             mesocycle.templateId}

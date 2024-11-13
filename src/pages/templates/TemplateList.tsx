@@ -50,7 +50,7 @@ const TemplateList: React.FC<TemplateListProps> = ({
             <Accordion
               title={
                 <div>
-                  <h3 className="text-lg font-semibold">{template.name}</h3>
+                  <h3 className="font-semibold">{template.name}</h3>
                   <span className="text-gray-600 text-sm">
                     {template.timesPerWeek}/WEEK:
                   </span>

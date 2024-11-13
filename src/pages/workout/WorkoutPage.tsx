@@ -77,8 +77,7 @@ const WorkoutPage = () => {
   const fetchHistoricalData = async (
     mesocycleId: number,
     week: number,
-    day: number,
-    name: string
+    day: number
   ) => {
     const previousWeek = week - 1;
     if (previousWeek > 0) {
@@ -116,12 +115,7 @@ const WorkoutPage = () => {
           setExercises(exercisesWithSets);
 
           // Fetch historical data
-          await fetchHistoricalData(
-            mesocycle.id!,
-            workout.week,
-            workout.day,
-            workout.name
-          );
+          await fetchHistoricalData(mesocycle.id!, workout.week, workout.day);
         }
       } else {
         navigate("/mesocycles"); // Redirect if no active mesocycle
