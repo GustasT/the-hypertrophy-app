@@ -26,3 +26,12 @@ A private, offline-first progressive web application (PWA) designed to track and
 https://admirable-semifreddo-517fdb.netlify.app
 
 ## Screenshots
+
+![IMG_7994](https://github.com/user-attachments/assets/5432cf22-d687-4aea-9d06-f58ce9abcffe)
+![IMG_7996](https://github.com/user-attachments/assets/d23d562f-2539-44c8-93a5-9842eea9468c)
+![IMG_7995](https://github.com/user-attachments/assets/40c77cda-6811-4c27-8b5a-1927109c9c59)
+![IMG_7997](https://github.com/user-attachments/assets/f34b2354-7e5f-4bf4-89a9-673cff120a52)
+![IMG_7998](https://github.com/user-attachments/assets/8ce09ae2-8e63-4e5a-8698-44d0a5b0d79f)
+![IMG_7999](https://github.com/user-attachments/assets/637c0d6f-19a4-40c8-9548-961b4f38a4b3)
+![IMG_8002](https://github.com/user-attachments/assets/5ddc2f8f-d8c1-4988-aa34-5c79ef246d0d)
+![IMG_8003](https://github.com/user-attachments/assets/da7930ee-10ca-4dd7-843b-8a751935dd49)
