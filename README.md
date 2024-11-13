@@ -1,30 +1,28 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# The Hypertrophy App PWA
 
-Currently, two official plugins are available:
+A private, offline-first progressive web application (PWA) designed to track and optimize exercise routines through customizable mesocycles, workout plans (templates), and exercises. The app enables consistent tracking of performance over time, making it ideal for hypertrophy training.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- Premade and Custom Exercises
+- Workout Plan Templates
+- Mesocycle Logging
+- Performance Tracking
+- Mobile-first
+- Offline-first
+- Runs on all platforms
+  
+## Usage instruction
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+    1. Select a workout plan (or create a custom one)
+    2. Select exercises for the workout plan (or add your own)
+    3. Type in the name and select duration of the mesocycle
+    4. Log your performance
+    5. Check past performance anytime
+    
+## Demo
 
-- Configure the top-level `parserOptions` property like this:
+https://admirable-semifreddo-517fdb.netlify.app
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## Screenshots
